@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
 """
 Author: Jaro Steindorff
+
+Inputs for the script are:
+    - fragment_seq_file: Path to the file with all fragment sequences
+    - constitutive_backbone_sequences: List with the constitutive backbone sequences
+    - linker_dict: Dictionary with structure names as keys and linker sequences as values
+    - length_dict: Dictionary with structure names as keys and sequence lengths as values
+    - trim_dict: Dictionary with structure names as keys and trim ranges as values
+    - out_name_LUT: Path to the output file with the LUT data
+    - out_name: Path to the output file with the alignment data
+
+Output of the script is:
+    - The LUT data with annotated structures
+    - The alignment data with sequences
 """
 
-
-import os
-import sys
 import time
 import tempfile
 import subprocess
@@ -17,10 +27,14 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.Data import CodonTable
 import pysam
+import logging
 # local import
 from costum_functions import aatodna, load_wSet
 from config import get_config
 
+# Initialize logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def create_LUT(LUT_file: str, backbone_seq: list) -> pd.DataFrame:
     """
@@ -63,7 +77,7 @@ def split_and_annotate_sequences(LUT_dna: pd.DataFrame, linker: dict, length: di
     for structure, seq_linker in linker.items():
         subset = LUT_dna[unprocessed & LUT_dna['Sequence'].str.startswith(seq_linker)].copy()
         subsets[structure] = subset
-        print(f"Number of {structure} sequences (by linker): {len(subset)}")
+        logger.info(f"Number of {structure} sequences (by linker): {len(subset)}")
         # Annotate 'Structure' in LUT_dna
         LUT_dna.loc[subset.index, 'Structure'] = structure
         # Mark sequences as processed
@@ -73,7 +87,7 @@ def split_and_annotate_sequences(LUT_dna: pd.DataFrame, linker: dict, length: di
     for structure, seq_length in length.items():
         subset = LUT_dna[unprocessed & (LUT_dna['Sequence'].str.len() == seq_length)].copy()
         subsets[structure] = subset
-        print(f"Number of {structure} sequences (by length): {len(subset)}")
+        logger.info(f"Number of {structure} sequences (by length): {len(subset)}")
         # Annotate 'Structure' in LUT_dna
         LUT_dna.loc[subset.index, 'Structure'] = structure
         # Mark sequences as processed
@@ -82,7 +96,7 @@ def split_and_annotate_sequences(LUT_dna: pd.DataFrame, linker: dict, length: di
     # Remaining unprocessed sequences
     remaining = LUT_dna[unprocessed]
     subsets['unprocessed'] = remaining
-    print(f"Number of unprocessed sequences: {len(remaining)}")
+    logger.info(f"Number of unprocessed sequences: {len(remaining)}")
 
     return subsets, LUT_dna
 
@@ -209,6 +223,8 @@ def main():
     LUT_dna = create_LUT(config["fragment_seq_file"], config["constitutive_backbone_sequences"])
     # Split sequences based on conditions (linker and length) & annotate structures
     subsets, LUT_dna = split_and_annotate_sequences(LUT_dna, config["linker_dict"], config["length_dict"])
+    # Save LUT data
+    LUT_dna.to_csv(config["out_name_LUT"], index=False)
     # Trim sequences
     subsets = trim_sequences(subsets, config["trim_dict"])
     # Save sequences to FASTA files
@@ -227,8 +243,8 @@ def main():
     # Save final data
     df_all_fragments.to_csv(config["out_name"], index=False)
     # Print total execution time
-    print("Total execution time:")
-    print(time.time() - start_time)
+    logger.info("Total execution time:")
+    logger.info(time.time() - start_time)
 
 if __name__ == "__main__":
     main()

@@ -24,6 +24,7 @@ import time
 from Bio import SeqIO
 from Bio.Seq import translate
 from multiprocessing import Pool, cpu_count
+import logging
 # local import
 from costum_functions import aatodna, load_wSet
 from config import get_config
@@ -171,6 +172,10 @@ def add_overhangs(fragments, five_prime, three_prime):
 def main():
     start_time = time.time()
 
+    # Initialize logging
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
     config = get_config("S1")
 
     # Read the input FASTA file
@@ -191,15 +196,15 @@ def main():
     # Add overhangs for 22aa fragments
     sorted_fragments_22aa = add_overhangs(sorted_fragments_22aa, config["22_aa_overhangs"][0], config["22_aa_overhangs"][1])
 
-    print(f"Number of 14aa fragments: {len(sorted_fragments_14aa)}")
-    print(f"Number of 14aa G4S fragments: {len(sorted_fragments_14aa_G4S)}")
-    print(f"Number of 14aa A5 fragments: {len(sorted_fragments_14aa_A5)}")
-    print(f"Number of 22aa fragments: {len(sorted_fragments_22aa)}")
+    logger.info(f"Number of 14aa fragments: {len(sorted_fragments_14aa)}")
+    logger.info(f"Number of 14aa G4S fragments: {len(sorted_fragments_14aa_G4S)}")
+    logger.info(f"Number of 14aa A5 fragments: {len(sorted_fragments_14aa_A5)}")
+    logger.info(f"Number of 22aa fragments: {len(sorted_fragments_22aa)}")
 
     # Merge all separate fragment lists into one complete list
     sorted_fragments = sorted_fragments_22aa + sorted_fragments_14aa + sorted_fragments_14aa_A5 + sorted_fragments_14aa_G4S
 
-    print(f"Number of total fragments: {len(sorted_fragments)}")
+    logger.info(f"Number of unique fragments: {len(set(frag['AAfragment']) for frag in sorted_fragments)}")
 
     # Write the merged fragments to a file
     with open(config["output_name"], "w") as f:
@@ -207,8 +212,8 @@ def main():
         for frag in sorted_fragments:
             f.write(f"{frag['DNAfragment']}\n")
 
-    print(f"Number of unique fragments: {len(set(frag['AAfragment'] for frag in sorted_fragments))}")
-    print(f"Execution time: {time.time() - start_time} seconds")
+    logger.info(f"Number of unique fragments: {len(set(frag['AAfragment'] for frag in sorted_fragments))}")
+    logger.info(f"Execution time: {time.time() - start_time} seconds")
 
 
 if __name__ == "__main__":

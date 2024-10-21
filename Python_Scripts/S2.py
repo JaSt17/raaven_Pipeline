@@ -26,9 +26,14 @@ import tempfile
 import shutil
 import shlex
 import re
+import logging
 from datetime import datetime
 # local import
 from config import get_config
+
+# Initialize logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def count_fastq_reads(file_path: str) -> int:
@@ -49,7 +54,7 @@ def count_fastq_reads(file_path: str) -> int:
         num_sequences = int(result.strip())
         return num_sequences
     except subprocess.CalledProcessError as e:
-        print(f"Error executing the command: {e}")
+        logger.info(f"Error executing the command: {e}")
         return None
 
 def run_bbduk2(args_list: list) -> tuple:
@@ -58,7 +63,7 @@ def run_bbduk2(args_list: list) -> tuple:
     
     :param args_list: List of arguments to pass to bbduk2.sh
     """
-    print("Running bbduk2.sh")
+    logger.info("Running bbduk2.sh")
     bbduk2_path = os.path.expanduser("~/bbmap/bbduk2.sh")
     # Stream output directly to the console instead of collecting it in memory
     with subprocess.Popen(
@@ -71,10 +76,10 @@ def run_bbduk2(args_list: list) -> tuple:
         process.communicate()
 
         if process.returncode != 0:
-            print(f"Error running bbduk2.sh with return code {process.returncode}", file=sys.stderr)
+            logger.info(f"Error running bbduk2.sh with return code {process.returncode}", file=sys.stderr)
             sys.exit(1)
 
-        print("Finished bbduk2.sh")
+        logger.info("Finished bbduk2.sh")
 
         return process.returncode, process.stderr
 
@@ -93,10 +98,10 @@ def run_pairfq(args_list):
         process.communicate()
 
         if process.returncode != 0:
-            print(f"Error running pairfq with return code {process.returncode}", file=sys.stderr)
+            logger.info(f"Error running pairfq with return code {process.returncode}", file=sys.stderr)
             sys.exit(1)
 
-        print("Finished pairfq")
+        logger.info("Finished pairfq")
 
 # Main function
 def main():
@@ -112,7 +117,7 @@ def main():
 
     # Count reads
     output_reads = count_fastq_reads(in_name_P5)
-    print(f"Utilized Reads: {output_reads} for barcode extraction")
+    logger.info(f"Utilized Reads: {output_reads} for barcode extraction")
 
     # Extraction of barcodes
     out_name_P5 = tempfile.NamedTemporaryFile(prefix="BC_", suffix=".fastq.gz", delete=False).name
@@ -125,13 +130,13 @@ def main():
         f"in={in_name_P5}",
         f"out={out_name_P5}",
     ])
-    print("Running bbduk2 for barcode extraction")
+    logger.info("Running bbduk2 for barcode extraction")
     _, stderr_output = run_bbduk2(bbduk2_args_BC)
     # Parse stderr_output to find the number of reads used for barcode extraction
     match = re.search(r'Result:.*\t(\d+)\sreads', stderr_output)
     if match:
         barcode_read_count = int(match.group(1))
-        print(f"Total number of found barcode reads: {barcode_read_count}")
+        logger.info(f"Total number of found barcode reads: {barcode_read_count}")
 
     # Update input file for barcodes
     in_name_P5 = out_name_P5
@@ -145,13 +150,13 @@ def main():
         f"in={in_name_P7}",
         f"out={out_name_P7}",
     ])
-    print("Running bbduk2 for fragment extraction")
+    logger.info("Running bbduk2 for fragment extraction")
     _, stderr_output = run_bbduk2(bbduk2_args_Frag)
     # Parse stderr_output to find the number of reads used for fragment extraction
     match = re.search(r'Result:.*\t(\d+)\sreads', stderr_output)
     if match:
         fragment_read_count = int(match.group(1))
-        print(f"Total number of found fragment reads: {fragment_read_count}")
+        logger.info(f"Total number of found fragment reads: {fragment_read_count}")
 
     # Update input file for fragments
     in_name_P7 = out_name_P7
@@ -174,7 +179,7 @@ def main():
         "-rs", out_name_P7_singlet,
         "--stats",
     ]
-    print("Running pairfq to pair barcodes and fragments")
+    logger.info("Running pairfq to pair barcodes and fragments")
     run_pairfq(pairfq_args)
 
     # Save outputs
@@ -197,8 +202,8 @@ def main():
             pass  # File may have been already removed
 
     # Print total execution time
-    print("Total execution time:")
-    print(datetime.now() - start_time)
+    logger.info("Total execution time:")
+    logger.info(datetime.now() - start_time)
 
 if __name__ == "__main__":
     main()

@@ -65,7 +65,15 @@ config_S3 = {
         "14aaA5": [14,56],
         "22aa": [2,68],
     },
+    "out_name_LUT": "0_data/LUT.csv",
     "out_name": "0_data/alignedLibraries.csv",
+}
+
+config_S4 = {
+    "in_name_LUT": "0_data/LUT.csv",
+    "barcode_file": "0_data/barcode_fragment/DNA_pscAAVlib_1_barcodes.fastq.gz",
+    "fragment_file": "0_data/barcode_fragment/DNA_pscAAVlib_1_fragments.fastq.gz",
+    "out_name": "0_data/alignedLibraries_sorted.csv",
 }
 
 # create a lookup dictionary for the configuration dictionaries
@@ -73,6 +81,7 @@ config_lookup = {
     "S1": config_S1,
     "S2": config_S2,
     "S3": config_S3,
+    "S4": config_S4,
 }
 
 def get_config(step: str) -> dict:

@@ -5,3 +5,4 @@ functions/
 input/
 *.err
 *.out
+__pycache__/
