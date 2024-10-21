@@ -1,0 +1,7 @@
+0_data/
+1_quality_control/
+2_output/
+functions/
+input/
+*.err
+*.out
