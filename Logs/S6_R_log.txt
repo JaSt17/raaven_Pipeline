@@ -1,0 +1,190 @@
+
+R version 4.4.1 (2024-06-14) -- "Race for Your Life"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+> #' ---
+> #' title: "Generate a complete library range object"
+> #' author: "Tomas Bjorklund"
+> #' edited by: "Jaro Steindorff"
+> #' output: completeLibraryRanges.rds -- a table of the AAV plasmid library so that it follows the same sturucre
+> #'         as the mRNA samples so that they can be compared for coverages.
+> #' ---
+> 
+> #  This will make R-functions such as library() and install.packages() use this directory:
+> .libPaths(c('~/MyRextensions', .libPaths()))
+> 
+> #load libraries
+> suppressPackageStartupMessages(library(knitr))
+> suppressPackageStartupMessages(library(ShortRead))
+> suppressPackageStartupMessages(library(parallel))
+> suppressPackageStartupMessages(library(doParallel))
+> suppressPackageStartupMessages(library(data.table))
+> suppressPackageStartupMessages(library(devtools))
+> suppressPackageStartupMessages(library(kableExtra))
+> 
+> 
+> #' Generate library rage object
+> #' ============================
+> # laod data
+> load("0_data/alignedLibraries.rda")
+> load("0_data/LUTdna.rda")
+> load("0_data/multipleContfragmentsComplete.rda")
+> # change keys to make the data.table mergeable
+> setkey(output.Table,LUTnr)
+> setkey(LUT.dna,LUTnr)
+> # merge the tables
+> output.Table <- output.Table[LUT.dna,nomatch=0]
+> # remove unnecessary columns
+> output.Table[,c("Names","i.Structure"):=NULL]
+> # set the key to the fragment
+> setnames(output.Table,"Sequence","fragment")
+> # set the key to the fragment
+> setkey(output.Table,fragment)
+> # create a new data.table with the fragment and the index of the fragment
+> range.idx <- data.table(fragment=mcols(allFragments.ranges)$Sequence, 
++                         idxFrag=1:length(allFragments.ranges), key="fragment")
+> # only keep the fragments that are in the range.idx                         
+> output.Table <- output.Table[range.idx, nomatch=0, allow.cartesian=TRUE]
+> 
+> # create a new data.table with the fragment that are found
+> foundFragments.ranges <- allFragments.ranges[output.Table$idxFrag]
+> # remove unnecessary columns
+> output.Table[,c("Reads","fragment","idxFrag","Structure","LUTnr"):=NULL]
+> # create a new column RNAcount with the count of the fragment
+> output.Table[,RNAcount:=tCount]
+> 
+> # add the output.Table to the foundFragments.ranges
+> mcols(foundFragments.ranges) <- c(mcols(foundFragments.ranges), output.Table)
+> 
+> # save the foundFragments.ranges
+> saveRDS(foundFragments.ranges, file="2_output/completeLibraryRanges.rds")
+> 
+> devtools::session_info()
+─ Session info ───────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.4.1 (2024-06-14)
+ os       Rocky Linux 9.4 (Blue Onyx)
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       Europe/Stockholm
+ date     2024-09-13
+ pandoc   NA (via rmarkdown)
+
+─ Packages ───────────────────────────────────────────────────────────────────
+ package              * version date (UTC) lib source
+ abind                  1.4-5   2016-07-21 [1] CRAN (R 4.4.1)
+ Biobase              * 2.64.0  2024-04-30 [1] Bioconductor 3.19 (R 4.4.1)
+ BiocGenerics         * 0.50.0  2024-04-30 [1] Bioconductor 3.19 (R 4.4.1)
+ BiocParallel         * 1.38.0  2024-04-30 [1] Bioconductor 3.19 (R 4.4.1)
+ Biostrings           * 2.72.1  2024-06-02 [1] Bioconductor 3.19 (R 4.4.1)
+ bitops                 1.0-8   2024-07-29 [1] CRAN (R 4.4.1)
+ cachem                 1.0.8   2023-05-01 [2] CRAN (R 4.4.1)
+ cli                    3.6.2   2023-12-11 [2] CRAN (R 4.4.1)
+ codetools              0.2-20  2024-03-31 [1] CRAN (R 4.4.1)
+ colorspace             2.1-1   2024-07-26 [1] CRAN (R 4.4.1)
+ crayon                 1.5.2   2022-09-29 [2] CRAN (R 4.4.1)
+ data.table           * 1.16.0  2024-08-27 [1] CRAN (R 4.4.1)
+ DelayedArray           0.30.1  2024-05-07 [1] Bioconductor 3.19 (R 4.4.1)
+ deldir                 2.0-4   2024-02-28 [1] CRAN (R 4.4.1)
+ devtools             * 2.4.5   2022-10-11 [1] CRAN (R 4.4.1)
+ digest                 0.6.34  2024-01-11 [2] CRAN (R 4.4.1)
+ doParallel           * 1.0.17  2022-02-07 [1] CRAN (R 4.4.1)
+ ellipsis               0.3.2   2021-04-29 [2] CRAN (R 4.4.1)
+ evaluate               0.24.0  2024-06-10 [1] CRAN (R 4.3.1)
+ fastmap                1.1.1   2023-02-24 [2] CRAN (R 4.4.1)
+ foreach              * 1.5.2   2022-02-02 [1] CRAN (R 4.4.1)
+ fs                     1.6.3   2023-07-20 [2] CRAN (R 4.4.1)
+ GenomeInfoDb         * 1.40.1  2024-05-24 [1] Bioconductor 3.19 (R 4.4.1)
+ GenomeInfoDbData       1.2.12  2024-09-05 [1] Bioconductor
+ GenomicAlignments    * 1.40.0  2024-04-30 [1] Bioconductor 3.19 (R 4.4.1)
+ GenomicRanges        * 1.56.1  2024-06-12 [1] Bioconductor 3.19 (R 4.4.1)
+ glue                   1.7.0   2024-01-09 [2] CRAN (R 4.4.1)
+ htmltools              0.5.7   2023-11-03 [2] CRAN (R 4.4.1)
+ htmlwidgets            1.6.4   2023-12-06 [2] CRAN (R 4.4.1)
+ httpuv                 1.6.14  2024-01-26 [2] CRAN (R 4.4.1)
+ httr                   1.4.7   2023-08-15 [1] CRAN (R 4.3.1)
+ hwriter                1.3.2.1 2022-04-08 [1] CRAN (R 4.4.1)
+ interp                 1.1-6   2024-01-26 [1] CRAN (R 4.4.1)
+ IRanges              * 2.38.1  2024-07-03 [1] Bioconductor 3.19 (R 4.4.1)
+ iterators            * 1.0.14  2022-02-05 [1] CRAN (R 4.4.1)
+ jpeg                   0.1-10  2022-11-29 [1] CRAN (R 4.4.1)
+ jsonlite               1.8.8   2023-12-04 [1] CRAN (R 4.3.1)
+ kableExtra           * 1.4.0   2024-01-24 [1] CRAN (R 4.4.1)
+ knitr                * 1.48    2024-07-07 [1] CRAN (R 4.3.1)
+ later                  1.3.2   2023-12-06 [2] CRAN (R 4.4.1)
+ lattice                0.22-6  2024-03-20 [1] CRAN (R 4.4.1)
+ latticeExtra           0.6-30  2022-07-04 [1] CRAN (R 4.4.1)
+ lifecycle              1.0.4   2023-11-07 [2] CRAN (R 4.4.1)
+ magrittr               2.0.3   2022-03-30 [2] CRAN (R 4.4.1)
+ Matrix                 1.7-0   2024-04-26 [1] CRAN (R 4.4.1)
+ MatrixGenerics       * 1.16.0  2024-04-30 [1] Bioconductor 3.19 (R 4.4.1)
+ matrixStats          * 1.4.1   2024-09-08 [1] CRAN (R 4.4.1)
+ memoise                2.0.1   2021-11-26 [2] CRAN (R 4.4.1)
+ mime                   0.12    2021-09-28 [1] CRAN (R 4.3.1)
+ miniUI                 0.1.1.1 2018-05-18 [2] CRAN (R 4.4.1)
+ munsell                0.5.1   2024-04-01 [1] CRAN (R 4.4.1)
+ pkgbuild               1.4.3   2023-12-10 [2] CRAN (R 4.4.1)
+ pkgload                1.3.4   2024-01-16 [2] CRAN (R 4.4.1)
+ png                    0.1-8   2022-11-29 [1] CRAN (R 4.4.1)
+ profvis                0.3.8   2023-05-02 [2] CRAN (R 4.4.1)
+ promises               1.2.1   2023-08-10 [2] CRAN (R 4.4.1)
+ purrr                  1.0.2   2023-08-10 [2] CRAN (R 4.4.1)
+ pwalign                1.0.0   2024-04-30 [1] Bioconductor 3.19 (R 4.4.1)
+ R6                     2.5.1   2021-08-19 [1] CRAN (R 4.3.1)
+ RColorBrewer           1.1-3   2022-04-03 [1] CRAN (R 4.4.1)
+ Rcpp                   1.0.12  2024-01-09 [2] CRAN (R 4.4.1)
+ remotes                2.4.2.1 2023-07-18 [2] CRAN (R 4.4.1)
+ rlang                  1.1.3   2024-01-10 [2] CRAN (R 4.4.1)
+ rmarkdown              2.25    2023-09-18 [2] CRAN (R 4.4.1)
+ Rsamtools            * 2.20.0  2024-04-30 [1] Bioconductor 3.19 (R 4.4.1)
+ rstudioapi             0.15.0  2023-07-07 [2] CRAN (R 4.4.1)
+ S4Arrays               1.4.1   2024-05-20 [1] Bioconductor 3.19 (R 4.4.1)
+ S4Vectors            * 0.42.1  2024-07-03 [1] Bioconductor 3.19 (R 4.4.1)
+ scales                 1.3.0   2023-11-28 [1] CRAN (R 4.4.1)
+ sessioninfo            1.2.2   2021-12-06 [2] CRAN (R 4.4.1)
+ shiny                  1.8.0   2023-11-17 [2] CRAN (R 4.4.1)
+ ShortRead            * 1.62.0  2024-04-30 [1] Bioconductor 3.19 (R 4.4.1)
+ SparseArray            1.4.8   2024-05-24 [1] Bioconductor 3.19 (R 4.4.1)
+ stringi                1.8.3   2023-12-11 [2] CRAN (R 4.4.1)
+ stringr                1.5.1   2023-11-14 [2] CRAN (R 4.4.1)
+ SummarizedExperiment * 1.34.0  2024-05-01 [1] Bioconductor 3.19 (R 4.4.1)
+ svglite                2.1.3   2023-12-08 [1] CRAN (R 4.4.1)
+ systemfonts            1.0.5   2023-10-09 [2] CRAN (R 4.4.1)
+ UCSC.utils             1.0.0   2024-04-30 [1] Bioconductor 3.19 (R 4.4.1)
+ urlchecker             1.0.1   2021-11-30 [2] CRAN (R 4.4.1)
+ usethis              * 2.2.3   2024-02-19 [2] CRAN (R 4.4.1)
+ vctrs                  0.6.5   2023-12-01 [2] CRAN (R 4.4.1)
+ viridisLite            0.4.2   2023-05-02 [1] CRAN (R 4.4.1)
+ xfun                   0.47    2024-08-17 [1] CRAN (R 4.3.1)
+ xml2                   1.3.6   2023-12-04 [2] CRAN (R 4.4.1)
+ xtable                 1.8-4   2019-04-21 [2] CRAN (R 4.4.1)
+ XVector              * 0.44.0  2024-04-30 [1] Bioconductor 3.19 (R 4.4.1)
+ zlibbioc               1.50.0  2024-04-30 [1] Bioconductor 3.19 (R 4.4.1)
+
+ [1] /home/jarost/MyRextensions
+ [2] /sw/easybuild_milan/software/R/4.4.1-foss-2023a/lib64/R/library
+
+──────────────────────────────────────────────────────────────────────────────
+> 
+> proc.time()
+   user  system elapsed 
+ 64.399   3.061  59.585 
