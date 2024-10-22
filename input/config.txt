@@ -1,0 +1,4 @@
+dataDir	0_data/fastq_files
+in.name.P5	DNA_pscAAVlib_1.fastq.gz
+in.name.P7	DNA_pscAAVlib_2.fastq.gz
+name.out	AAVlibrary_complete
