@@ -203,16 +203,16 @@ def main():
 
     # Merge all separate fragment lists into one complete list
     sorted_fragments = sorted_fragments_22aa + sorted_fragments_14aa + sorted_fragments_14aa_A5 + sorted_fragments_14aa_G4S
-
-    logger.info(f"Number of unique fragments: {len(set(frag['AAfragment']) for frag in sorted_fragments)}")
+    all_fragments = [frag['AAfragment'] for frag in sorted_fragments]
+    logger.info(f"Number of unique Amino Acid fragments: {len(set(set(all_fragments)))}")
+    logger.info(f"Number of written fragments: {len(all_fragments)}")
 
     # Write the merged fragments to a file
     with open(config["output_name"], "w") as f:
         f.write("Sequence\n")
         for frag in sorted_fragments:
             f.write(f"{frag['DNAfragment']}\n")
-
-    logger.info(f"Number of unique fragments: {len(set(frag['AAfragment'] for frag in sorted_fragments))}")
+    logger.info(f"Written fragments to file: {config['output_name']}")
     logger.info(f"Execution time: {time.time() - start_time} seconds")
 
 

@@ -4,3 +4,5 @@
 *.err
 *.out
 __pycache__/
+install_packages.sh
+bbmap/

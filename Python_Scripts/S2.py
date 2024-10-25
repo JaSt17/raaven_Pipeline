@@ -64,7 +64,7 @@ def run_bbduk2(args_list: list) -> tuple:
     :param args_list: List of arguments to pass to bbduk2.sh
     """
     logger.info("Running bbduk2.sh")
-    bbduk2_path = os.path.expanduser("~/bbmap/bbduk2.sh")
+    bbduk2_path = os.path.expanduser("bbmap/bbduk2.sh")
     # Stream output directly to the console instead of collecting it in memory
     with subprocess.Popen(
         [bbduk2_path] + args_list,

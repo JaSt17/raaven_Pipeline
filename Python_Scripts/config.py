@@ -7,7 +7,7 @@ config_S1 = {
     "14_aa_G4S_overhangs": ["AACCTCCAGAGAGGCAACGGAGGCGGAGGAAGT", "GGAGGCGGCGGAAGCAGACAAGCAGCTACCGCA"],
     "14_aa_A5_overhangs": ["AACCTCCAGAGAGGCAACGCTGCTGCAGCAGCC", "GCAGCTGCAGCTGCCAGACAAGCAGCTACCGCA"],
     "22_aa_overhangs": ["AACCTCCAGAGAGGCAACGCT", "GCCAGACAAGCAGCTACCGCA"],
-    "output_name": "0_data/SortedFragments_all_python.txt",
+    "output_name": "0_data/SortedFragments.txt",
 }
 
 config_S2 = {
