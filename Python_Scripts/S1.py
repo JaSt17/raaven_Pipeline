@@ -172,8 +172,12 @@ def add_overhangs(fragments, five_prime, three_prime):
 def main():
     start_time = time.time()
 
-    # Initialize logging
-    logging.basicConfig(level=logging.INFO)
+    # Initialize logging with custom format
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(message)s',
+        datefmt='%H:%M:%S'  # Only show hour, minute, and second
+    )
     logger = logging.getLogger(__name__)
 
     config = get_config("S1")

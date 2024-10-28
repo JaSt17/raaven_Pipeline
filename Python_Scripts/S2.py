@@ -1,209 +1,144 @@
 #!/usr/bin/env python3
 """
-Extraction of Barcodes and Gene Fragments from the given P5 and P7 raw reads sequencing files
+Extraction of Barcodes and Gene Fragments from P5 and P7 raw sequencing files
 
 Author: Jaro Steindorff
 
-This script extracts barcodes and fragments from sequencing files, pairs them and saves them in separate files.
+This script extracts barcodes and fragments from sequencing files, pairs them, and saves them in separate files.
 
-Inputs for the script are:
-    - in_name_P5: The path to the P5 sequencing file
-    - in_name_P7: The path to the P7 sequencing file
-    - out_dir: The path to the output directory
-    - out_name: The name of the output files
-    - bbduk2_args_BC: The arguments for barcode extraction with bbduk2.sh
-    - bbduk2_args_Frag: The arguments for fragment extraction with bbduk2.sh
+Workflow:
+    - Use bbduk2.sh to extract barcodes from the P5 sequencing file
+    - Use bbduk2.sh to extract fragments from the P7 sequencing file
+    - Pair the barcodes and fragments using pairfq
+    - Save the paired barcodes and fragments in separate files
 
-Output of the script is:
-    - Two files containing the extracted barcodes and fragments respectively
+Inputs for the script:
+    - in_name_P5: Path to the P5 sequencing file
+    - in_name_P7: Path to the P7 sequencing file
+    - out_dir: Output directory path
+    - out_name: Output files name
 """
 
 import os
 import sys
 import subprocess
-import multiprocessing
 import tempfile
 import shutil
-import shlex
 import re
 import logging
 from datetime import datetime
-# local import
 from config import get_config
 
-# Initialize logging
-logging.basicConfig(level=logging.INFO)
+# Initialize logging with custom format
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(message)s',
+    datefmt='%H:%M:%S'  # Only show hour, minute, and second
+)
 logger = logging.getLogger(__name__)
 
-
-def count_fastq_reads(file_path: str) -> int:
+def run_command(command: list, description: str) -> tuple:
     """
-    Count the number of reads in a fastq file.
+    Runs a subprocess command and returns stdout, stderr, and error status.
     
-    :param file_path: Path to the fastq file
-    :return: Number of reads in the file
+    :param command: Command list to execute
+    :param description: Description of the command for logging
     """
-    # Command to count the number of sequences
-    command = f"pigz -dc {shlex.quote(file_path)} | wc -l| awk '{{print $1/4}}'"
-
-    
-    # Run the command
-    try:
-        result = subprocess.check_output(command, shell=True, text=True)
-        # Strip the result and convert it to a float (in case of decimal places)
-        num_sequences = int(result.strip())
-        return num_sequences
-    except subprocess.CalledProcessError as e:
-        logger.info(f"Error executing the command: {e}")
-        return None
-
-def run_bbduk2(args_list: list) -> tuple:
-    """
-    Run the bbduk2.sh script with the provided arguments.
-    
-    :param args_list: List of arguments to pass to bbduk2.sh
-    """
-    logger.info("Running bbduk2.sh")
-    bbduk2_path = os.path.expanduser("bbmap/bbduk2.sh")
-    # Stream output directly to the console instead of collecting it in memory
-    with subprocess.Popen(
-        [bbduk2_path] + args_list,
-        stdout=sys.stdout,
-        stderr=sys.stderr,
-        text=True
-    ) as process:
-        
-        process.communicate()
-
+    logger.info(f"Running {description}")
+    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
+        stdout, stderr = process.communicate()
         if process.returncode != 0:
-            logger.info(f"Error running bbduk2.sh with return code {process.returncode}", file=sys.stderr)
+            logger.error(f"Error running {description} with code {process.returncode}")
             sys.exit(1)
 
-        logger.info("Finished bbduk2.sh")
-
-        return process.returncode, process.stderr
-
-
-def run_pairfq(args_list):
-    """
-    Run the pairfq tool with the provided arguments.
+        return stdout, stderr
     
-    :param args_list: List of arguments to pass to pairfq"""
-    with subprocess.Popen(
-        ["pairfq"] + args_list,
-        stdout=sys.stdout,
-        stderr=sys.stderr,
-        text=True
-    ) as process:
-        process.communicate()
-
-        if process.returncode != 0:
-            logger.info(f"Error running pairfq with return code {process.returncode}", file=sys.stderr)
-            sys.exit(1)
-
-        logger.info("Finished pairfq")
+def extract_summary(stdout: str) -> str:
+    """
+    Extracts the summary from the stdout of a command.
+    
+    :param stdout: stdout of the command
+    """
+    match = re.search(r"(Input:.*?Result:.*?bases\s*\(\d+\.\d+%\))", stdout, re.DOTALL)
+    if match:
+        return match.group(1)
+    return None
 
 # Main function
 def main():
-    # Start timer
     start_time = datetime.now()
-
-    # Read configuration dictionary from the config.py file
     config = get_config("S2")
-    in_name_P5 = config['in_name_P5']
-    in_name_P7 = config['in_name_P7']
-    out_dir = config['out_dir']
-    out_name = config['out_name']
 
-    # Count reads
-    output_reads = count_fastq_reads(in_name_P5)
-    logger.info(f"Utilized Reads: {output_reads} for barcode extraction")
+    # File paths and threading info
+    in_name_P5, in_name_P7 = config['in_name_P5'], config['in_name_P7']
+    out_dir, out_name = config['out_dir'], config['out_name']
+    threads = os.cpu_count()
 
-    # Extraction of barcodes
+    # BBDuk extraction for barcodes
+    # create a temporary file for the barcode extraction
     out_name_P5 = tempfile.NamedTemporaryFile(prefix="BC_", suffix=".fastq.gz", delete=False).name
-    threads = multiprocessing.cpu_count()
-    # get the bbduk2 arguments for barcode extraction from config
-    bbduk2_args_BC = config['bbduk2_args_BC']
-    # add the input and output file names to the bbduk2 arguments
-    bbduk2_args_BC.extend([
-        f"threads={threads}",
-        f"in={in_name_P5}",
-        f"out={out_name_P5}",
-    ])
-    logger.info("Running bbduk2 for barcode extraction")
-    _, stderr_output = run_bbduk2(bbduk2_args_BC)
-    # Parse stderr_output to find the number of reads used for barcode extraction
-    match = re.search(r'Result:.*\t(\d+)\sreads', stderr_output)
-    if match:
-        barcode_read_count = int(match.group(1))
-        logger.info(f"Total number of found barcode reads: {barcode_read_count}")
-
-    # Update input file for barcodes
+    # extract the configuration for the barcode extraction and add the input and output files and the number of threads
+    bbduk2_args_BC = config['bbduk2_args_BC'] + [f"threads={threads}", f"in={in_name_P5}", f"out={out_name_P5}"]
+    # run bbduk2 with the configuration
+    _, stderr = run_command(["bbmap/bbduk2.sh"] + bbduk2_args_BC, "bbduk2 barcode extraction")
+    
+    # Extract and log barcode summary
+    summary = extract_summary(stderr)
+    if summary:
+        logger.info(f"bbduk2 barcode extraction summary:\n{summary}")
+    # set the input file for the fragment extraction to the output file of the barcode extraction
     in_name_P5 = out_name_P5
 
-    # Extraction of fragments
+    # BBDuk extraction for fragments
+    # create a temporary file for the fragment extraction
     out_name_P7 = tempfile.NamedTemporaryFile(prefix="P7_", suffix=".fastq.gz", delete=False).name
-    # get the bbduk2 arguments for fragment extraction from config
-    bbduk2_args_Frag = config['bbduk2_args_Frag']
-    bbduk2_args_Frag.extend([
-        f"threads={threads}",
-        f"in={in_name_P7}",
-        f"out={out_name_P7}",
-    ])
-    logger.info("Running bbduk2 for fragment extraction")
-    _, stderr_output = run_bbduk2(bbduk2_args_Frag)
-    # Parse stderr_output to find the number of reads used for fragment extraction
-    match = re.search(r'Result:.*\t(\d+)\sreads', stderr_output)
-    if match:
-        fragment_read_count = int(match.group(1))
-        logger.info(f"Total number of found fragment reads: {fragment_read_count}")
-
-    # Update input file for fragments
+    # extract the configuration for the fragment extraction and add the input and output files and the number of threads
+    bbduk2_args_Frag = config['bbduk2_args_Frag'] + [f"threads={threads}", f"in={in_name_P7}", f"out={out_name_P7}"]
+    # run bbduk2 with the configuration
+    _, stderr = run_command(["bbmap/bbduk2.sh"] + bbduk2_args_Frag, "bbduk2 fragment extraction")
+    
+    # Extract and log fragment summary
+    summary = extract_summary(stderr)
+    if summary:
+        logger.info(f"bbduk2 fragment extraction summary:\n{summary}")
+    # set the input file for the pairing to the output file of the fragment extraction
     in_name_P7 = out_name_P7
 
-    # Pairing barcodes and fragments
-    out_name_P5_paired = tempfile.NamedTemporaryFile(prefix="P5_", suffix=".fastq.gz", delete=False).name
-    out_name_P7_paired = tempfile.NamedTemporaryFile(prefix="P7_", suffix=".fastq.gz", delete=False).name
-    out_name_P5_singlet = tempfile.NamedTemporaryFile(prefix="P5_singlet_", suffix=".fastq.gz", delete=False).name
-    out_name_P7_singlet = tempfile.NamedTemporaryFile(prefix="P7_singlet_", suffix=".fastq.gz", delete=False).name
-
-    # define the arguments for pairfq
+    # create a dictionary with the temporary output file names for the paired and unpaired barcodes and fragments
+    paired_outs = {
+        "P5_paired": tempfile.NamedTemporaryFile(prefix="P5_", suffix=".fastq.gz", delete=False).name,
+        "P7_paired": tempfile.NamedTemporaryFile(prefix="P7_", suffix=".fastq.gz", delete=False).name,
+        "P5_singlet": tempfile.NamedTemporaryFile(prefix="P5_singlet_", suffix=".fastq.gz", delete=False).name,
+        "P7_singlet": tempfile.NamedTemporaryFile(prefix="P7_singlet_", suffix=".fastq.gz", delete=False).name
+    }
     pairfq_args = [
-        "makepairs",
-        "-c", "gzip",
-        "-f", in_name_P5,
-        "-r", in_name_P7,
-        "-fp", out_name_P5_paired,
-        "-rp", out_name_P7_paired,
-        "-fs", out_name_P5_singlet,
-        "-rs", out_name_P7_singlet,
-        "--stats",
+        "pairfq", "makepairs", "-c", "gzip",
+        "-f", in_name_P5, "-r", in_name_P7,
+        "-fp", paired_outs["P5_paired"], "-rp", paired_outs["P7_paired"],
+        "-fs", paired_outs["P5_singlet"], "-rs", paired_outs["P7_singlet"], "--stats"
     ]
-    logger.info("Running pairfq to pair barcodes and fragments")
-    run_pairfq(pairfq_args)
+    stdout, _ = run_command(pairfq_args, "pairfq pairing")
+    
+    # Extract and log pairing summary
+    match = re.search(r"(Total paired reads\s*:\s*\d+.*\nTotal unpaired reads\s*:\s*\d+)", stdout)
+    if match:
+        last_two_lines = re.sub(r"\s*:\s*", ":\t", match.group(1))
+        logger.info(f"pairfq pairing summary:\n{last_two_lines}")
 
     # Save outputs
     os.makedirs(out_dir, exist_ok=True)
-    shutil.move(out_name_P5_paired, f"./{out_dir}/barcode_{out_name}.fastq.gz")
-    shutil.move(out_name_P7_paired, f"./{out_dir}/fragment_{out_name}.fastq.gz")
+    shutil.move(paired_outs["P5_paired"], os.path.join(out_dir, f"barcode_{out_name}.fastq.gz"))
+    shutil.move(paired_outs["P7_paired"], os.path.join(out_dir, f"fragment_{out_name}.fastq.gz"))
 
-    # Clean up temporary files
-    temp_files = [
-        in_name_P5,
-        in_name_P7,
-        out_name_P5_singlet,
-        out_name_P7_singlet,
-        # Add other temporary files if necessary
-    ]
-    for temp_file in temp_files:
+    # Cleanup
+    for file_path in [in_name_P5, in_name_P7] + list(paired_outs.values()):
         try:
-            os.remove(temp_file)
-        except OSError:
-            pass  # File may have been already removed
+            os.remove(file_path)
+        except OSError as e:
+            # If the file does not exist, continue
+            continue
 
-    # Print total execution time
-    logger.info("Total execution time:")
-    logger.info(datetime.now() - start_time)
+    logger.info(f"Total execution time: {datetime.now() - start_time}")
 
 if __name__ == "__main__":
     main()

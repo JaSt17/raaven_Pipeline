@@ -49,6 +49,8 @@ config_S2 = {
 }
 
 config_S3 = {
+    "original_seq_file": "input/DNA-lib_RetrogradeTransport.fasta",
+    "wSet": "input/wSet.csv",
     "fragment_seq_file": "0_data/SortedFragments_all_python.txt",
     "constitutive_backbone_sequences": ["aacctccagagaggcaacg", "cagacaagcagctaccgca"],
     "linker_dict": {
@@ -56,8 +58,8 @@ config_S3 = {
         "14aaA5": "CTGCTGCAGCAGCC",
     },
     "length_dict": {
-        "14aa": 14,
-        "22aa": 22,
+        "14aa": 46,
+        "22aa": 70,
     },
     "trim_dict": {
         "14aa": [2,44],
