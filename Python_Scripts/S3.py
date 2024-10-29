@@ -43,6 +43,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 def run_command(command: list, description: str) -> tuple:
     """
     Runs a subprocess command and returns stdout, stderr, and error status.
@@ -59,10 +60,12 @@ def run_command(command: list, description: str) -> tuple:
             sys.exit(1)
 
         return stdout, stderr
+    
 
 def create_LUT(LUT_file: str, backbone_seq: list) -> pd.DataFrame:
     """
     Create a lookup table (LUT) from a file with all fragment sequences.
+    Cuts off the backbone sequences, sets all sequences to uppercase, and adds a unique identifier.
     
     :param LUT_file: Path to the sequence file
     :return: LUT dataframe
@@ -74,6 +77,7 @@ def create_LUT(LUT_file: str, backbone_seq: list) -> pd.DataFrame:
     LUT_dna = LUT_dna.drop_duplicates()
     LUT_dna['LUTnr'] = ['seq_' + str(i+1) for i in range(len(LUT_dna))]
     return LUT_dna
+
 
 def split_and_annotate_sequences(LUT_dna: pd.DataFrame, linker: dict, length: dict) -> tuple:
     """
@@ -113,6 +117,7 @@ def split_and_annotate_sequences(LUT_dna: pd.DataFrame, linker: dict, length: di
 def trim_sequences(subsets: dict, trim_dict) -> dict:
     """
     Trim sequences based on structure and trim ranges.
+    The trim ranges are given as a dictionary with structure names as keys and trim ranges as values.
     
     :param subsets: Dictionary of subsets
     :param trim_dict: Dictionary with structure names as keys and trim ranges as values
@@ -125,9 +130,10 @@ def trim_sequences(subsets: dict, trim_dict) -> dict:
     
     return subsets
 
-def save_fasta_files(subsets: dict) -> dict:
+def create_fasta_files(subsets: dict) -> dict:
     """
-    Save sequences to FASTA files.
+    Create FASTA files from subsets. The dictionary keys are the structure names.
+    These FASTA files are used to build Bowtie2 indices.
 
     :param subsets: Dictionary of subsets
     :return: Dictionary of FASTA files
@@ -149,7 +155,8 @@ def build_bowtie_index(original_sequences: str, wSet_path: str) -> str:
     """
     Build Bowtie2 index from original sequences.
 
-    :param LUT_file: Path to the LUT file
+    :param original_sequences: Path to the file with original sequences
+    :param wSet_path: Path to the file with the wSet data
     :return: Path to Bowtie2 index
     """
     # read in file with original sequences
@@ -158,6 +165,8 @@ def build_bowtie_index(original_sequences: str, wSet_path: str) -> str:
     seqs_AA = [seq_record.seq.translate() for seq_record in seqs_original]
     # get sequence ids
     ids = [seq_record.description for seq_record in seqs_original]
+    # change id to have underscore instead of space
+    ids = [seq_id.replace(" ", "_") for seq_id in ids]
     # load wSet with the hsa codon table
     wSet = load_wSet(wSet_path)
     # translate amino acids back to DNA using the hsa specific condon usage table
@@ -173,9 +182,11 @@ def build_bowtie_index(original_sequences: str, wSet_path: str) -> str:
 
     return bowtie_idx_prefix
 
+
 def align_to_reference(fa_file: str, bowtie_idx_prefix: str, structure_name: str):
     """
-    Align sequences to reference using Bowtie2.
+    Align sequences to reference using Bowtie2. The reference is the original sequence file. 
+    The alignment information is stored in a DataFrame. SO we get the position of the sequence in the reference.
 
     :param fa_file: Path to FASTA file with sequences
     :param bowtie_idx_prefix: Path to Bowtie2 index
@@ -192,27 +203,26 @@ def align_to_reference(fa_file: str, bowtie_idx_prefix: str, structure_name: str
         "--very-sensitive", "-f", "-a",
         "-x", bowtie_idx_prefix, "-U", fa_file, "-S", sam_file
     ]
-    run_command(bowtie2_cmd, "Bowtie2 alignment")
+    run_command(bowtie2_cmd, "Bowtie2 alignment for " + structure_name)
     # check if SAM file is empty
     with open(sam_file, "r") as f:
         if not f.readline():
             logger.warning("SAM file is empty")
             sys.exit(0)
-    run_command(["samtools", "view", "-@", str(num_threads), "-Sb", sam_file, "-o", bam_file], "SAM to BAM conversion")
-    run_command(["samtools", "sort", "-@", str(num_threads), bam_file, "-o", sorted_bam_file], "BAM sorting")
+    run_command(["samtools", "view", "-@", str(num_threads), "-Sb", sam_file, "-o", bam_file], "SAM to BAM conversion for " + structure_name)
+    run_command(["samtools", "sort", "-@", str(num_threads), bam_file, "-o", sorted_bam_file], "BAM sorting for " + structure_name)
     bam = pysam.AlignmentFile(sorted_bam_file, "rb")
     frag_ranges = list(bam.fetch(until_eof=True))
     bam.close()
     alignment_data = []
     for aln in frag_ranges:
         alignment_data.append({
-            'LUTnr': aln.query_name,
             'reference_name': aln.reference_name,
-            'flag': aln.flag,
-            'reference_start': aln.reference_start,
-            'mapping_quality': aln.mapping_quality,
-            'cigarstring': aln.cigarstring,
-            'is_reverse': aln.is_reverse,
+            'strand': '-' if aln.is_reverse else '+',
+            'width': aln.reference_end - aln.reference_start,
+            'start': aln.reference_start,
+            'end': aln.reference_end,
+            'LUTnr': aln.query_name,
             'structure': structure_name
         })
     return pd.DataFrame(alignment_data)
@@ -224,14 +234,12 @@ def main():
     subsets, LUT_dna = split_and_annotate_sequences(LUT_dna, config["linker_dict"], config["length_dict"])
     LUT_dna.to_csv(config["out_name_LUT"], index=False)
     subsets = trim_sequences(subsets, config["trim_dict"])
-    fa_files_dict = save_fasta_files(subsets)
+    fa_files_dict = create_fasta_files(subsets)
     bowtie_idx_prefix = build_bowtie_index(config["original_seq_file"], config["wSet"])
-    sys.exit(0)
     bowtie_results_dfs = []
     for structure, fa_file in fa_files_dict.items():
         df = align_to_reference(fa_file.name, bowtie_idx_prefix, structure)
         bowtie_results_dfs.append(df)
-    sys.exit(0)
     df_all_fragments = pd.concat(bowtie_results_dfs)
     df_all_fragments = df_all_fragments.merge(LUT_dna[['LUTnr', 'Sequence']], on='LUTnr', how='left')
     df_all_fragments.to_csv(config["out_name"], index=False)
