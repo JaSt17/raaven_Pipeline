@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """
+Mapping of Fragment Sequences to Original Sequences to get the position of the fragment in the original sequence
+
 Author: Jaro Steindorff
 
 Inputs for the script are:
@@ -15,7 +17,7 @@ Inputs for the script are:
 
 Output of the script is:
     - The LUT data with annotated structures
-    - The alignment data with sequences
+    - The alignment data with reference_name,strand,width,start,end,LUTnr,structure,Sequence
 """
 
 import time

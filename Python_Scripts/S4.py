@@ -19,9 +19,14 @@ import logging
 # local import
 from config import get_config
 
-# Initialize logging
-logging.basicConfig(level=logging.INFO)
+# Initialize logging with custom format
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(message)s',
+    datefmt='%H:%M:%S'
+)
 logger = logging.getLogger(__name__)
+
 
 
 def load_trimmed_reads(fragments_file: str, barcodes_file: str)-> tuple:
@@ -35,10 +40,10 @@ def load_trimmed_reads(fragments_file: str, barcodes_file: str)-> tuple:
     """
     logger.info("Reading trimmed reads and barcodes")
     with gzip.open(fragments_file, "rt") as handle:
-        reads_trim = list(SeqIO.parse(handle, "fastq"))
+        reads_frag = list(SeqIO.parse(handle, "fastq"))
     with gzip.open(barcodes_file, "rt") as handle:
         reads_BC = list(SeqIO.parse(handle, "fastq"))
-    return reads_trim, reads_BC
+    return reads_frag, reads_BC
 
 
 def make_customarray_reference_index(lut_df: pd.DataFrame)-> str:
@@ -63,16 +68,17 @@ def make_customarray_reference_index(lut_df: pd.DataFrame)-> str:
     return blast_db_prefix
 
 
-def save_unique_fragments(reads_trim: list)-> tuple:
+def save_unique_fragments(reads_frag: list)-> tuple:
     """
     Save unique fragments from trimmed reads to a FASTA file.
 
-    :param reads_trim: List of trimmed reads as SeqRecords
+    :param reads_frag: List of trimmed reads as SeqRecords
 
     :return: Path to the FASTA file containing unique fragments and a set of unique sequences
     """
     logger.info("Saving unique fragments to FASTA file")
-    unique_reads_sequences = set(str(rec.seq) for rec in reads_trim)
+    unique_reads_sequences = set(str(rec.seq) for rec in reads_frag)
+    logger.info(f"Number of unique fragments: {len(unique_reads_sequences)}")
     unique_reads = [SeqRecord(Seq(seq), id=str(i+1), description="")
                     for i, seq in enumerate(unique_reads_sequences)]
     fragments_unique_fa = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".fa")
@@ -83,7 +89,7 @@ def save_unique_fragments(reads_trim: list)-> tuple:
 
 def align_against_library(fragments_unique_fa_name: str, blast_db_prefix: str)-> str:
     """
-    Align unique fragments against the LUT database using BLASTn.
+    Align unique fragments against the LUT database using BLASTn. BLAST output is saved to a file.
 
     :param fragments_unique_fa_name: Path to the FASTA file containing unique fragments
     :param blast_db_prefix: Path to the BLAST database prefix
@@ -111,23 +117,9 @@ def align_against_library(fragments_unique_fa_name: str, blast_db_prefix: str)->
     return blast_out_file.name
 
 
-def compress_blast_output(blast_out_file_name: str, output_filename: str)-> None:
-    """
-    Compress the BLAST output and save it.
-
-    :param blast_out_file_name: Path to the BLAST output file
-    :param output_filename: Path to the compressed output file
-
-    :return: None
-    """
-    logger.info("Compressing BLAST output")
-    with open(blast_out_file_name, 'rb') as f_in, gzip.open(output_filename, 'wb') as f_out:
-        f_out.writelines(f_in)
-
-
 def read_blast_output(blast_out_file_name: str, unique_reads_sequences: set, lut_df: pd.DataFrame)-> pd.DataFrame:
     """
-    Read the BLAST output into a DataFrame and map IDs to sequences.
+    Read the BLAST output into a DataFrame and map every read to its corresponding LUTnr.
     """
     logger.info("Reading BLAST output")
     blast_columns = ["Reads", "Sequence", "identity", "alignmentLength", "mismatches",
@@ -144,13 +136,13 @@ def read_blast_output(blast_out_file_name: str, unique_reads_sequences: set, lut
     return blast_df
 
 
-def create_full_table(blast_df: pd.DataFrame, lut_df: pd.DataFrame, reads_trim: list, reads_BC: list)-> pd.DataFrame:
+def create_full_table(blast_df: pd.DataFrame, lut_df: pd.DataFrame, reads_frag: list, reads_BC: list)-> pd.DataFrame:
     """
-    Create a full table of all fragments that matched the LUT with their BLASTn results.
+    Create a full table of all fragments that matched the LUT with their BLASTn results. For every fragment, only the top hit is kept.
     
     :param blast_df: DataFrame containing the BLAST results
     :param lut_df: DataFrame containing the LUT sequences
-    :param reads_trim: List of trimmed reads as SeqRecords
+    :param reads_frag: List of fragments as SeqRecords
     :param reads_BC: List of barcodes as SeqRecords
     """
     logger.info("Creating full table with fragments and barcodes")
@@ -163,22 +155,22 @@ def create_full_table(blast_df: pd.DataFrame, lut_df: pd.DataFrame, reads_trim: 
     blast_df['bitScore'] = pd.to_numeric(blast_df['bitScore'])
     blast_df['mismatches'] = pd.to_numeric(blast_df['mismatches'])
 
-    # Keep only the top hit for each read and LUTnr
+    # Keep only the top hit for each read and LUTnr combination
     blast_df.sort_values(by=['Reads', 'LUTnr', 'bitScore'], ascending=[True, True, False], inplace=True)
     blast_df.drop_duplicates(subset=['Reads', 'LUTnr'], keep='first', inplace=True)
 
-    # Create full table with fragments and barcodes
+    # Create full table with fragments and barcodes pairs
     full_table = pd.DataFrame({
-        'Reads': [str(rec.seq) for rec in reads_trim],
+        'Reads': [str(rec.seq) for rec in reads_frag],
         'BC': [str(rec.seq) for rec in reads_BC]
     })
 
-    # Selecting only the top hit for each read
+    # Selecting only the top hit for each fragment from the BLAST results
     blast_top_hit = blast_df.loc[blast_df.groupby('Reads')['bitScore'].idxmax()]
     full_table = full_table.merge(blast_top_hit, on='Reads', how='inner')
 
-    # Calculate the percentage of reads that have been aligned to our DB
-    alignment_percentage = len(full_table) / len(reads_trim) if reads_trim else 0
+    # Calculate the percentage of fragments that have been aligned to our DB (original created fragments)
+    alignment_percentage = len(full_table) / len(reads_frag) if reads_frag else 0
     logger.info(f"Alignment percentage: {alignment_percentage:.2%}")
 
     return full_table
@@ -203,7 +195,7 @@ def starcode_based_barcode_reduction(barcodes_file: str)-> pd.DataFrame:
     starcode_df = pd.read_csv(starcode_output.name, sep='\t', header=None, names=['scBC', 'count', 'BC_list'])
     starcode_df['BC_list'] = starcode_df['BC_list'].str.split(',')
 
-    # Explode the BC_list to have one row per barcode
+    # Explode the BC_list to have one row per barcode and rename the columns
     starcode_exploded = starcode_df.explode('BC_list')
     starcode_exploded.rename(columns={'BC_list': 'BC'}, inplace=True)
 
@@ -244,7 +236,10 @@ def split_reads_into_single_and_multi_read_barcodes(full_table: pd.DataFrame)-> 
     # get multi read barcodes table
     multi_read_barcodes = barcode_counts[barcode_counts > 1].index
 
-    # create single and multi read tables
+    logger.info(f"Number of single-read barcodes: {len(single_read_barcodes)}")
+    logger.info(f"Number of multi-read barcodes: {len(multi_read_barcodes)}")
+
+    # create tables with single and multi read barcodes
     temp_table_single = full_table[full_table['BC'].isin(single_read_barcodes)].copy()
     temp_table_multi = full_table[full_table['BC'].isin(multi_read_barcodes)].copy()
 
@@ -258,7 +253,7 @@ def split_reads_into_single_and_multi_read_barcodes(full_table: pd.DataFrame)-> 
 
 def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataFrame)-> tuple:
     """
-    Split multi-read barcodes into clean and chimeric based on LUTnr associations.
+    Split multi-read barcodes into clean and chimeric based on LUTnr.
 
     :param temp_table_multi: DataFrame containing the multi-read barcodes
 
@@ -267,49 +262,66 @@ def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataF
     logger.info("Splitting multi-read barcodes into clean and chimeric")
     temp_table_multi['mismatches'] = temp_table_multi['mismatches'].astype(float)
 
-    # Group by BC and LUTnr to compute statistics
-    group_cols = ['BC', 'LUTnr']
-    temp_table_multi_grouped = temp_table_multi.groupby(group_cols).agg({
+    # Group by BC and LUTnr to compute statistics for every single pair
+    temp_table_multi_grouped = temp_table_multi.groupby(['BC', 'LUTnr']).agg({
         'bitScore': 'mean',
         'mismatches': 'median',
         'Reads': 'count'
-    }).reset_index().rename(columns={'Reads': 'tCount'})
+    }).reset_index().rename(columns={'Reads': 'tCount'}) # tCount is the total count of reads for a given BC and LUTnr pair
 
     # Identify clean and chimeric barcodes
     bc_counts = temp_table_multi_grouped['BC'].value_counts()
+    # if their is only one BC for a given LUTnr, then it is a clean barcode
     clean_barcodes = bc_counts[bc_counts == 1].index
+    # if their is more than one BC for a given LUTnr, then it is a chimeric barcode
     chimeric_barcodes = bc_counts[bc_counts > 1].index
 
+    logger.info(f"Number of clean barcodes: {len(clean_barcodes)}")
+    logger.info(f"Number of chimeric barcodes: {len(chimeric_barcodes)}")
+
+    # create tables with clean and chimeric barcodes
     temp_table_multi_clean = temp_table_multi_grouped[temp_table_multi_grouped['BC'].isin(clean_barcodes)].copy()
     temp_table_multi_chimeric = temp_table_multi_grouped[temp_table_multi_grouped['BC'].isin(chimeric_barcodes)].copy()
 
+    # set the max read count, total read count, since we only have one barcode for this LUTnr and mode for clean barcode
     temp_table_multi_clean['mCount'] = temp_table_multi_clean['tCount']
     temp_table_multi_clean['Mode'] = 'Def'
 
     return temp_table_multi_clean, temp_table_multi_chimeric
 
-def calculate_consensus_alignment(temp_table_multi_chimeric):
+def calculate_consensus_alignment(temp_table_multi_chimeric: pd.DataFrame)-> pd.DataFrame:
     """
-    Calculate consensus alignment of chimeric barcodes.
+    Calculate consensus alignment of chimeric barcodes. This means we are getting the barcode with the highest maximal read count for each LUTnr.
+
+    :param temp_table_multi_chimeric: DataFrame containing the chimeric multi-read barcodes
+
+    :return: DataFrame containing the consensus alignment for chimeric barcodes
     """
     logger.info("Calculating consensus alignment for chimeric barcodes")
-    # For chimeric barcodes, select the LUTnr with the maximum mCount
+    # For every barcode LUTnr pair, set mCount to tCount
     temp_table_multi_chimeric['mCount'] = temp_table_multi_chimeric['tCount']
+    # Sum the total count of reads for each barcode
     temp_table_multi_chimeric['tCount'] = temp_table_multi_chimeric.groupby('BC')['tCount'].transform('sum')
 
-    # Select the LUTnr with the highest mCount for each barcode
+    # Select the LUTnr, barcode pair with the highest maximal read count
     idx = temp_table_multi_chimeric.groupby('BC')['mCount'].idxmax()
     temp_table_multi_consensus = temp_table_multi_chimeric.loc[idx].copy()
     temp_table_multi_consensus['Mode'] = 'Def'
 
     return temp_table_multi_consensus
 
-def combine_tables(temp_table_multi_final, temp_table_single):
+def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_consensus: pd.DataFrame, temp_table_single: pd.DataFrame)-> pd.DataFrame:
     """
     Combine the multi-read and single-read tables into the final output table.
     """
     logger.info("Combining tables to create final output")
+    # Combine clean and consensus tables
+    temp_table_multi_final = pd.concat([temp_table_multi_clean, temp_table_multi_consensus], ignore_index=True)
+    print(f"Number of definitive Barcodes: {len(temp_table_multi_final.loc[temp_table_multi_final['Mode'] == 'Def'])}")
+    print(f"Number of ambiguous Barcodes: {len(temp_table_multi_final.loc[temp_table_multi_final['Mode'] == 'Amb'])}")
+    print(f"Number of single-read Barcodes: {len(temp_table_single)}")
     output_table = pd.concat([temp_table_multi_final, temp_table_single], ignore_index=True)
+
     return output_table
 
 def main():
@@ -318,32 +330,29 @@ def main():
     # load config
     config = get_config(4)
 
+    # read in the LUT file
     lut_df = pd.read_csv(config["in_name_LUT"])
 
-    # Load trimmed reads and barcodes
-    reads_trim, reads_BC = load_trimmed_reads(config["fragment_file"], config["barcode_file"])
+    # Load trimmed fragments and barcodes
+    reads_frag, reads_BC = load_trimmed_reads(config["fragment_file"], config["barcode_file"])
 
     # Create BLAST database from LUT sequences
     blast_db_prefix = make_customarray_reference_index(lut_df)
 
     # Save unique fragments as FASTA file
-    fragments_unique_fa_name, unique_reads_sequences = save_unique_fragments(reads_trim)
+    fragments_unique_fa_name, unique_reads_sequences = save_unique_fragments(reads_frag)
 
     # Align against the library using BLAST
     blast_out_file_name = align_against_library(fragments_unique_fa_name, blast_db_prefix)
-
-    # Compress BLAST output
-    blast_output_gz = f"./0_data/{filename}_blastOutput.csv.gz"
-    compress_blast_output(blast_out_file_name, blast_output_gz)
 
     # Read BLAST output
     blast_df = read_blast_output(blast_out_file_name, unique_reads_sequences, lut_df)
 
     # Create full table with fragments and barcodes
-    full_table = create_full_table(blast_df, lut_df, reads_trim, reads_BC)
+    full_table = create_full_table(blast_df, lut_df, reads_frag, reads_BC)
 
     # Perform Starcode barcode reduction
-    starcode_exploded = starcode_based_barcode_reduction(barcodes_file)
+    starcode_exploded = starcode_based_barcode_reduction(config["barcode_file"])
 
     # Replace barcodes with Starcode-reduced versions
     full_table = replace_barcodes_with_starcode_versions(full_table, starcode_exploded)
@@ -357,16 +366,12 @@ def main():
     # Calculate consensus alignment for chimeric barcodes
     temp_table_multi_consensus = calculate_consensus_alignment(temp_table_multi_chimeric)
 
-    # Combine clean and consensus tables
-    temp_table_multi_final = pd.concat([temp_table_multi_clean, temp_table_multi_consensus], ignore_index=True)
-
     # Combine all tables into final output
-    output_table = combine_tables(temp_table_multi_final, temp_table_single)
+    output_table = combine_tables(temp_table_multi_clean, temp_table_multi_consensus, temp_table_single)
 
     # Save the output table
-    output_file = f"0_data/{filename}_multipleContfragmentsComplete.csv"
-    output_table.to_csv(output_file, index=False)
-    logger.info(f"Output saved to {output_file}")
+    output_table.to_csv(config['out_name'], index=False)
+    logger.info(f"Output saved to {config['out_name']}")
 
     # Print total analysis time
     total_time = time.time() - start_time
