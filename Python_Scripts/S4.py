@@ -1,6 +1,30 @@
 #!/usr/bin/env python3
 """
+Detection of fragments in the DNA library using BLASTn. Only keeps the best hit for each alignemt to match it with the LUT data.
+Creating starcode barcodes. Than detecting single and multi read barcodes.
+The multi read barcodes are split into clean and chimeric barcodes. Clean barcodes are those that have that match only one LUTnr.
+Chimeric barcodes are those that match multiple LUTnr. For chimeric barcodes, a consensus alignment is set
+by choosing the barcode with the highest maximal read count for each LUTnr.
+Finally a output table is created with all fragments and barcodes pairs and the corresponding LUTnr and mode (Def or Amb).
+
 Author: Jaro Steindorff
+
+Inputs for the script are:
+    - LUT data with annotated structures
+    - file with barcodes
+    - file with fragments
+    - output file name for final output table
+
+
+
+    "in_name_LUT": "0_data/LUT.csv",
+    "barcode_file": "0_data/barcode_fragment/DNA_pscAAVlib_1_barcodes.fastq.gz",
+    "fragment_file": "0_data/barcode_fragment/DNA_pscAAVlib_1_fragments.fastq.gz",
+    "out_name": "0_data/alignedLibraries.csv",
+
+Output of the script is:
+    - The LUT data with annotated structures
+    - The alignment data with reference_name,strand,width,start,end,LUTnr,structure,Sequence
 """
 
 import os
