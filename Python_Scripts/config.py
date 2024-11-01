@@ -1,5 +1,7 @@
 """ This file contains the  config dictionary that is used to store the configuration parameters for the pipeline. """
 
+data_dir = "9_test_data"
+
 config_S1 = {
     "input_file": "input/DNA-lib_RetrogradeTransport.fasta",
     "wSet": "input/wSet.csv",
@@ -7,13 +9,13 @@ config_S1 = {
     "14_aa_G4S_overhangs": ["AACCTCCAGAGAGGCAACGGAGGCGGAGGAAGT", "GGAGGCGGCGGAAGCAGACAAGCAGCTACCGCA"],
     "14_aa_A5_overhangs": ["AACCTCCAGAGAGGCAACGCTGCTGCAGCAGCC", "GCAGCTGCAGCTGCCAGACAAGCAGCTACCGCA"],
     "22_aa_overhangs": ["AACCTCCAGAGAGGCAACGCT", "GCCAGACAAGCAGCTACCGCA"],
-    "output_name": "0_data/SortedFragments.txt",
+    "output_name": data_dir + "/SortedFragments.txt",
 }
 
 config_S2 = {
-    "in_name_P5": "0_data/fastq_files/DNA_pscAAVlib_1.fastq.gz",
-    "in_name_P7": "0_data/fastq_files/DNA_pscAAVlib_2.fastq.gz",
-    "out_dir": "0_data/barcode_fragment",
+    "in_name_P5": data_dir + "/fastq_files/DNA_pscAAVlib_1.fastq.gz",
+    "in_name_P7": data_dir + "/fastq_files/DNA_pscAAVlib_2.fastq.gz",
+    "out_dir": data_dir + "/barcode_fragment",
     "out_name": "DNA_pscAAVlib_1",
     "bbduk2_args_BC" : [        
         "overwrite=true",
@@ -51,7 +53,7 @@ config_S2 = {
 config_S3 = {
     "original_seq_file": "input/DNA-lib_RetrogradeTransport.fasta",
     "wSet": "input/wSet.csv",
-    "fragment_seq_file": "0_data/SortedFragments_all_python.txt",
+    "fragment_seq_file": config_S1["output_name"],
     "constitutive_backbone_sequences": ["aacctccagagaggcaacg", "cagacaagcagctaccgca"],
     "linker_dict": {
         "14aaG4S": "GAGGCGGAGGAAGT",
@@ -67,23 +69,23 @@ config_S3 = {
         "14aaA5": [14,56],
         "22aa": [2,68],
     },
-    "out_name_LUT": "0_data/LUT.csv",
-    "out_name": "0_data/fragment_pos.csv",
+    "out_name_LUT": data_dir + "/LUT.csv",
+    "out_name": data_dir + "/fragment_pos.csv",
 }
 
 config_S4 = {
-    "in_name_LUT": "0_data/LUT.csv",
-    "barcode_file": "0_data/barcode_fragment/DNA_pscAAVlib_1_barcodes.fastq.gz",
-    "fragment_file": "0_data/barcode_fragment/DNA_pscAAVlib_1_fragments.fastq.gz",
-    "out_name": "0_data/MatchedFragments.csv",
+    "in_name_LUT": config_S3["out_name_LUT"],
+    "barcode_file": config_S2["out_dir"] + "/barcode_" + config_S2["out_name"] + ".fastq.gz",
+    "fragment_file": config_S2["out_dir"] + "/fragment_" + config_S2["out_name"] + ".fastq.gz",
+    "out_name": data_dir + "/MatchedFragments.csv",
 }
 
 config_S5 = {
-    "input_table": "0_data/MatchedFragments.csv",
-    "fragments_pos": "0_data/fragment_pos.csv",
-    "in_name_LUT": "0_data/LUT.csv",
+    "input_table": config_S4["out_name"],
+    "fragments_pos": config_S3["out_name"],
+    "in_name_LUT": config_S3["out_name_LUT"],
     "sample_inputs": "input/load_list.csv",
-    "sample_directory": "0_data/fastq_files",
+    "sample_directory": data_dir + "/fastq_files",
 }
 
 # create a lookup dictionary for the configuration dictionaries

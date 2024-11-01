@@ -20,7 +20,7 @@ Output of the script is:
     - A file containing all the generated fragments
 """
 
-import time
+from datetime import datetime
 from Bio import SeqIO
 from Bio.Seq import translate
 from multiprocessing import Pool, cpu_count
@@ -170,7 +170,7 @@ def add_overhangs(fragments, five_prime, three_prime):
 
 # Main script
 def main():
-    start_time = time.time()
+    start_time = datetime.now()
 
     # Initialize logging with custom format
     logging.basicConfig(
@@ -217,7 +217,7 @@ def main():
         for frag in sorted_fragments:
             f.write(f"{frag['DNAfragment']}\n")
     logger.info(f"Written fragments to file: {config['output_name']}")
-    logger.info(f"Execution time: {time.time() - start_time} seconds")
+    logger.info(f"Execution time: {datetime.now() - start_time} seconds")
 
 
 if __name__ == "__main__":

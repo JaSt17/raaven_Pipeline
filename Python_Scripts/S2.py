@@ -137,7 +137,9 @@ def main():
         except OSError as e:
             # If the file does not exist, continue
             continue
-
+        
+    logger.info(f"Finished extraction of barcodes and fragments")
+    logger.info(f"Output files saved in {out_dir}")
     logger.info(f"Total execution time: {datetime.now() - start_time}")
 
 if __name__ == "__main__":

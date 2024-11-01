@@ -38,7 +38,7 @@ from Bio import SeqIO
 from Bio.Blast.Applications import NcbiblastnCommandline
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
-import time
+from datetime import datetime
 import logging
 # local import
 from config import get_config
@@ -87,7 +87,7 @@ def make_customarray_reference_index(lut_df: pd.DataFrame)-> str:
 
     # Create BLAST database
     blast_db_prefix = tempfile.mktemp(prefix="blastDB_")
-    makeblastdb_cmd = f"makeblastdb -in {lut_fa.name} -out {blast_db_prefix} -dbtype nucl -title LUT -parse_seqids"
+    makeblastdb_cmd = f"makeblastdb -in {lut_fa.name} -out {blast_db_prefix} -dbtype nucl -title LUT -parse_seqids -logfile /dev/null"
     subprocess.run(makeblastdb_cmd, shell=True, check=True)
     return blast_db_prefix
 
@@ -349,10 +349,10 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_consen
     return output_table
 
 def main():
-    start_time = time.time()
+    start_time = datetime.now()
 
     # load config
-    config = get_config(4)
+    config = get_config("S4")
 
     # read in the LUT file
     lut_df = pd.read_csv(config["in_name_LUT"])
@@ -398,8 +398,7 @@ def main():
     logger.info(f"Output saved to {config['out_name']}")
 
     # Print total analysis time
-    total_time = time.time() - start_time
-    logger.info(f"Total analysis time: {total_time:.2f} seconds")
+    logger.info(f"Total execution time: {datetime.now() - start_time}")
 
 if __name__ == "__main__":
     main()

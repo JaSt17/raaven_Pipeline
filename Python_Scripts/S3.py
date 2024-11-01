@@ -20,7 +20,7 @@ Output of the script is:
     - The alignment data with reference_name,strand,width,start,end,LUTnr,structure,Sequence
 """
 
-import time
+from datetime import datetime
 import sys
 import tempfile
 import subprocess
@@ -230,7 +230,7 @@ def align_to_reference(fa_file: str, bowtie_idx_prefix: str, structure_name: str
     return pd.DataFrame(alignment_data)
 
 def main():
-    start_time = time.time()
+    start_time = datetime.now()
     config = get_config("S3")
     LUT_dna = create_LUT(config["fragment_seq_file"], config["constitutive_backbone_sequences"])
     subsets, LUT_dna = split_and_annotate_sequences(LUT_dna, config["linker_dict"], config["length_dict"])
@@ -245,8 +245,10 @@ def main():
     df_all_fragments = pd.concat(bowtie_results_dfs)
     df_all_fragments = df_all_fragments.merge(LUT_dna[['LUTnr', 'Sequence']], on='LUTnr', how='left')
     df_all_fragments.to_csv(config["out_name"], index=False)
-    logger.info("Total execution time:")
-    logger.info(time.time() - start_time)
+    
+    logger.info(f"LUT data written to {config['out_name_LUT']}")
+    logger.info(f"Fragment position data written to {config['out_name']}")
+    logger.info(f"Total execution time: {datetime.now() - start_time}")
 
 if __name__ == "__main__":
     main()
