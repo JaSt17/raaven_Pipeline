@@ -1,30 +1,32 @@
 # Import necessary libraries
 import random
+from collections import defaultdict
 import pandas as pd
+from Bio.Seq import Seq
 
-human_codon = {
-    'A': ['gct', 'gcc', 'gca', 'gcg'],      # Alanine
-    'C': ['tgt', 'tgc'],                    # Cysteine
-    'D': ['gat', 'gac'],                    # Aspartic Acid
-    'E': ['gaa', 'gag'],                    # Glutamic Acid
-    'F': ['ttt', 'ttc'],                    # Phenylalanine
-    'G': ['ggt', 'ggc', 'gga', 'ggg'],      # Glycine
-    'H': ['cat', 'cac'],                    # Histidine
-    'I': ['att', 'atc', 'ata'],             # Isoleucine
-    'K': ['aaa', 'aag'],                    # Lysine
-    'L': ['tta', 'ttg', 'ctt', 'ctc', 'cta', 'ctg'],  # Leucine
-    'M': ['atg'],                          # Methionine (start codon)
-    'N': ['aat', 'aac'],                    # Asparagine
-    'P': ['cct', 'ccc', 'cca', 'ccg'],      # Proline
-    'Q': ['caa', 'cag'],                    # Glutamine
-    'R': ['cgt', 'cgc', 'cga', 'cgg', 'aga', 'agg'],  # Arginine
-    'S': ['tct', 'tcc', 'tca', 'tcg', 'agt', 'agc'],  # Serine
-    'T': ['act', 'acc', 'aca', 'acg'],      # Threonine
-    'V': ['gtt', 'gtc', 'gta', 'gtg'],      # Valine
-    'W': ['tgg'],                          # Tryptophan
-    'Y': ['tat', 'tac'],                    # Tyrosine
-    '*': ['taa', 'tag', 'tga']              # Stop codons
-}
+inverted_codon_table = {
+            'E': ['GAG', 'GAA'],
+            'S': ['TCG', 'AGT', 'TCT', 'AGC', 'TCA', 'TCC'],
+            'F': ['TTC', 'TTT'],
+            'K': ['AAA', 'AAG'],
+            'H': ['CAC', 'CAT'],
+            'C': ['TGT', 'TGC'],
+            'Q': ['CAA', 'CAG'],
+            'R': ['CGG', 'CGA', 'AGA', 'AGG', 'CGT', 'CGC'],
+            'A': ['GCT', 'GCA', 'GCG', 'GCC'],
+            'I': ['ATA', 'ATC', 'ATT'],
+            'P': ['CCC', 'CCG', 'CCA', 'CCT'],
+            'T': ['ACA', 'ACG', 'ACC', 'ACT'],
+            'W': ['TGG'],
+            'N': ['AAT', 'AAC'],
+            'L': ['CTC', 'CTT', 'CTG', 'TTA', 'CTA', 'TTG'],
+            'V': ['GTC', 'GTT', 'GTA', 'GTG'],
+            'G': ['GGG', 'GGC', 'GGA', 'GGT'],
+            'M': ['ATG'],
+            'Y': ['TAC', 'TAT'],
+            'D': ['GAC', 'GAT']
+            }
+
 
 def load_wSet(file_path: str) -> pd.DataFrame:
     """ 
@@ -41,33 +43,53 @@ def load_wSet(file_path: str) -> pd.DataFrame:
     return wSet
 
 
-def gene_codon(aa_seq: str, wSet: pd.DataFrame, organism: str = "hsa", max_opt: bool = True) -> str:
+def gene_codon(seq: str, wSet: pd.DataFrame, organism: str = "ec", max_opt: bool = True, scale: float = 0.5, numcode: int = 1) -> str:
     """
     Optimizes the codon usage for a given organism.
-
-    :param aa_seq: Amino acid sequence
+    
+    :param seq: DNA sequence
     :param wSet: Codon usage DataFrame
-    :param organism: Organism for codon optimization (default: human)
+    :param organism: Organism for codon optimization
     :param max_opt: Whether to use maximum codon optimization
+    :param scale: Scaling factor for randomness in non-maximizing optimization
+    :param numcode: Genetic code to use for translation
     :return: Codon-optimized DNA sequence
     """
+    
+    # Load codon weights
     try:
         codon_usage_weights = wSet.loc[organism].to_dict()
     except KeyError:
         raise ValueError(f"The organism {organism} is not present in the wSet DataFrame")
-
+    
+    if len(seq) == 0:
+        return ""
+    
+    # Translate the sequence to amino acids
+    amino_seq = str(Seq(seq).translate(table=numcode))
+    
     optimized_seq = []
 
-    for aa in aa_seq:
-        codons = human_codon[aa]
+    # Codon optimization
+    for aa in amino_seq:
+        codons = inverted_codon_table.get(aa, [])
         if max_opt:
-            optimal_codon = max(codons, key=lambda c: codon_usage_weights.get(c, 0))
+            # Maximum optimization: select codon with highest weight
+            optimal_codon = max(codons, key=lambda c: codon_usage_weights.get(c.lower(), 0))
         else:
-            weights = [codon_usage_weights.get(c, 0) for c in codons]
-            optimal_codon = random.choices(codons, weights=weights)[0]
+            num_codons = len(codons)
+            if num_codons == 1:
+                optimal_codon = codons[0]
+            else:
+                # Scale-adjusted random selection
+                cutoff = max(1, round(num_codons * scale))
+                top_codons = sorted(codons, key=lambda c: codon_usage_weights.get(c.lower(), 0), reverse=True)[:cutoff]
+                optimal_codon = random.choice(top_codons)
+        
         optimized_seq.append(optimal_codon)
 
     return "".join(optimized_seq)
+
 
 
 def aatodna(in_aa: str, wSet: pd.DataFrame, species: str = "hsa", opt: bool = True, max_opt=True) -> str:
@@ -87,11 +109,35 @@ def aatodna(in_aa: str, wSet: pd.DataFrame, species: str = "hsa", opt: bool = Tr
         raise ValueError("Input sequence cannot be empty")
 
     in_aa = in_aa.upper()
-
-    if opt:
-        optimized_dna_seq = gene_codon(in_aa, wSet, organism=species, max_opt=max_opt)
-        return optimized_dna_seq.upper()
+    
+    human_codon = {
+    'A': 'gcc',
+    'C': 'tgc',
+    'D': 'gac',
+    'E': 'gag',
+    'F': 'ttc',
+    'G': 'ggc',
+    'H': 'cac',
+    'I': 'atc',
+    'K': 'aag',
+    'L': 'ctg',
+    'M': 'atg',
+    'N': 'aac',
+    'P': 'ccc',
+    'Q': 'cag',
+    'R': 'cgg',
+    'S': 'agc',
+    'T': 'acc',
+    'V': 'gtg',
+    'W': 'tgg',
+    'Y': 'tac'
+    }
 
     # Translate amino acid sequence to DNA sequence
-    dna_seq = ''.join([human_codon[aa][0] for aa in in_aa])
+    dna_seq = ''.join([human_codon[aa]for aa in in_aa]).upper()
+    
+    if opt:
+        optimized_dna_seq = gene_codon(dna_seq, wSet, organism=species, max_opt=max_opt)
+        return optimized_dna_seq.upper()
+
     return dna_seq.upper()

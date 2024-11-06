@@ -41,8 +41,10 @@ from config import get_config
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(message)s',
-    datefmt='%H:%M:%S'
-)
+    datefmt='%H:%M:%S',  # Only show hour, minute, and second
+    filemode='w',  # Overwrite log file
+    filename='Python_Scripts/Logs/S3.log'  # Log file name
+    )
 logger = logging.getLogger(__name__)
 
 

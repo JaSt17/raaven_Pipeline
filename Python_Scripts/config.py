@@ -1,6 +1,6 @@
 """ This file contains the  config dictionary that is used to store the configuration parameters for the pipeline. """
 
-data_dir = "9_test_data"
+data_dir = "0_data"
 
 config_S1 = {
     "input_file": "input/DNA-lib_RetrogradeTransport.fasta",
@@ -77,7 +77,7 @@ config_S4 = {
     "in_name_LUT": config_S3["out_name_LUT"],
     "barcode_file": config_S2["out_dir"] + "/barcode_" + config_S2["out_name"] + ".fastq.gz",
     "fragment_file": config_S2["out_dir"] + "/fragment_" + config_S2["out_name"] + ".fastq.gz",
-    "out_name": data_dir + "/MatchedFragments.csv",
+    "out_name": data_dir + "/library_fragments.csv",
 }
 
 config_S5 = {
@@ -86,6 +86,34 @@ config_S5 = {
     "in_name_LUT": config_S3["out_name_LUT"],
     "sample_inputs": "input/load_list.csv",
     "sample_directory": data_dir + "/fastq_files",
+    "log_file_path": data_dir + "/found_barcode_report.csv",
+    "output_dir": data_dir + "/found_barcodes",
+    "bbduk2_args" : [        
+        "overwrite=true",
+        "k=12",
+        "mink=12",
+        "hammingdistance=2",
+        "findbestmatch=t",
+        "trd=t",
+        "rcomp=f",
+        "skipr2=t",
+        "findbestmatch=f",
+        "qhdist=0",
+        "minavgquality=0",
+        "ordered=t",
+        "maxns=0",
+        "minlength=18",
+        "maxlength=22",
+        "lliteral=GGCCTAGCGGCCGCTTTACTT",
+        "rliteral=ATAACTTCGTATA"
+    ],
+}
+
+config_S6 = {
+    "input_table": config_S4["out_name"],
+    "fragments_pos": config_S3["out_name"],
+    "in_name_LUT": config_S3["out_name_LUT"],
+    "output_table": data_dir + "/annotated_library_fragments.csv",
 }
 
 # create a lookup dictionary for the configuration dictionaries
@@ -95,6 +123,7 @@ config_lookup = {
     "S3": config_S3,
     "S4": config_S4,
     "S5": config_S5,
+    "S6": config_S6,
 }
 
 def get_config(step: str) -> dict:

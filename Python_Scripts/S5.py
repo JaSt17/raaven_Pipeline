@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Barcoded extraction and reduction from RNA samples
+Barcoded extraction and reduction from all given Samples.
 
 Author: Jaro Steindorff
 
-This script extracts barcodes from RNA samples, reduces them using the Starcode algorithm, and identifies
-corresponding fragments. It processes a list of RNA samples and saves the results for each sample.
+This script extracts barcodes from given samples, reduces them using the Starcode algorithm, and identifies
+corresponding fragments. It processes a csv file with file_path and basename and saves the results for each base name group.
 
 Workflow:
-    - Load necessary data from previous steps
+    - Load necessary data from previous steps (LUT.csv, MatchedFragments.csv, fragment_pos.csv)
     - For each RNA sample:
         - Extract barcodes using bbduk2.sh
         - Reduce barcodes using Starcode
@@ -21,12 +21,12 @@ import os
 import sys
 import subprocess
 import tempfile
-import shutil
 import re
 import logging
 from datetime import datetime
 import pandas as pd
 from multiprocessing import Pool, cpu_count
+import gzip
 from Bio import SeqIO
 from functools import partial
 # local import
@@ -36,11 +36,13 @@ from config import get_config
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(message)s',
-    datefmt='%H:%M:%S'  # Only show hour, minute, and second
-)
+    datefmt='%H:%M:%S',  # Only show hour, minute, and second
+    filemode='w',  # Overwrite log file
+    filename='Python_Scripts/Logs/S5.log'  # Log file name
+    )
 logger = logging.getLogger(__name__)
 
-def run_command(command, description: str, shell=False):
+def run_command(command, description: str, shell=False, verbose=False):
     """
     Runs a subprocess command and returns stdout, stderr.
 
@@ -48,7 +50,8 @@ def run_command(command, description: str, shell=False):
     :param description: Description of the command for logging
     :param shell: Whether to execute the command through the shell
     """
-    logger.info(f"Running {description}")
+    if verbose:
+        logger.info(f"Running {description}")
     try:
         if shell:
             process = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -64,62 +67,54 @@ def run_command(command, description: str, shell=False):
     except Exception as e:
         logger.error(f"Exception running {description}: {e}")
         sys.exit(1)
+        
+        
+# Function to index fragments that are found multiple times
+def match_range(idx_frag: int, foundFrags: pd.DataFrame, all_fragments_ranges : pd.DataFrame)->list:
+    """ Helper function to find the ranges of a fragment in all_fragments_ranges based on its index in foundFrags.
+    
+    :param idx_frag: Index of the fragment in foundFrags
+    :param foundFrags: DataFrame with the found fragments
+    :param all_fragments_ranges: DataFrame with the ranges of all fragments
+    
+    :return: List of tuples with the index of the fragment in all_fragments_ranges and the index of the fragment in foundFrags
+    """
+    fragment_seq = foundFrags.iloc[idx_frag]['fragment']
+    match_ranges = all_fragments_ranges[all_fragments_ranges['Sequence'] == fragment_seq].index.tolist()
+        
+    return [(match_range, idx_frag) for match_range in match_ranges]
 
-def analyze_tissue(index_nr, load_list, data_dir, output_table, all_fragments_ranges, lut_dna, threads):
+
+def analyze_tissue(file_path:str, base_name:str, data_dir:str, out_dir:str, library_fragments: pd.DataFrame,
+                    all_fragments_ranges: pd.DataFrame, lut_dna: pd.DataFrame, threads:int, bbduk2_args: list) -> dict:
     """
     Analyze a single tissue sample based on its index in the load list.
 
-    :param index_nr: Index number of the sample in the load list
-    :param load_list: DataFrame containing the load list
+    :param file_path: path to the fastq file
+    :param base_name: base name of the file
     :param data_dir: Directory containing the fastq files
-    :param output_table: DataFrame loaded from multipleContfragmentsComplete.pkl
+    :param library_fragments: DataFrame loaded from multipleContfragmentsComplete.pkl
     :param all_fragments_ranges: DataFrame loaded from alignedLibraries.pkl
     :param lut_dna: DataFrame loaded from LUTdna.pkl
     :param threads: Number of threads to use
     :return: Dictionary containing log information for the sample
     """
     log_entry = {}
-    # Extract the base name for the file corresponding to the provided index
-    base_name = load_list.loc[index_nr, 'Name']
-
-    # Split the base name into components using '/' as a delimiter
-    name_components = [comp for comp in base_name.split('/') if comp]
-
-    # Determine the input file paths based on the number of name components
-    if len(name_components) == 2:
-        # If the name has two components, construct the path to the files within the subdirectory
-        path = os.path.join(data_dir, name_components[0])
-        pattern = name_components[1]
-    else:
-        # If the name has a single component, search for files directly within data_dir
-        path = data_dir
-        pattern = name_components[0]
-
-    # Get list of files matching the pattern
-    try:
-        in_files = [os.path.join(path, f) for f in os.listdir(path) if f.startswith(pattern)]
-    except FileNotFoundError:
-        logger.error(f"Path not found: {path}")
-        return None
-
-    # Identify the files corresponding to P5 (e.g., '_1' in the name) because the barcodes are in the P5 reads
-    in_name_P5 = [f for f in in_files if '_1' in f]
-    if not in_name_P5:
-        logger.error(f"No P5 files found for index {index_nr}")
-        return None
-    in_name_P5 = in_name_P5[0]
-
     # Add the name to the log entry and set the output name
     log_entry['Name'] = base_name
+    path = os.path.join(data_dir, file_path)
 
-    # Count the number of reads in in_name_P5
+    # Count the reads in the FASTQ file
     try:
-        read_count = sum(1 for _ in SeqIO.parse(in_name_P5, "fastq"))
+        with gzip.open(path, "rt") as handle:
+            read_count = sum(1 for _ in SeqIO.parse(handle, "fastq"))
     except Exception as e:
-        logger.error(f"Error reading FASTQ file {in_name_P5}: {e}")
+        logger.info(f"Error reading FASTQ file {path}: {e}")
         return None
     log_entry['Reads'] = read_count
     name_out = base_name
+    
+    logger.info(f"Processing {file_path} with {read_count} reads")
 
     # Extraction of barcodes
     # ============================
@@ -127,30 +122,12 @@ def analyze_tissue(index_nr, load_list, data_dir, output_table, all_fragments_ra
     out_name_BC = tempfile.NamedTemporaryFile(prefix="BC_", suffix=".fastq.gz", delete=False).name
 
     # Run the bbduk2 command to extract barcodes from the reads
-    bbduk2_command = [
-        "bbmap/bbduk2.sh",
-        "overwrite=true",
-        "k=12",
-        "mink=12",
-        "hammingdistance=2",
-        "findbestmatch=t",
-        "trd=t",
-        "rcomp=f",
-        "skipr2=t",
-        "findbestmatch=f",
-        "qhdist=0",
-        "minavgquality=0",
-        "ordered=t",
-        "maxns=0",
-        "minlength=18",
-        "maxlength=22",
+    bbduk2_command = ["bbmap/bbduk2.sh"] + bbduk2_args + [
         f"threads={threads}",
-        f"in={in_name_P5}",
+        f"in={path}",
         f"out={out_name_BC}",
-        "lliteral=GGCCTAGCGGCCGCTTTACTT",
-        "rliteral=ATAACTTCGTATA"
     ]
-    stdout, stderr = run_command(bbduk2_command, "bbduk2 barcode extraction")
+    stdout, stderr = run_command(bbduk2_command, f"bbduk2 barcode extraction for {file_path}")
 
     # Save the Barcode extraction result in the log entry
     match = re.search(r"Result:\s*(\d+)", stderr)
@@ -161,7 +138,8 @@ def analyze_tissue(index_nr, load_list, data_dir, output_table, all_fragments_ra
 
     # Read the barcodes
     try:
-        reads_BC = list(SeqIO.parse(out_name_BC, "fastq"))
+        with gzip.open(out_name_BC, "rt") as handle:
+            reads_BC = list(SeqIO.parse(handle, "fastq"))
     except Exception as e:
         logger.error(f"Error reading FASTQ file {out_name_BC}: {e}")
         return None
@@ -176,21 +154,18 @@ def analyze_tissue(index_nr, load_list, data_dir, output_table, all_fragments_ra
     out_name_BC_star = tempfile.NamedTemporaryFile(prefix="BCsc_", suffix=".txt", delete=False).name
     # Run the starcode command to reduce the barcodes
     starcode_command = f"gunzip -c {out_name_BC} | starcode -t {threads - 1} --print-clusters -d 1 -r5 -q -o {out_name_BC_star}"
-    _, stderr = run_command(starcode_command, "starcode barcode reduction", shell=True)
+    _, stderr = run_command(starcode_command, f"starcode barcode reduction for {file_path}", shell=True)
 
     # Create a table with the reduced barcodes
     try:
-        table_BC_sc = pd.read_csv(out_name_BC_star, sep="\t", header=None, index_col=0, names=['V1', 'V2', 'V3'], dtype=str)
+        table_BC_sc = pd.read_csv(out_name_BC_star, sep="\t", header=None, names=['scBC', '_', 'BC'], dtype=str)
     except Exception as e:
         logger.error(f"Error reading Starcode output file {out_name_BC_star}: {e}")
         return None
-    table_BC_sc.reset_index(inplace=True)
-    table_BC_sc.rename(columns={'index': 'rn'}, inplace=True)
-    # Split the third column by comma
-    table_BC_sc['V3'] = table_BC_sc['V3'].str.split(',')
-    table_BC_sc = table_BC_sc.explode('V3')
-    # Set the column names to BC and scBC
-    table_BC_sc.rename(columns={'rn': 'scBC', 'V3': 'BC'}, inplace=True)
+    # Split the barcodes by comma
+    table_BC_sc['BC'] = table_BC_sc['BC'].str.split(',')
+    # Explode the table to have one row per barcode
+    table_BC_sc = table_BC_sc.explode('BC')
 
     # Replacing barcodes with Starcode reduced versions
     # ============================
@@ -207,12 +182,14 @@ def analyze_tissue(index_nr, load_list, data_dir, output_table, all_fragments_ra
     log_entry['SCdroppedBC'] = SC_dropped_BC
     # Delete the old barcodes column
     barcode_table.drop(columns=['oldBC'], inplace=True)
-
+    
+    # Matching barcodes with fragments and adding RNAcount
+    # ============================
     # Reorganize the barcode_table to have BC and RNAcount
     BCcount = barcode_table['BC'].value_counts().reset_index()
     BCcount.columns = ['BC', 'RNAcount']
     # Extract only BC that are in BCcount
-    foundFrags = output_table.merge(BCcount, on='BC', how='inner')
+    foundFrags = library_fragments.merge(BCcount, on='BC', how='inner')
     # Merge with lut_dna on 'LUTnr'
     foundFrags = foundFrags.merge(lut_dna, on='LUTnr', how='inner')
     # Rename 'Sequence' to 'fragment'
@@ -222,15 +199,12 @@ def analyze_tissue(index_nr, load_list, data_dir, output_table, all_fragments_ra
         if col in foundFrags.columns:
             foundFrags.drop(columns=[col], inplace=True)
 
-    # Function to index fragments that are found multiple times
-    def match_range(idx_frag, foundFrags, all_fragments_ranges):
-        fragment_seq = foundFrags.iloc[idx_frag]['fragment']
-        match_ranges = all_fragments_ranges[all_fragments_ranges['Sequence'] == fragment_seq].index.tolist()
-        return [(match_range, idx_frag) for match_range in match_ranges]
-
     # Create a list of matches
+    # create a pool of workers
     pool = Pool(threads)
+    # Create a partial function to pass the necessary arguments
     match_range_partial = partial(match_range, foundFrags=foundFrags, all_fragments_ranges=all_fragments_ranges)
+    # Match the ranges of the fragments by using all available threads
     match_ranges_list = pool.map(match_range_partial, range(len(foundFrags)))
     pool.close()
     pool.join()
@@ -252,11 +226,13 @@ def analyze_tissue(index_nr, load_list, data_dir, output_table, all_fragments_ra
         # Sort them by RNAcount in descending order
         found_fragments_ranges.sort_values(by='RNAcount', ascending=False, inplace=True)
         # Save the found fragments for the sample in the output folder
-        output_filename = os.path.join("2_output", f"found.{name_out}.pkl")
-        os.makedirs(os.path.dirname(output_filename), exist_ok=True)
-        found_fragments_ranges.to_pickle(output_filename)
+        output_filename = os.path.join(out_dir, f"found.{name_out}.csv")
+        found_fragments_ranges.to_csv(output_filename, index=False)
     else:
         logger.info(f"No matches found for sample {name_out}")
+    
+    logger.info(f"Finished processing {file_path} found {log_entry['scBCs']} barcodes")    
+    
     return log_entry
 
 def main():
@@ -264,38 +240,49 @@ def main():
     threads = cpu_count()
     
     # load config
-    config = get_config(5)
+    config = get_config("S5")
 
-    # Load the data
+    # Try to load the necessary data
     try:
-        output_table = pd.read_csv(config["input_table"])
+        library_fragments = pd.read_csv(config["input_table"], dtype={7: str})
         all_fragments_ranges = pd.read_csv(config["fragments_pos"])
         lut_dna = pd.read_csv(config["in_name_LUT"])
-        load_list = pd.read_csv(config["sample_inputs"], sep="\t", header=None, names=["Name", "BaseName", "GroupName"])
     except Exception as e:
         logger.error(f"Error loading data: {e}")
         sys.exit(1)
-
+    # Try to load the sample inputs
+    try:
+        load_list = pd.read_csv(config["sample_inputs"], header=None)
+    except Exception as e:
+        logger.error(f"Error loading sample inputs: {e}")
+        sys.exit(1)
+    # check if the data directory exists
     data_dir = config["sample_directory"]
+    output_dir = config["output_dir"]
+    # Create the output directory if it does not exist
+    if not os.path.isdir(output_dir):
+        os.makedirs(output_dir)
+    if not os.path.isdir(data_dir):
+        logger.error(f"Data directory {data_dir} does not exist")
+        sys.exit(1)
     log_table = []
+    # get the settings for the barcode extraction
+    bbduk2_args_BC = config["bbduk2_args"]
 
     # Analyze each tissue sample
-    for index_nr in range(len(load_list)):
-        log_entry = analyze_tissue(index_nr, load_list, data_dir, output_table, all_fragments_ranges, lut_dna, threads)
+    for row in load_list.iterrows():
+        # Extract the file name from the first column
+        file_path = row[1][0]
+        # Extract the base name from the second column
+        base_name = row[1][1]
+        log_entry = analyze_tissue(file_path, base_name, data_dir, output_dir, library_fragments, all_fragments_ranges, lut_dna, threads, bbduk2_args_BC)
         if log_entry:
             log_table.append(log_entry)
 
     # Create a DataFrame from the log table
     log_df = pd.DataFrame(log_table)
     # Save the log table
-    log_df.to_pickle("S5_log.table.pkl")
-
-    # Cleanup the temp files
-    temp_dir = tempfile.gettempdir()
-    try:
-        shutil.rmtree(temp_dir)
-    except Exception as e:
-        logger.error(f"Error cleaning up temp files: {e}")
+    log_df.to_csv(config["log_file_path"], index=False)
 
     logger.info(f"Total execution time: {datetime.now() - start_time}")
 

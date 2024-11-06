@@ -15,13 +15,6 @@ Inputs for the script are:
     - file with fragments
     - output file name for final output table
 
-
-
-    "in_name_LUT": "0_data/LUT.csv",
-    "barcode_file": "0_data/barcode_fragment/DNA_pscAAVlib_1_barcodes.fastq.gz",
-    "fragment_file": "0_data/barcode_fragment/DNA_pscAAVlib_1_fragments.fastq.gz",
-    "out_name": "0_data/alignedLibraries.csv",
-
 Output of the script is:
     - The LUT data with annotated structures
     - The alignment data with reference_name,strand,width,start,end,LUTnr,structure,Sequence
@@ -35,11 +28,11 @@ import multiprocessing
 import pandas as pd
 import numpy as np
 from Bio import SeqIO
-from Bio.Blast.Applications import NcbiblastnCommandline
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 from datetime import datetime
 import logging
+import sys
 # local import
 from config import get_config
 
@@ -47,10 +40,29 @@ from config import get_config
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(message)s',
-    datefmt='%H:%M:%S'
-)
+    datefmt='%H:%M:%S',  # Only show hour, minute, and second
+    filemode='w',  # Overwrite log file
+    filename='Python_Scripts/Logs/S4.log'  # Log file name
+    )
 logger = logging.getLogger(__name__)
 
+
+def run_command(command: list, description: str) -> tuple:
+    """
+    Runs a subprocess command and returns stdout, stderr, and error status.
+    
+    :param command: Command list to execute
+    :param description: Description of the command for logging
+    """
+    logger.info(f"Running {description}")
+    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
+        stdout, stderr = process.communicate()
+        if process.returncode != 0:
+            logger.error(f"Error running {description} with code {process.returncode}")
+            logger.error(stderr)
+            sys.exit(1)
+
+        return stdout, stderr
 
 
 def load_trimmed_reads(fragments_file: str, barcodes_file: str)-> tuple:
@@ -88,7 +100,14 @@ def make_customarray_reference_index(lut_df: pd.DataFrame)-> str:
     # Create BLAST database
     blast_db_prefix = tempfile.mktemp(prefix="blastDB_")
     makeblastdb_cmd = f"makeblastdb -in {lut_fa.name} -out {blast_db_prefix} -dbtype nucl -title LUT -parse_seqids -logfile /dev/null"
-    subprocess.run(makeblastdb_cmd, shell=True, check=True)
+    stdout, stderr = run_command(makeblastdb_cmd.split(), "BLAST database creation")
+    # print the size of the database
+    check_db_size_cmd = f"blastdbcmd -db {blast_db_prefix} -info"
+    stdout, stderr = run_command(check_db_size_cmd.split(), "Checking BLAST database size")
+    # pritn the first 2 lines of the output
+    stdout = stdout.split('\n')[0:2]
+    size = stdout[1].replace("\t", "")
+    logger.info(f"BLAST database size: {size}")
     return blast_db_prefix
 
 
@@ -101,14 +120,19 @@ def save_unique_fragments(reads_frag: list)-> tuple:
     :return: Path to the FASTA file containing unique fragments and a set of unique sequences
     """
     logger.info("Saving unique fragments to FASTA file")
-    unique_reads_sequences = set(str(rec.seq) for rec in reads_frag)
-    logger.info(f"Number of unique fragments: {len(unique_reads_sequences)}")
+    unique_fragments = set(str(rec.seq) for rec in reads_frag)
+    
+    # exclude all sequences that have a N in them
+    unique_fragments = [seq for seq in unique_fragments if 'N' not in seq]
+    
+    logger.info(f"Number of unique fragments: {len(unique_fragments)}")
     unique_reads = [SeqRecord(Seq(seq), id=str(i+1), description="")
-                    for i, seq in enumerate(unique_reads_sequences)]
+                    for i, seq in enumerate(unique_fragments)]
     fragments_unique_fa = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".fa")
-    SeqIO.write(unique_reads, fragments_unique_fa.name, "fasta")
+    SeqIO.write(unique_reads, fragments_unique_fa.name, "fasta-2line")
+    SeqIO.write(unique_reads, "unique_reads.fa", "fasta-2line")
     fragments_unique_fa.close()
-    return fragments_unique_fa.name, unique_reads_sequences
+    return fragments_unique_fa.name, unique_fragments
 
 
 def align_against_library(fragments_unique_fa_name: str, blast_db_prefix: str)-> str:
@@ -120,18 +144,21 @@ def align_against_library(fragments_unique_fa_name: str, blast_db_prefix: str)->
 
     :return: Path to the BLAST output file
     """
-    logger.info("Running BLAST alignment")
     # Get the number of threads
     num_threads = multiprocessing.cpu_count()
     blast_out_file = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".txt")
-    blastn_cline = NcbiblastnCommandline(query=fragments_unique_fa_name,
-                                        db=blast_db_prefix,
-                                        outfmt=10,
-                                        max_target_seqs=25,
-                                        word_size=7,
-                                        num_threads=num_threads,
-                                        out=blast_out_file.name)
-    stdout, stderr = blastn_cline()
+    blast_out_file.name = "blast_output.txt"
+    blast_cmd = [
+        "blastn",
+        "-query", fragments_unique_fa_name,
+        "-db", blast_db_prefix,
+        "-outfmt", "10",
+        "-max_target_seqs", "25",
+        "-word_size", "7",
+        "-num_threads", str(num_threads),
+        "-out", blast_out_file.name
+    ]
+    stdout, stderr =  run_command(blast_cmd, "BLAST alignment")
 
     # Check for errors
     if stderr:
@@ -141,7 +168,7 @@ def align_against_library(fragments_unique_fa_name: str, blast_db_prefix: str)->
     return blast_out_file.name
 
 
-def read_blast_output(blast_out_file_name: str, unique_reads_sequences: set, lut_df: pd.DataFrame)-> pd.DataFrame:
+def read_blast_output(blast_out_file_name: str, unique_fragments: set, lut_df: pd.DataFrame)-> pd.DataFrame:
     """
     Read the BLAST output into a DataFrame and map every read to its corresponding LUTnr.
     """
@@ -152,10 +179,13 @@ def read_blast_output(blast_out_file_name: str, unique_reads_sequences: set, lut
     blast_df = pd.read_csv(blast_out_file_name, header=None, names=blast_columns)
     
     # Map the Reads and Sequence IDs back to the actual sequences
-    reads_index = {str(i+1): seq for i, seq in enumerate(unique_reads_sequences)}
+    reads_index = {str(i+1): seq for i, seq in enumerate(unique_fragments)}
     lut_seq_index = lut_df.set_index('LUTnr')['Sequence'].astype(str).to_dict()
     blast_df['Reads'] = blast_df['Reads'].astype(str).map(reads_index)
     blast_df['Sequence'] = blast_df['Sequence'].astype(str).map(lut_seq_index)
+    
+    # wirte the blast_df to a file
+    blast_df.to_csv("blast_output.csv", index=False)
     
     return blast_df
 
@@ -171,17 +201,19 @@ def create_full_table(blast_df: pd.DataFrame, lut_df: pd.DataFrame, reads_frag: 
     """
     logger.info("Creating full table with fragments and barcodes")
     # Merge BLAST results with LUT data
-    blast_df = blast_df.merge(lut_df[['Sequence', 'LUTnr']], on='Sequence', how='left')
-    blast_df.dropna(subset=['LUTnr'], inplace=True)
+    blast_df = blast_df.merge(lut_df[['Sequence', 'LUTnr']], on='Sequence', how='inner')
     blast_df.drop(columns=['Sequence'], inplace=True)
 
     # Convert columns to appropriate data types
     blast_df['bitScore'] = pd.to_numeric(blast_df['bitScore'])
     blast_df['mismatches'] = pd.to_numeric(blast_df['mismatches'])
 
-    # Keep only the top hit for each read and LUTnr combination
+    # Sort by Reads, LUTnr, and bitScore (descending for bitScore)
     blast_df.sort_values(by=['Reads', 'LUTnr', 'bitScore'], ascending=[True, True, False], inplace=True)
+    # Keep only the first occurrence of each unique pair of Reads and LUTnr
     blast_df.drop_duplicates(subset=['Reads', 'LUTnr'], keep='first', inplace=True)
+    # save the blast_df to a file
+    blast_df.to_csv("blast_results.csv", index=False)
 
     # Create full table with fragments and barcodes pairs
     full_table = pd.DataFrame({
@@ -192,7 +224,7 @@ def create_full_table(blast_df: pd.DataFrame, lut_df: pd.DataFrame, reads_frag: 
     # Selecting only the top hit for each fragment from the BLAST results
     blast_top_hit = blast_df.loc[blast_df.groupby('Reads')['bitScore'].idxmax()]
     full_table = full_table.merge(blast_top_hit, on='Reads', how='inner')
-
+    
     # Calculate the percentage of fragments that have been aligned to our DB (original created fragments)
     alignment_percentage = len(full_table) / len(reads_frag) if reads_frag else 0
     logger.info(f"Alignment percentage: {alignment_percentage:.2%}")
@@ -292,6 +324,9 @@ def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataF
         'mismatches': 'median',
         'Reads': 'count'
     }).reset_index().rename(columns={'Reads': 'tCount'}) # tCount is the total count of reads for a given BC and LUTnr pair
+    
+    # save the temp_table_multi_grouped to a file
+    temp_table_multi_grouped.to_csv("temp_table_multi_grouped.csv", index=False)
 
     # Identify clean and chimeric barcodes
     bc_counts = temp_table_multi_grouped['BC'].value_counts()
@@ -341,9 +376,9 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_consen
     logger.info("Combining tables to create final output")
     # Combine clean and consensus tables
     temp_table_multi_final = pd.concat([temp_table_multi_clean, temp_table_multi_consensus], ignore_index=True)
-    print(f"Number of definitive Barcodes: {len(temp_table_multi_final.loc[temp_table_multi_final['Mode'] == 'Def'])}")
-    print(f"Number of ambiguous Barcodes: {len(temp_table_multi_final.loc[temp_table_multi_final['Mode'] == 'Amb'])}")
-    print(f"Number of single-read Barcodes: {len(temp_table_single)}")
+    logger.info(f"Number of defintive barcodes: {len(temp_table_multi_final)}")
+    logger.info(f"Number of ambiguous barcodes: {len(temp_table_multi_consensus)}")
+    logger.info(f"Number of single-read barcodes: {len(temp_table_single)}")
     output_table = pd.concat([temp_table_multi_final, temp_table_single], ignore_index=True)
 
     return output_table
@@ -364,13 +399,13 @@ def main():
     blast_db_prefix = make_customarray_reference_index(lut_df)
 
     # Save unique fragments as FASTA file
-    fragments_unique_fa_name, unique_reads_sequences = save_unique_fragments(reads_frag)
+    fragments_unique_fa_name, unique_fragments = save_unique_fragments(reads_frag)
 
     # Align against the library using BLAST
     blast_out_file_name = align_against_library(fragments_unique_fa_name, blast_db_prefix)
 
     # Read BLAST output
-    blast_df = read_blast_output(blast_out_file_name, unique_reads_sequences, lut_df)
+    blast_df = read_blast_output(blast_out_file_name, unique_fragments, lut_df)
 
     # Create full table with fragments and barcodes
     full_table = create_full_table(blast_df, lut_df, reads_frag, reads_BC)

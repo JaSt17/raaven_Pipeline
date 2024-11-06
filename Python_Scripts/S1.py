@@ -28,6 +28,7 @@ import logging
 # local import
 from costum_functions import aatodna, load_wSet
 from config import get_config
+import copy
 
 
 def read_fasta(file_path: str) -> list:
@@ -51,7 +52,7 @@ def read_fasta(file_path: str) -> list:
         this_id = record.description
         this_seq = record.seq
         # Translate the DNA sequence to amino acids using the standard genetic code
-        this_aa = translate(this_seq)
+        this_aa = translate(this_seq, table=1)
         this_id_split = this_id.split(sep=",")
         aa_list.append({
             "Class": this_id_split[0],
@@ -65,23 +66,21 @@ def read_fasta(file_path: str) -> list:
     return aa_list
 
 
-def make_all_frags(k, aa_list, min_length, max_length, frequency):
+def make_all_frags(k: int, aa_list: list, length: int, frequency: int) -> list:
     """
     This function generates all possible fragments of a given length from a single amino acid sequence.
     
     :param k: The index of the amino acid sequence in the list
     :param aa_list: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, and AAfragment
-    :param min_length: The minimum length of the fragments
-    :param max_length: The maximum length of the fragments
+    :param length: The length of the fragments
     :param frequency: The frequency at which to generate the fragments
     
     :return: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, and AAfragment
     """
     frag_list = []
     this_full_aa = aa_list[k]["AAfragment"]
-    for l in range(0, len(this_full_aa) - min_length + 1, frequency):
-        for m in range(l + min_length, min(l + max_length, len(this_full_aa)) + 1):
-            this_fragment = this_full_aa[l:m]
+    for l in range(0, (len(this_full_aa) - length) + 1, frequency):
+            this_fragment = this_full_aa[l:l + length]
             if this_fragment[0] != "M":  # Skipping fragments starting with 'M' (Start codon)
                 frag_list.append({
                     "Class": aa_list[k]["Class"],
@@ -91,13 +90,35 @@ def make_all_frags(k, aa_list, min_length, max_length, frequency):
                     "Number": aa_list[k]["Number"],
                     "Name": aa_list[k]["Name"],
                     "AAstart": l + 1,
-                    "AAstop": m,
+                    "AAstop": l + length,
                     "AAfragment": this_fragment
                 })
     return frag_list
 
 
-def generate_fragments(wSet: str, aa_list: dict, min_length: int, max_length: int, frequency=1):
+def get_unique_fragments(frag_list: list) -> list:
+    """
+    This function removes duplicate fragments from a list of fragments.
+
+    Args:
+        frag_list (list): A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, and AAfragment
+
+    Returns:
+        list: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, and AAfragment
+    """
+    unique_frag_list = []
+    seen_fragments = set()
+
+    for frag in frag_list:
+        fragment = frag["AAfragment"]
+        if fragment not in seen_fragments:
+            seen_fragments.add(fragment)
+            unique_frag_list.append(frag)
+
+    return unique_frag_list
+
+
+def generate_fragments(wSet: str, aa_list: dict, length: int, frequency:int = 1) -> list:
     """
     This function generates all possible fragments of a given length from a list of amino acid sequences.
 
@@ -114,7 +135,7 @@ def generate_fragments(wSet: str, aa_list: dict, min_length: int, max_length: in
     # Use multiprocessing with Pool
     with Pool(cpu_count()) as p:
         # Map the function across all entries in aa_list
-        results = p.starmap(make_all_frags, [(k, aa_list, min_length, max_length, frequency) for k in range(len(aa_list))])
+        results = p.starmap(make_all_frags, [(k, aa_list, length, frequency) for k in range(len(aa_list))])
     
     # Collect the results
     for result in results:
@@ -124,9 +145,9 @@ def generate_fragments(wSet: str, aa_list: dict, min_length: int, max_length: in
     frag_list = [frag for frag in frag_list if not any(c in frag["AAfragment"] for c in "X")]
 
     # get unique fragments
-    frag_list = list({frag["AAfragment"]: frag for frag in frag_list}.values())
+    frag_list = get_unique_fragments(frag_list)
 
-        # Load codon usage table once
+    # Load codon usage table once
     wSet = load_wSet(wSet)
 
     # Prepare arguments for multiprocessing
@@ -176,7 +197,9 @@ def main():
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(message)s',
-        datefmt='%H:%M:%S'  # Only show hour, minute, and second
+        datefmt='%H:%M:%S',  # Only show hour, minute, and second
+        filemode='w',  # Overwrite log file
+        filename='Python_Scripts/Logs/S1.log'  # Log file name
     )
     logger = logging.getLogger(__name__)
 
@@ -186,10 +209,10 @@ def main():
     aa_list = read_fasta(config["input_file"])
 
     # Generate fragments as AA sequences
-    sorted_fragments_14aa = generate_fragments(config["wSet"], aa_list, 14, 14, 1)
-    sorted_fragments_14aa_G4S = generate_fragments(config["wSet"], aa_list, 14, 14, 3)
-    sorted_fragments_14aa_A5 = generate_fragments(config["wSet"], aa_list, 14, 14, 3)
-    sorted_fragments_22aa = generate_fragments(config["wSet"], aa_list, 22, 22, 3)
+    sorted_fragments_14aa = generate_fragments(config["wSet"], aa_list, 14, 1)
+    sorted_fragments_14aa_G4S = generate_fragments(config["wSet"], aa_list, 14, 3)
+    sorted_fragments_14aa_A5 = generate_fragments(config["wSet"], aa_list, 14, 3)
+    sorted_fragments_22aa = generate_fragments(config["wSet"], aa_list, 22, 3)
 
     # Add overhangs for 14aa fragments
     sorted_fragments_14aa = add_overhangs(sorted_fragments_14aa, config["14_aa_overhangs"][0], config["14_aa_overhangs"][1])
