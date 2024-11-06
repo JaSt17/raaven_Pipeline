@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 """
-Costum fragment generation script from input FASTA file
-
 Author: Jaro Steindorff
 
 This script reads a FASTA file given by the path in the config file and generates all possible 
 fragments of a given length from the nucleotide sequences in that give file.
+
+Workflow:
+    - Read the input FASTA file
+    - Generate fragments of a given length from the amino acid sequences
+    - Convert the amino acid fragments to DNA fragments
+    - Add overhangs to the DNA fragments
+    - Write the fragments to a file
 
 Inputs for the script are:
     - input_file: The path to the FASTA file

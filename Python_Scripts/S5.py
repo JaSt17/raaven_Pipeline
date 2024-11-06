@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """
-Barcoded extraction and reduction from all given Samples.
-
 Author: Jaro Steindorff
 
 This script extracts barcodes from given samples, reduces them using the Starcode algorithm, and identifies
@@ -15,6 +13,17 @@ Workflow:
         - Match reduced barcodes with fragments
         - Save found fragments for the sample
     - Save a log table with summary statistics
+    
+Input:
+    - library_fragments: DataFrame with the library fragments
+    - fragments_pos: DataFrame with the positions of the fragments in the original sequneces
+    - lut_dna: DataFrame with the LUT data
+    - sample_inputs: CSV file with the sample inputs (file_path, base_name)
+    - sample_directory: Directory containing the fastq files
+    - log_file_path: Path to save the log table
+    - output_dir: Directory to save the found fragments
+    - bbduk2_args: List of arguments for bbduk2.sh barcode extraction
+    
 """
 
 import os
@@ -223,6 +232,9 @@ def analyze_tissue(file_path:str, base_name:str, data_dir:str, out_dir:str, libr
         found_fragments_ranges = all_fragments_ranges.iloc[match_ranges_df['matchRanges']].reset_index(drop=True)
         # Add foundFrags columns to found_fragments_ranges
         found_fragments_ranges = pd.concat([found_fragments_ranges, foundFrags], axis=1)
+        # remove unnecessary columns 
+        unessary_columns = ['q_start', 'evalue', 's_end', 'alignmentLength', 'gapOpens', 'identity', 's_start', 'q_end']
+        found_fragments_ranges = found_fragments_ranges.drop(columns=unessary_columns)
         # Sort them by RNAcount in descending order
         found_fragments_ranges.sort_values(by='RNAcount', ascending=False, inplace=True)
         # Save the found fragments for the sample in the output folder

@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """
-Extraction of Barcodes and Gene Fragments from P5 and P7 raw sequencing files
-
 Author: Jaro Steindorff
 
 This script extracts barcodes and fragments from sequencing files, pairs them, and saves them in separate files.
@@ -17,6 +15,10 @@ Inputs for the script:
     - in_name_P7: Path to the P7 sequencing file
     - out_dir: Output directory path
     - out_name: Output files name
+    
+Outputs of the script:
+    - barcode_out_name: Paired barcode file
+    - fragment_out_name: Paired fragment file
 """
 
 import os

@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
 """
-Barcoded extraction and reduction from all given Samples.
-
 Author: Jaro Steindorff
 
-This script extracts barcodes from given samples, reduces them using the Starcode algorithm, and identifies
-corresponding fragments. It processes a csv file with file_path and basename and saves the results for each base name group.
+This script annotates the fragments found in the library with the information of the fragments position file.
 
 Workflow:
-    - Load necessary data from previous steps (LUT.csv, MatchedFragments.csv, fragment_pos.csv)
-    - For each RNA sample:
-        - Extract barcodes using bbduk2.sh
-        - Reduce barcodes using Starcode
-        - Match reduced barcodes with fragments
-        - Save found fragments for the sample
-    - Save a log table with summary statistics
+    - Loading both input files
+    - Merging the library fragments with the fragments position file based on the LUTnr
+    - Removing unnecessary columns
+    - Adding the RNAcount column
+    - Saving the annotated library fragments
+    
+Input:
+    - input_table: str - Path to the library fragments file
+    - fragments_pos: str - Path to the fragments position file
+    - output_table: str - Path to save the annotated library fragments
+    
+Output:
+    - annotated library fragments: csv - The library fragments with the fragments position information
+
 """
 
 import sys
@@ -42,7 +46,6 @@ def main():
     try:
         library_fragments = pd.read_csv(config["input_table"], dtype={7: str})
         fragments_pos = pd.read_csv(config["fragments_pos"])
-        LUT = pd.read_csv(config["in_name_LUT"])
     except FileNotFoundError as e:
         logger.error(f"Could not find input file: {e}")
         sys.exit(1)
@@ -59,8 +62,8 @@ def main():
     unessary_columns = ["Reads", "identity", "alignmentLength", "gapOpens", "q_start", "q_end", "s_start", "s_end", "evalue"]
     library_fragments = library_fragments.drop(columns=unessary_columns)
     
-    # add column RNA_count and set it to tcount
-    library_fragments["RNA_count"] = library_fragments["tCount"]
+    # add column RNAcount and set it to tcount
+    library_fragments["RNAcount"] = library_fragments["tCount"]
     
     # save the merged library_fragments
     library_fragments.to_csv(config["output_table"], index=False)

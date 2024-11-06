@@ -1,8 +1,18 @@
 #!/usr/bin/env python3
 """
-Mapping of Fragment Sequences to Original Sequences to get the position of the fragment in the original sequence
-
 Author: Jaro Steindorff
+
+This script maps the fragment sequences to the original sequences to get the position of the fragment in the original sequence.
+
+Workflow:
+    - Create a lookup table (LUT) from a file with all fragment sequences
+    - Split sequences based on linker and length, and annotate structures
+    - Trim sequences based on structure and trim ranges
+    - Create FASTA files from subsets
+    - Build Bowtie2 index from original sequences
+    - Align sequences to reference using Bowtie2
+    - Merge alignment information with LUT data
+    - Save alignment information
 
 Inputs for the script are:
     - original_seq_file: Path to the file with all original sequences

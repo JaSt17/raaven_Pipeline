@@ -1,19 +1,32 @@
 #!/usr/bin/env python3
 """
-Detection of fragments in the DNA library using BLASTn. Only keeps the best hit for each alignemt to match it with the LUT data.
-Creating starcode barcodes. Than detecting single and multi read barcodes.
-The multi read barcodes are split into clean and chimeric barcodes. Clean barcodes are those that have that match only one LUTnr.
-Chimeric barcodes are those that match multiple LUTnr. For chimeric barcodes, a consensus alignment is set
-by choosing the barcode with the highest maximal read count for each LUTnr.
-Finally a output table is created with all fragments and barcodes pairs and the corresponding LUTnr and mode (Def or Amb).
-
 Author: Jaro Steindorff
 
+This script finds the fragments in the library and maps them to the LUT.
+It then reduces the barcodes using the Starcode algorithm and identifies the corresponding fragments.
+Finally it devides the barcodes into single-read and multi-read barcodes and splits the multi-read barcodes into clean and chimeric based on the LUTnr.
+
+Workflow:
+    - Load the LUT data
+    - Load the fragments and barcodes
+    - Create a BLAST database from the LUT sequences
+    - Save unique fragments to a FASTA file
+    - Align unique fragments against the LUT database using BLASTn
+    - Read the BLAST output into a DataFrame
+    - Map every read to its corresponding LUTnr
+    - Create a full table of all fragments that matched the LUT with their BLASTn results
+    - Perform barcode reduction using Starcode clustering
+    - Replace barcodes with Starcode-reduced versions
+    - Split reads into single-read and multi-read barcodes
+    - Split multi-read barcodes into clean and chimeric based on LUTnr
+    - Create consensus alignment of chimeric barcodes
+    - Combine all tables into final output
+
 Inputs for the script are:
-    - LUT data with annotated structures
-    - file with barcodes
-    - file with fragments
-    - output file name for final output table
+    - in_name_LUT: Path to the LUT file
+    - fragment_file: Path to the fragments FASTQ file
+    - barcode_file: Path to the barcodes FASTQ file
+    - out_name: Path to the output file
 
 Output of the script is:
     - The LUT data with annotated structures
@@ -65,16 +78,16 @@ def run_command(command: list, description: str) -> tuple:
         return stdout, stderr
 
 
-def load_trimmed_reads(fragments_file: str, barcodes_file: str)-> tuple:
+def load_frag_bc_reads(fragments_file: str, barcodes_file: str)-> tuple:
     """
-    Load the trimmed reads and barcodes from FASTQ files.
+    Load the fragments and barcodes from FASTQ files.
 
-    :param fragments_file: Path to the trimmed reads FASTQ file
+    :param fragments_file: Path to the fragments FASTQ file
     :param barcodes_file: Path to the barcodes FASTQ file
 
-    :return: A tuple containing the trimmed reads and barcodes as lists of SeqRecords
+    :return: A tuple containing the fragments and barcodes as lists of SeqRecords
     """
-    logger.info("Reading trimmed reads and barcodes")
+    logger.info("Reading fragments and barcodes")
     with gzip.open(fragments_file, "rt") as handle:
         reads_frag = list(SeqIO.parse(handle, "fastq"))
     with gzip.open(barcodes_file, "rt") as handle:
@@ -113,9 +126,9 @@ def make_customarray_reference_index(lut_df: pd.DataFrame)-> str:
 
 def save_unique_fragments(reads_frag: list)-> tuple:
     """
-    Save unique fragments from trimmed reads to a FASTA file.
+    Save unique fragments from fragments to a FASTA file.
 
-    :param reads_frag: List of trimmed reads as SeqRecords
+    :param reads_frag: List of fragments as SeqRecords
 
     :return: Path to the FASTA file containing unique fragments and a set of unique sequences
     """
@@ -393,7 +406,7 @@ def main():
     lut_df = pd.read_csv(config["in_name_LUT"])
 
     # Load trimmed fragments and barcodes
-    reads_frag, reads_BC = load_trimmed_reads(config["fragment_file"], config["barcode_file"])
+    reads_frag, reads_BC = load_frag_bc_reads(config["fragment_file"], config["barcode_file"])
 
     # Create BLAST database from LUT sequences
     blast_db_prefix = make_customarray_reference_index(lut_df)

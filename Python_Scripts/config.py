@@ -112,8 +112,14 @@ config_S5 = {
 config_S6 = {
     "input_table": config_S4["out_name"],
     "fragments_pos": config_S3["out_name"],
-    "in_name_LUT": config_S3["out_name_LUT"],
     "output_table": data_dir + "/annotated_library_fragments.csv",
+}
+
+config_S7 = {
+    "input_dir": config_S5["output_dir"],
+    "library_fragments": config_S6["output_table"],
+    "exclude_groups1": ["DNA_pscAAVlib", "DNA_pscAAVlib_Prep2"],
+    "exclude_groups2": ["DNA_AAVlib_DNAse_3cpc", "DNA_AAVlib_DNAse_30cpc"]
 }
 
 # create a lookup dictionary for the configuration dictionaries
@@ -124,6 +130,7 @@ config_lookup = {
     "S4": config_S4,
     "S5": config_S5,
     "S6": config_S6,
+    "S7": config_S7,
 }
 
 def get_config(step: str) -> dict:
