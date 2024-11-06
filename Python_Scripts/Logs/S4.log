@@ -1,0 +1,26 @@
+16:36:13 - Reading trimmed reads and barcodes
+16:47:33 - Creating BLAST database from LUT sequences
+16:47:37 - Running BLAST database creation
+16:47:42 - Running Checking BLAST database size
+16:47:44 - BLAST database size: 92,583 sequences; 5,405,298 total bases
+16:47:45 - Saving unique fragments to FASTA file
+16:48:02 - Number of unique fragments: 3137697
+16:48:24 - Running BLAST alignment
+17:36:51 - Reading BLAST output
+17:42:51 - Creating full table with fragments and barcodes
+17:48:58 - Alignment percentage: 99.63%
+17:48:59 - Running Starcode clustering
+17:49:32 - Replacing barcodes with Starcode-reduced versions
+17:49:41 - Splitting reads into single-read and multi-read barcodes
+17:49:46 - Number of single-read barcodes: 1354895
+17:49:46 - Number of multi-read barcodes: 1834708
+17:49:52 - Splitting multi-read barcodes into clean and chimeric
+17:50:07 - Number of clean barcodes: 455628
+17:50:07 - Number of chimeric barcodes: 1379080
+17:50:08 - Calculating consensus alignment for chimeric barcodes
+17:50:11 - Combining tables to create final output
+17:50:11 - Number of defintive barcodes: 1834708
+17:50:11 - Number of ambiguous barcodes: 1379080
+17:50:11 - Number of single-read barcodes: 1354895
+17:50:23 - Output saved to 0_data/MatchedFragments.csv
+17:50:23 - Total execution time: 1:14:10.417010

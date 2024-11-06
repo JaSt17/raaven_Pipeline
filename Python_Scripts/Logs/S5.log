@@ -1,0 +1,81 @@
+12:35:08 - Processing DNA_pscAAVlib_Prep2_1.fastq.gz with 41355446 reads
+12:50:05 - Finished processing DNA_pscAAVlib_Prep2_1.fastq.gz found 3944344 barcodes
+12:51:23 - Processing DNA_AAVlib_DNAse_3cpc_1.fastq.gz with 7992233 reads
+12:52:30 - Finished processing DNA_AAVlib_DNAse_3cpc_1.fastq.gz found 224201 barcodes
+12:54:42 - Processing DNA_AAVlib_DNAse_30cpc_1.fastq.gz with 17611858 reads
+12:58:38 - Finished processing DNA_AAVlib_DNAse_30cpc_1.fastq.gz found 797117 barcodes
+12:59:02 - Processing mRNA_30cpc_SN_RatNr7_1.fastq.gz with 1990014 reads
+12:59:38 - Finished processing mRNA_30cpc_SN_RatNr7_1.fastq.gz found 10003 barcodes
+12:59:54 - Processing mRNA_30cpc_Ctx_RatNr7_1.fastq.gz with 2002416 reads
+13:00:30 - Finished processing mRNA_30cpc_Ctx_RatNr7_1.fastq.gz found 7585 barcodes
+13:00:52 - Processing mRNA_30cpc_Th_RatNr7_1.fastq.gz with 2878095 reads
+13:01:24 - Finished processing mRNA_30cpc_Th_RatNr7_1.fastq.gz found 11664 barcodes
+13:01:37 - Processing mRNA_30cpc_Str_RatNr7_1.fastq.gz with 1602499 reads
+13:02:11 - Finished processing mRNA_30cpc_Str_RatNr7_1.fastq.gz found 21280 barcodes
+13:02:24 - Processing mRNA_30cpc_SN_RatNr1_1.fastq.gz with 1617136 reads
+13:02:58 - Finished processing mRNA_30cpc_SN_RatNr1_1.fastq.gz found 6101 barcodes
+13:03:11 - Processing mRNA_30cpc_Ctx_RatNr1_1.fastq.gz with 1546754 reads
+13:03:43 - Finished processing mRNA_30cpc_Ctx_RatNr1_1.fastq.gz found 7776 barcodes
+13:04:02 - Processing mRNA_30cpc_Th_RatNr1_1.fastq.gz with 2367316 reads
+13:04:32 - Finished processing mRNA_30cpc_Th_RatNr1_1.fastq.gz found 8614 barcodes
+13:04:44 - Processing mRNA_30cpc_Str_RatNr1_1.fastq.gz with 1511120 reads
+13:05:11 - Finished processing mRNA_30cpc_Str_RatNr1_1.fastq.gz found 13448 barcodes
+13:05:27 - Processing mRNA_30cpc_SN_RatNr8_1.fastq.gz with 2061124 reads
+13:06:02 - Finished processing mRNA_30cpc_SN_RatNr8_1.fastq.gz found 11457 barcodes
+13:06:18 - Processing mRNA_30cpc_Ctx_RatNr8_1.fastq.gz with 2109283 reads
+13:06:51 - Finished processing mRNA_30cpc_Ctx_RatNr8_1.fastq.gz found 7144 barcodes
+13:07:07 - Processing mRNA_30cpc_Th_RatNr8_1.fastq.gz with 2112350 reads
+13:07:39 - Finished processing mRNA_30cpc_Th_RatNr8_1.fastq.gz found 12486 barcodes
+13:07:51 - Processing mRNA_30cpc_Str_RatNr8_1.fastq.gz with 1629552 reads
+13:08:22 - Finished processing mRNA_30cpc_Str_RatNr8_1.fastq.gz found 20223 barcodes
+13:08:32 - Processing mRNA_3cpc_SN_RatNr15_1.fastq.gz with 1441507 reads
+13:08:56 - Finished processing mRNA_3cpc_SN_RatNr15_1.fastq.gz found 1541 barcodes
+13:09:07 - Processing mRNA_3cpc_Ctx_RatNr15_1.fastq.gz with 1264619 reads
+13:09:36 - Finished processing mRNA_3cpc_Ctx_RatNr15_1.fastq.gz found 3235 barcodes
+13:09:45 - Processing mRNA_3cpc_Th_RatNr15_1.fastq.gz with 1109845 reads
+13:10:14 - Finished processing mRNA_3cpc_Th_RatNr15_1.fastq.gz found 2828 barcodes
+13:10:21 - Processing mRNA_3cpc_Str_RatNr15_1.fastq.gz with 951483 reads
+13:10:46 - Finished processing mRNA_3cpc_Str_RatNr15_1.fastq.gz found 6648 barcodes
+13:10:54 - Processing mRNA_3cpc_SN_RatNr21_1.fastq.gz with 1118098 reads
+13:11:25 - Finished processing mRNA_3cpc_SN_RatNr21_1.fastq.gz found 2033 barcodes
+13:11:34 - Processing mRNA_3cpc_Ctx_RatNr21_1.fastq.gz with 1204490 reads
+13:12:00 - Finished processing mRNA_3cpc_Ctx_RatNr21_1.fastq.gz found 1940 barcodes
+13:12:10 - Processing mRNA_3cpc_Th_RatNr21_1.fastq.gz with 1238214 reads
+13:12:41 - Finished processing mRNA_3cpc_Th_RatNr21_1.fastq.gz found 3790 barcodes
+13:12:50 - Processing mRNA_3cpc_Str_RatNr21_1.fastq.gz with 1154893 reads
+13:13:19 - Finished processing mRNA_3cpc_Str_RatNr21_1.fastq.gz found 8637 barcodes
+13:13:32 - Processing mRNA_3cpc_Ctx_RatNr19_1.fastq.gz with 1750752 reads
+13:13:58 - Finished processing mRNA_3cpc_Ctx_RatNr19_1.fastq.gz found 2782 barcodes
+13:14:12 - Processing mRNA_3cpc_Th_RatNr19_1.fastq.gz with 1744359 reads
+13:14:47 - Finished processing mRNA_3cpc_Th_RatNr19_1.fastq.gz found 6560 barcodes
+13:15:00 - Processing mRNA_3cpc_Str_RatNr19_1.fastq.gz with 1650931 reads
+13:15:34 - Finished processing mRNA_3cpc_Str_RatNr19_1.fastq.gz found 13031 barcodes
+13:15:41 - Processing mRNA_3cpc_Th_RatNr20_1.fastq.gz with 791183 reads
+13:16:06 - Finished processing mRNA_3cpc_Th_RatNr20_1.fastq.gz found 2489 barcodes
+13:16:14 - Processing mRNA_3cpc_Str_RatNr20_1.fastq.gz with 987297 reads
+13:16:42 - Finished processing mRNA_3cpc_Str_RatNr20_1.fastq.gz found 8372 barcodes
+13:16:54 - Processing mRNA_3cpc_HEK293Nr2_1.fastq.gz with 1594099 reads
+13:17:15 - Finished processing mRNA_3cpc_HEK293Nr2_1.fastq.gz found 3042 barcodes
+13:17:30 - Processing mRNA_30cpc_HEK293Nr3_1.fastq.gz with 1927045 reads
+13:17:52 - Finished processing mRNA_30cpc_HEK293Nr3_1.fastq.gz found 7762 barcodes
+13:18:01 - Processing mRNA_3cpc_pNeuronNr6_1.fastq.gz with 1148477 reads
+13:18:15 - Finished processing mRNA_3cpc_pNeuronNr6_1.fastq.gz found 2561 barcodes
+13:18:28 - Processing mRNA_30cpc_pNeuronNr7_1.fastq.gz with 1658035 reads
+13:18:56 - Finished processing mRNA_30cpc_pNeuronNr7_1.fastq.gz found 8047 barcodes
+13:19:16 - Processing mRNA_30cpc_4wks_Ctx_RatNr2_1.fastq.gz with 1969799 reads
+13:19:34 - Finished processing mRNA_30cpc_4wks_Ctx_RatNr2_1.fastq.gz found 2696 barcodes
+13:19:54 - Processing mRNA_30cpc_4wks_SN_RatNr2_1.fastq.gz with 1933241 reads
+13:20:20 - Finished processing mRNA_30cpc_4wks_SN_RatNr2_1.fastq.gz found 8562 barcodes
+13:20:42 - Processing mRNA_30cpc_4wks_Str_RatNr2_1.fastq.gz with 2101122 reads
+13:21:33 - Finished processing mRNA_30cpc_4wks_Str_RatNr2_1.fastq.gz found 59375 barcodes
+13:21:54 - Processing mRNA_30cpc_4wks_Th_RatNr2_1.fastq.gz with 2280731 reads
+13:22:17 - Finished processing mRNA_30cpc_4wks_Th_RatNr2_1.fastq.gz found 5882 barcodes
+13:22:39 - Processing mRNA_3cpc_4wks_Ctx_RatNr13_1.fastq.gz with 2078947 reads
+13:22:47 - Finished processing mRNA_3cpc_4wks_Ctx_RatNr13_1.fastq.gz found 686 barcodes
+13:23:06 - Processing mRNA_3cpc_4wks_SN_RatNr13_1.fastq.gz with 1818834 reads
+13:23:19 - Finished processing mRNA_3cpc_4wks_SN_RatNr13_1.fastq.gz found 1266 barcodes
+13:23:36 - Processing mRNA_3cpc_4wks_Str_RatNr13_1.fastq.gz with 1704708 reads
+13:24:01 - Finished processing mRNA_3cpc_4wks_Str_RatNr13_1.fastq.gz found 6464 barcodes
+13:24:22 - Processing mRNA_3cpc_4wks_Th_RatNr13_1.fastq.gz with 1962102 reads
+13:24:44 - Finished processing mRNA_3cpc_4wks_Th_RatNr13_1.fastq.gz found 5297 barcodes
+13:24:45 - Total execution time: 0:54:44.012039
