@@ -51,7 +51,7 @@ config_S2 = {
 }
 
 config_S3 = {
-    "original_seq_file": "input/DNA-lib_RetrogradeTransport.fasta",
+    "original_seq_file": config_S1["input_file"],
     "wSet": "input/wSet.csv",
     "fragment_seq_file": config_S1["output_name"],
     "constitutive_backbone_sequences": ["aacctccagagaggcaacg", "cagacaagcagctaccgca"],
@@ -116,6 +116,7 @@ config_S6 = {
 }
 
 config_S7 = {
+    "original_seq_file": config_S1["input_file"],
     "input_dir": config_S5["output_dir"],
     "library_fragments": config_S6["output_table"],
     "exclude_groups1": ["DNA_pscAAVlib", "DNA_pscAAVlib_Prep2"],

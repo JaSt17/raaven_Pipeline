@@ -1,6 +1,32 @@
+#!/usr/bin/env python3
+"""
+Author: Jaro Steindorff
+
+This script processes the found fragments and combines them into a single dataset.
+
+Workflow:
+    - Combined all output data from the specified directory into one DataFrame
+    - Add the library fragments to the combined data
+    - add the reference sequence lengths to the combined data
+    - Split the 'reference_name' column into multiple columns
+    - Normalize the read counts in the DataFrame to adjust for the total RNA counts 
+    - Get the subset of the DataFrame after excluding certain groups
+    - Combine information of identical fragments in a DataFrame
+    - Save the processed data to a new CSV file
+    
+Input:
+    - 
+    
+Output:
+    - 
+"""
+
 import os
 import pandas as pd
+from pandarallel import pandarallel
+import numpy as np
 import logging
+from Bio import SeqIO
 # local import
 from config import get_config
 
@@ -9,10 +35,36 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(message)s',
     datefmt='%H:%M:%S',  # Only show hour, minute, and second
-    filemode='w',  # Overwrite log file
-    filename='Python_Scripts/Logs/S6.log'  # Log file name
+    #filemode='w',  # Overwrite log file
+    #filename='Python_Scripts/Logs/S7.log'  # Log file name
     )
 logger = logging.getLogger(__name__)
+
+
+def get_ref_sequence_length_df(file_path:str) -> pd.DataFrame:
+    """
+    Reads a FASTA file containing reference sequences and returns a DataFrame with sequence ids and lengths.
+    Args:
+        file_path (str): path to the file containing the reference sequences
+
+    Returns:
+        pd.DataFrame: DataFrame with the reference sequence ids and lengths
+    """
+    
+    # read in file with original sequences
+    seqs_original = list(SeqIO.parse(file_path, "fasta"))
+    # translate sequences to amino acids
+    seq = [str(seq_record.seq).strip() for seq_record in seqs_original]
+    # get sequence ids
+    ids = [seq_record.description for seq_record in seqs_original]
+    # change id to have underscore instead of space
+    ids = [seq_id.replace(" ", "_") for seq_id in ids]
+    
+    # create a DataFrame with sreference sequence ids and lengths
+    ref_seq_len_df = pd.DataFrame({"reference_name": ids, "seqlength": [len(s) for s in seq]})
+    
+    return ref_seq_len_df
+
 
 def load_combined_data(dir_path: str) -> pd.DataFrame:
     """
@@ -26,6 +78,8 @@ def load_combined_data(dir_path: str) -> pd.DataFrame:
     """
     # Initialize a list to hold DataFrames
     df_list = []
+    
+    logger.info(f"Loading data from {dir_path}")
 
     # Loop through the CSV files in the directory
     for file in os.listdir(dir_path):
@@ -41,7 +95,7 @@ def load_combined_data(dir_path: str) -> pd.DataFrame:
                 # Append the DataFrame to the list
                 df_list.append(df)
             except Exception as e:
-                print(f"Error reading {file}: {e}")
+                logger.info(f"Error reading file {file}: {e}")
 
     # Combine the DataFrames if the list is not empty
     if df_list:
@@ -49,17 +103,17 @@ def load_combined_data(dir_path: str) -> pd.DataFrame:
             combined_data = pd.concat(df_list, ignore_index=True)
             return combined_data
         except ValueError as e:
-            print(f"Error concatenating DataFrames: {e}")
+            logger.info(f"Error combining data: {e}")
             return pd.DataFrame()
     else:
-        print("No CSV files found or all files failed to read.")
+        logger.info("No CSV files found in the directory.")
         return pd.DataFrame()
     
 
 def split_reference_name(df: pd.DataFrame) -> pd.DataFrame:
     """
     Splits the 'reference_name' column of a pandas DataFrame into multiple new columns
-    and removes unnecessary columns
+    and removes unnecessary columns.
 
     Parameters:
         df (pd.DataFrame): The input DataFrame containing a 'reference_name' column.
@@ -67,33 +121,20 @@ def split_reference_name(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: The modified DataFrame with new columns added and unnecessary columns removed.
     """
-    # Check if 'reference_name' column exists in the DataFrame
+    # Ensure 'reference_name' column exists
     if 'reference_name' not in df.columns:
         raise ValueError("The DataFrame does not have a 'reference_name' column.")
 
-    # Split 'reference_name' into multiple columns
+    # Split 'reference_name' into columns
     split_cols = df['reference_name'].str.split(',', expand=True)
-
-    # Expected number of columns after split
+    
+    # Define expected columns and assign split results, filling in missing columns with None
     expected_cols = ["Category", "Protein", "Origin", "Extra", "Number", "GeneName"]
+    for i, col_name in enumerate(expected_cols):
+        df[col_name] = split_cols[i] if i < split_cols.shape[1] else None
 
-    # Handle cases where the number of splits is less than expected
-    num_splits = split_cols.shape[1]
-    if num_splits < len(expected_cols):
-        # Add missing columns with NaN values
-        for i in range(num_splits, len(expected_cols)):
-            split_cols[i] = None
-
-    # Assign the split columns to new column names
-    split_cols.columns = expected_cols
-
-    # Concatenate the new columns to df
-    df = pd.concat([df, split_cols], axis=1)
-
-    # Remove unnecessary columns
-    columns_to_drop = ['reference_name', 'Protein', 'Origin', 'Extra', 'Number']
-    existing_columns_to_drop = [col for col in columns_to_drop if col in df.columns]
-    df = df.drop(columns=existing_columns_to_drop)
+    # Drop unnecessary columns in a single call
+    df.drop(columns=['reference_name', 'Protein', 'Origin', 'Extra', 'Number'], errors='ignore', inplace=True)
 
     return df
 
@@ -108,16 +149,12 @@ def normalize_read_counts(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: The DataFrame with normalized read counts.
     """
-    # create a dictionary to store the sum of RNA counts for each group
-    group_RNAcount_dict = dict(df.groupby("Group").sum()["RNAcount"])
+    # Sum RNA counts per group and get the maximum RNAcount
+    group_totals = df.groupby("Group")["RNAcount"].transform("sum")
+    max_RNAcount = group_totals.max()
     
-    # Normalize the group RNA counts by dividing each value by the RNAcounts of the biggest group
-    # get the max RNAcount
-    max_RNAcount = max(group_RNAcount_dict.values())
-    norm_group_RNAcount_dict = {group: RNAcount / max_RNAcount for group, RNAcount in group_RNAcount_dict.items()}
-    
-    # add the normalized RNA counts to the DataFrame
-    df["Normalized_RNAcount"] = df.apply(lambda row: row["RNAcount"] / norm_group_RNAcount_dict[row["Group"]], axis=1)
+    # Calculate normalized counts in a vectorized way
+    df["Normalized_RNAcount"] = df["RNAcount"] / (group_totals / max_RNAcount)
     
     return df
 
@@ -139,34 +176,85 @@ def get_subset_exclude(df: pd.DataFrame, exclude_groups:list, group:str) -> pd.D
     return subset
 
 
-def get_subset_include(df: pd.DataFrame, include_substr:list) -> pd.DataFrame:
+def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list) -> pd.DataFrame:
     """
-    Get the subset of the DataFrame after including only groups that contain any of the given string in the list.
+    Combine information of identical fragments in a DataFrame.
 
     Parameters:
-        df (pd.DataFrame): The input DataFrame containing a 'Group' column.
-        include_substr (list): A list of substrings to include in the group names.
-
+        df (pd.DataFrame): The input DataFrame containing fragment information.
+        key_cols (list): A list of column names to identify identical fragments.
+    
     Returns:
-        pd.DataFrame: The subset of the DataFrame after including only the specified groups.
+        pd.DataFrame: The DataFrame with combined information for identical fragments.
     """
-    # get a list of columns that contain any of the substrings
-    groups = df['Group'].unique()
-    include_groups = [group for group in groups if any(substring in group for substring in include_substr)]
+    # Define a function to perform the required aggregations for each group
+    def aggregate_group(df):
+        bitScore = (df['bitScore'] * df['tCount']).sum() / df['tCount'].sum()
+        mismatches = df['mismatches'].median()
+        mCount = df['mCount'].sum()
+        tCount = df['tCount'].sum()
+        BC = ','.join(df['BC'].unique())
+        Animals = ','.join(df['Sample'].unique())
+        LUTnrs = ','.join(df['LUTnr'].unique())
+        RNAcount = df['RNAcount'].sum()
+        NormCount = df['Normalized_RNAcount'].sum()
+        
+        return pd.Series({
+            'bitScore': bitScore,
+            'mismatches': mismatches,
+            'mCount': mCount,
+            'tCount': tCount,
+            'BC': BC,
+            'Animals': Animals,
+            'LUTnrs': LUTnrs,
+            'RNAcount': RNAcount,
+            'NormCount': NormCount
+        })
+    # Initialize pandarallel
+    pandarallel.initialize(nb_workers=os.cpu_count())
     
-    subset = df[df['Group'].isin(include_groups)]
+    # Optimize groupby operation with parallel apply if necessary
+    combined_data = combined_data.groupby(key_cols, as_index=False, group_keys=False).parallel_apply(aggregate_group)
     
-    return subset
+    # Adjust the start and width columns for the combined fragments to match AA readingframe
+    combined_data['start'] = np.floor(combined_data['start'] / 3).astype(int)
+    combined_data['end'] = np.floor(combined_data['end'] / 3).astype(int)
+    combined_data['width'] = np.floor(combined_data['width'] / 3).astype(int)
+    combined_data['seqlength'] = np.floor(combined_data['seqlength'] / 3).astype(int)
+    
+    # calculate the absolute AA position of the fragment
+    combined_data['AA_pos'] = combined_data['start'] + 1
+    # calculate the relative AA position of the fragment
+    combined_data['AA_rel_pos'] = combined_data['AA_pos'] / combined_data['seqlength']
+    
+    return combined_data
 
 
+def cut_overhangs_vectorized(df: pd.DataFrame) -> pd.DataFrame:
+    """ 
+    This function cuts the overhangs of the sequences based on the structure of the fragment.
+    
+    Args:
+        df (pd.DataFrame): The input DataFrame containing the 'structure' and 'Sequence' columns.
+        
+    Returns:
+        pd.DataFrame: The DataFrame with the overhangs of the sequences cut based on the structure of the fragment.
+    """
+    df.loc[df['structure'] == "14aa", 'Sequence'] = df.loc[df['structure'] == "14aa", 'Sequence'].str.slice(2, 44)
+    df.loc[df['structure'] == "14aaG4S", 'Sequence'] = df.loc[df['structure'] == "14aaG4S", 'Sequence'].str.slice(14, 56)
+    df.loc[df['structure'] == "14aaA5", 'Sequence'] = df.loc[df['structure'] == "14aaA5", 'Sequence'].str.slice(14, 56)
+    df.loc[df['structure'] == "22aa", 'Sequence'] = df.loc[df['structure'] == "22aa", 'Sequence'].str.slice(2, 68)
+    return df
+
+    
 def main():
     # Load configuration
-    config = get_config("S6")
+    config = get_config("S7")
     
     # Load the combined data from the specified directory
     combined_data = load_combined_data(config["input_dir"])
     if combined_data.empty:
-        logger.error("No data loaded. Exiting.")
+        logger.info("No data loaded. Exiting.")
         return
     
     # Add the library fragment to the combined data
@@ -174,22 +262,44 @@ def main():
     library_fragments['Group'] = "DNA_pscAAVlib"
     combined_data = pd.concat([combined_data, library_fragments], ignore_index=True)
     
+    # Get the reference sequence lengths
+    logger.info("Getting reference sequence lengths")
+    ref_seq_len_df = get_ref_sequence_length_df(config["original_seq_file"])
+    # add the reference sequence lengths to the combined data with the reference_name as the key
+    combined_data = pd.merge(combined_data, ref_seq_len_df, how="left", on="reference_name")
+    
+    logger.info("Splitting reference names and renaming columns")
     # Split the 'reference_name' column into multiple columns
     combined_data = split_reference_name(combined_data)
     
+    logger.info("Normalizing read counts")
     # Normalize the read counts in the DataFrame
     combined_data = normalize_read_counts(combined_data)
     
-    # Get the subset of the DataFrame after excluding certain groups
+    logger.info("Creating DNA_resistant and mRNA_all subsets")
+    # get the subset for DNAse_resistant and mRNA
     DNA_resistant = get_subset_exclude(combined_data, config["exclude_groups1"], "DNAse_resistant")
+    # get the subset of mRNA_all
     mRNA_all = get_subset_exclude(DNA_resistant, config["exclude_groups2"], "mRNA_all")
-    
     # combine the two subsets with the combined data
     combined_data = pd.concat([combined_data, DNA_resistant, mRNA_all], ignore_index=True)
     
+    logger.info("Combining information of identical fragments")
+    # Define the key columns
+    key_cols = ["Group", "Category", "GeneName", "structure", "start", "width", "Sequence", "seqlength"]
+
+    # Combine information of identical fragments in a DataFrame
+    combined_data = combine_information_of_identical_fragments(combined_data, key_cols)
     
+    logger.info("Cutting overhangs of the sequences based on the structure of the fragment")
+    # Cut the overhangs of the sequences based on the structure of the fragment
+    combined_data = cut_overhangs_vectorized(combined_data)
     
     # Save the processed data to a new CSV file
     combined_data.to_csv(config["output_table"], index=False)
     logger.info(f"Saved processed data to {config['output_table']}")
+    
+    
+if __name__ == "__main__":
+    main()
     

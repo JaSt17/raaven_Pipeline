@@ -53,10 +53,8 @@ def main():
     logger.info(f"Number of unique fragments in the library fragments: {len(library_fragments['LUTnr'].unique())}")
     logger.info(f"Number of unique fragments created with the input file: {len(fragments_pos['LUTnr'].unique())}")
     
-    print(len(library_fragments))
     # merge library_fragments with the LUT 
     library_fragments = pd.merge(library_fragments, fragments_pos, on="LUTnr", how="inner")
-    print(len(library_fragments))
     
     # remove unnecessary columns Reads,identity,alignmentLength,gapOpens,q_start,q_end,s_start,s_end,evalue,
     unessary_columns = ["Reads", "identity", "alignmentLength", "gapOpens", "q_start", "q_end", "s_start", "s_end", "evalue"]
