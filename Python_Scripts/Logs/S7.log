@@ -1,0 +1,12 @@
+15:51:42 - Loading data from 0_data/found_barcodes
+15:52:01 - Getting reference sequence lengths
+15:52:02 - Splitting reference names and renaming columns
+15:52:05 - Creating Subsets
+15:52:05 - Creating subset 'Infective_AAVs' with conditions: ['exclude', 'DNA_AAVlib_DNAse_30cpc', 'DNA_AAVlib_DNAse_3cpc', 'DNA_pscAAVlib', 'DNA_pscAAVlib_Prep2']
+15:52:05 - Creating subset 'DNAse_resistant_AAVs' with conditions: ['include', 'DNA_AAVlib_DNAse_30cpc', 'DNA_AAVlib_DNAse_3cpc']
+15:52:06 - Normalizing read counts
+15:52:07 - Combining information of identical fragments
+15:52:47 - Cutting overhangs of the sequences based on the structure of the fragment
+15:52:47 - Translating the sequences to amino acids
+15:53:01 - Saved processed data to 0_data/final_fragments_summary.csv
+15:53:01 - Finished processing in 0:01:18.474039

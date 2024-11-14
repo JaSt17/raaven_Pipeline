@@ -119,8 +119,12 @@ config_S7 = {
     "original_seq_file": config_S1["input_file"],
     "input_dir": config_S5["output_dir"],
     "library_fragments": config_S6["output_table"],
-    "exclude_groups1": ["DNA_pscAAVlib", "DNA_pscAAVlib_Prep2"],
-    "exclude_groups2": ["DNA_AAVlib_DNAse_3cpc", "DNA_AAVlib_DNAse_30cpc"]
+    "subsets": {
+        "Infective_AAVs": ['exclude','DNA_AAVlib_DNAse_30cpc', 'DNA_AAVlib_DNAse_3cpc','DNA_pscAAVlib', 'DNA_pscAAVlib_Prep2'],
+        "DNAse_resistant_AAVs": ['include', 'DNA_AAVlib_DNAse_30cpc','DNA_AAVlib_DNAse_3cpc'],
+    },
+    "trim_dict": config_S3["trim_dict"],
+    "output_table": data_dir + "/final_fragments_summary.csv",
 }
 
 # create a lookup dictionary for the configuration dictionaries
