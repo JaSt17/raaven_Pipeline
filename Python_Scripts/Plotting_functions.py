@@ -98,16 +98,198 @@ def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, 
     return plt.show()
 
 
-def plot_amino_acid_heatmap(df, group_name, structure_name):
-    # Filter the DataFrame for the specified group
-    group_df = df[df['Group'] == group_name]
-    group_df = group_df[group_df['structure'] == structure_name]
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+def plot_quantities(df: pd.DataFrame, groups: list, max_value: dict, step_size: int = 10000):
+    """
+    Creates a polar plot with concentric rings representing different groups.
+    Each ring displays an arc proportional to the group's size relative to the maximum value.
+    Additionally, each ring has its own set of angular grid lines and labels indicating step values.
+
+    Parameters:
+    df : pd.DataFrame
+        The input DataFrame containing at least 'Group' and 'LUTnr' columns.
+    groups : list
+        A list of group names to include in the plot.
+    max_value : dict
+        A dictionary where keys are group names and values are their corresponding maximum values.
+        This is used to update and determine the scaling of the plot.
+    step_size : int, optional
+        The step size for the grid lines and labels, by default 10000.
+
+    Returns:
+    plot : matplotlib.pyplot
+    """
+    # Filter the dataframe to include only specified groups
+    df = df.loc[df['Group'].isin(groups)]
+    
+    # Get unique LUTnr within each group
+    df = df.groupby(['Group', 'LUTnr']).first().reset_index()
+    
+    # Calculate the size of each group
+    group_size = dict(df.groupby('Group').size())
+    
+    # Update the group sizes with the max_value provided
+    group_size.update(max_value)
+    
+    # Determine the maximum value for scaling
+    max_val = max(group_size.values())
+    
+    # Calculate the size (thickness) of each ring
+    size = 1 / (len(groups) + 1)
+    
+    # Create a figure and axis with polar projection
+    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw={'projection': 'polar'})
+    
+    # Set zero at the top and angles to increase clockwise
+    ax.set_theta_zero_location('N')
+    ax.set_theta_direction(-1)
+    
+    # Disable the default grid and ticks
+    ax.grid(False)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    # remove the outside border
+    ax.spines['polar'].set_visible(False)
+    
+    # Generate colors using the 'bone' colormap
+    cmap = plt.get_cmap("bone")
+    colors = [cmap(i / (len(group_size) + 1)) for i in range(len(group_size) + 1)]
+    
+    # Sort group sizes for consistent plotting (largest first)
+    group_items = sorted(group_size.items(), key=lambda x: x[1], reverse=True)
+    
+    # Initialize the radius for the first ring
+    radius = size
+    for i, (label, length) in enumerate(group_items):
+        # Calculate the angle filled
+        angle_filled = (length / max_val) * 2 * np.pi  # Angle in radians
+        
+        # Draw the arc using ax.bar()
+        ax.bar(
+            x=0,                # Start angle (0 radians)
+            height=size,        # Thickness of the ring
+            width=angle_filled, # Angle spanned by the arc
+            bottom=radius,      # Starting radius
+            color=colors[i],
+            edgecolor='w',
+            align='edge',
+        )
+        # Get the position for annotation
+        if angle_filled / (2*np.pi) > 0.6:
+            theta = np.pi
+        else:
+            theta = angle_filled / 2  # Middle of the filled arc
+        x = radius + size / 2     # Mid-radius of the ring
+        
+        # Determine text rotation for better readability
+        theta_deg = np.degrees(theta)
+        if theta_deg > 180:
+            text_rotation = theta_deg - 180
+        else:
+            text_rotation = 180 - theta_deg
+        text_rotation = text_rotation if text_rotation < 90 else text_rotation - 180
+        
+        # Annotate with group name and size
+        ax.text(
+            theta,
+            x,
+            f"{label}\n{length}",
+            ha="center",
+            va="center",
+            fontsize=10,
+            color="white",
+            rotation=text_rotation,
+            rotation_mode='anchor'
+        )
+        
+        # Increment the radius for the next ring
+        radius += size  
+        
+    # create a list of values for the grid lines and labels
+    values = [i for i in range(0, max_val, step_size)]
+    
+    # sort the groups in group items assending based on their values
+    group_items = sorted(group_size.items(), key=lambda x: x[1])
+
+    # create a list of values for the grid lines and labels
+    radius = 1 
+    for i, (label, length) in enumerate(group_items): 
+        # Generate values for grid lines
+        temp_values = [value for value in values if value <= length]
+        
+        # delete all values in temp_values from values
+        for value in temp_values:
+            values.remove(value)
+        
+        # Calculate angles corresponding to these values
+        angles = [(value / max_val) * 2 * np.pi for value in temp_values]
+        
+        # Draw grid lines and labels
+        for angle, value in zip(angles, temp_values):
+            # Draw the grid line from inner to outer radius of the ring
+            ax.plot([angle, angle], [radius + size, radius + size + 0.05], color='grey', linewidth=0.5, linestyle='--')
+            # Place the label slightly outside the outer radius
+            label_radius = radius + size + 0.1 
+            # Calculate position for annotation so it is centered on the grid line
+            angle_deg = np.degrees(angle)
+            rotation = 360 - angle_deg if angle_deg > 180 else -angle_deg
+            if abs(rotation) >= 270 or abs(rotation)<= 90:
+                rotation = rotation
+            else:
+                rotation = rotation + 180
+            # write the value on the grid line
+            ax.text(
+                angle,
+                label_radius,
+                f"{value}",
+                ha='center',
+                va='center',
+                fontsize=10,
+                color='black',
+                rotation=rotation,
+                rotation_mode='anchor'
+            )
+        # break the loop if there are no more values
+        if len(temp_values) == 0:
+            break
+        
+        radius -= size  
+        
+    # add a title at the bottom of the plot
+    ax.text(0, 0, 'Fragment Quantity per Group', ha='center', va='center', fontsize=12, color='black')
+    
+    # return the plot
+    return plt.show()
+
+
+def plot_amino_acid_heatmap(df, group_name:str=None, structure_name:str=None):
+    """
+    Create a heatmap showing the percentage of each amino acid at each position in the peptide sequences.
+
+    Parameters:
+    df : pd.DataFrame
+        The input DataFrame containing the peptide sequences.
+    group_name : str, optional
+        The name of the group to filter the data. Default is None.  
+    structure_name : str, optional
+        The name of the structure to filter the data. Default is None.
+
+    Returns:
+    plot : matplotlib.pyplot
+    """
+    if group_name is not None:
+        temp_df = df[df['Group'] == group_name]
+    if structure_name is not None:
+        temp_df = df[df['structure'] == structure_name]
     
     # Get only unique peptides
-    group_df = group_df.drop_duplicates(subset=['Peptide'])
+    temp_df = temp_df.drop_duplicates(subset=['Peptide'])
 
     # Extract the 'Peptide' sequences
-    peptides = group_df['Peptide'].dropna().tolist()
+    peptides = temp_df['Peptide'].dropna().tolist()
 
     # Determine the maximum peptide length
     max_length = max(len(peptide) for peptide in peptides)

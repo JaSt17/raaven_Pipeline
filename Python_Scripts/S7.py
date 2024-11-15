@@ -255,6 +255,10 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
     # Compute log2NormCount
     combined_data['log2NormCount'] = np.log2(combined_data['Normalized_RNAcount'])
     
+    # Compute the count adjusted for the number of found barcodes
+    combined_data['BC_count'] = df['BC'].str.split(',').apply(len)
+    combined_data['BC_adjusted_count'] = np.log2(combined_data['BC_count'] * combined_data['Normalized_RNAcount'])
+    
     # Drop the intermediate column
     combined_data.drop(columns=['bitScore_times_tCount'], inplace=True)
     
