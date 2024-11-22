@@ -7,3 +7,5 @@ __pycache__/
 install_packages.sh
 bbmap/
 9_test_data/
+old/
+Brave/

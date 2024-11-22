@@ -15,4 +15,4 @@ Get an interactive GPU node:
 interactive --partition=gpua100i --gres=gpu:1 --nodes=1 --ntasks=1 --cpus-per-task=16 --time=02:00:00 -A lu2024-2-56
 
 Get an interactive CPU node:
-interactive --cpus-per-task=48 --time=04:00:00 -A lu2024-2-56
+interactive --cpus-per-task=48 --time=06:00:00 -A lu2024-2-8
