@@ -2,450 +2,260 @@
 """
 Author: Jaro Steindorff
 
-This script finds the fragments in the library and maps them to the LUT.
-It then reduces the barcodes using the Starcode algorithm and identifies the corresponding fragments.
-Finally it devides the barcodes into single-read and multi-read barcodes and splits the multi-read barcodes into clean and chimeric based on the LUTnr.
+This script extracts barcodes from given samples, reduces them using the Starcode algorithm, and identifies
+corresponding fragments. It processes a csv file with file_path and basename and saves the results for each base name group.
 
 Workflow:
-    - Load the LUT data
-    - Load the fragments and barcodes
-    - Create a BLAST database from the LUT sequences
-    - Save unique fragments to a FASTA file
-    - Align unique fragments against the LUT database using BLASTn
-    - Read the BLAST output into a DataFrame
-    - Map every read to its corresponding LUTnr
-    - Create a full table of all fragments that matched the LUT with their BLASTn results
-    - Perform barcode reduction using Starcode clustering
-    - Replace barcodes with Starcode-reduced versions
-    - Split reads into single-read and multi-read barcodes
-    - Split multi-read barcodes into clean and chimeric based on LUTnr
-    - Create consensus alignment of chimeric barcodes
-    - Combine all tables into final output
-
-Inputs for the script are:
-    - in_name_LUT: Path to the LUT file
-    - fragment_file: Path to the fragments FASTQ file
-    - barcode_file: Path to the barcodes FASTQ file
-    - out_name: Path to the output file
-
-Output of the script is:
-    - The LUT data with annotated structures
-    - The alignment data with reference_name,strand,width,start,end,LUTnr,structure,Sequence
+    - Load the library fragments and LUT data
+    - For each RNA sample:
+        - Extract barcodes using bbduk2.sh
+        - Reduce barcodes using Starcode
+        - Match reduced barcodes with fragments
+        - Save found fragments for the sample
+    - Save a log table with summary statistics
+    
+Input:
+    - library_fragments: DataFrame with the library fragments
+    - fragments_pos: DataFrame with the positions of the fragments in the original sequneces
+    - lut_dna: DataFrame with the LUT data
+    - sample_inputs: CSV file with the sample inputs (file_path, base_name)
+    - sample_directory: Directory containing the fastq files
+    - log_file_path: Path to save the log table
+    - output_dir: Directory to save the found fragments
+    - bbduk2_args: List of arguments for bbduk2.sh barcode extraction
+    
 """
 
 import os
-import gzip
-import tempfile
-import subprocess
-import multiprocessing
-import pandas as pd
-import numpy as np
-from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
-from Bio.Seq import Seq
-from datetime import datetime
-import logging
 import sys
+import subprocess
+import tempfile
+import re
+import logging
+from datetime import datetime
+import pandas as pd
+from multiprocessing import Pool, cpu_count
+import gzip
+from Bio import SeqIO
 # local import
 from config import get_config
 
-# Initialize logging with custom format
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(message)s',
-    datefmt='%H:%M:%S',  # Only show hour, minute, and second
-    filemode='w',  # Overwrite log file
-    filename='Python_Scripts/Logs/S4.log'  # Log file name
+# function to create a global logger
+def create_logger(path: str, name: str) -> None:
+    """
+    Create a global logger with a custom format.
+    """
+    filename = path + name + ".log"
+    # Initialize logging with custom format
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(message)s',
+        datefmt='%H:%M:%S',  # Only show hour, minute, and second
+        filemode='w',  # Overwrite log file
+        filename=filename
+        
     )
-logger = logging.getLogger(__name__)
-
-
-def run_command(command: list, description: str) -> tuple:
-    """
-    Runs a subprocess command and returns stdout, stderr, and error status.
+    global logger  # Declare the logger as global
+    logger = logging.getLogger(name) # Create a logger
     
-    :param command: Command list to execute
-    :param description: Description of the command for logging
+
+def run_command(command, description: str, shell=False, verbose=False):
     """
-    logger.info(f"Running {description}")
-    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
-        stdout, stderr = process.communicate()
+    Runs a subprocess command and returns stdout, stderr.
+
+    :param command: Command list to execute or string if shell=True
+    :param description: Description of the command for logging
+    :param shell: Whether to execute the command through the shell
+    """
+    if verbose:
+        logger.info(f"Running {description}")
+    try:
+        if shell:
+            process = subprocess.run(command, shell=True, capture_output=True, text=True)
+        else:
+            process = subprocess.run(command, capture_output=True, text=True)
+        stdout = process.stdout
+        stderr = process.stderr
         if process.returncode != 0:
             logger.error(f"Error running {description} with code {process.returncode}")
             logger.error(stderr)
             sys.exit(1)
-
         return stdout, stderr
+    except Exception as e:
+        logger.error(f"Exception running {description}: {e}")
+        sys.exit(1)
 
 
-def load_frag_bc_reads(fragments_file: str, barcodes_file: str)-> tuple:
+def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: pd.DataFrame,
+                    lut_dna: pd.DataFrame, threads:int, bbduk2_args: list) -> dict:
     """
-    Load the fragments and barcodes from FASTQ files.
+    Analyze a single tissue sample based on its index in the load list.
 
-    :param fragments_file: Path to the fragments FASTQ file
-    :param barcodes_file: Path to the barcodes FASTQ file
-
-    :return: A tuple containing the fragments and barcodes as lists of SeqRecords
+    :param file_path: path to the fastq file
+    :param data_dir: Directory containing the fastq files
+    :param library_fragments: DataFrame loaded from multipleContfragmentsComplete.pkl
+    :param lut_dna: DataFrame loaded from LUTdna.pkl
+    :param threads: Number of threads to use
+    :return: Dictionary containing log information for the sample
     """
-    logger.info("Reading fragments and barcodes")
-    with gzip.open(fragments_file, "rt") as handle:
-        reads_frag = list(SeqIO.parse(handle, "fastq"))
-    with gzip.open(barcodes_file, "rt") as handle:
-        reads_BC = list(SeqIO.parse(handle, "fastq"))
-    return reads_frag, reads_BC
-
-
-def make_customarray_reference_index(lut_df: pd.DataFrame)-> str:
-    """
-    Create a BLAST database from LUT sequences.
-
-    :param lut_df: DataFrame containing the LUT sequences
-
-    :return: Path to the BLAST database prefix
-    """
-    logger.info("Creating BLAST database from LUT sequences")
-    lut_fa = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".fa")
-    lut_records = [SeqRecord(Seq(row['Sequence']), id=str(row['LUTnr']), description="")
-                    for _, row in lut_df.iterrows()]
-    SeqIO.write(lut_records, lut_fa.name, "fasta")
-    lut_fa.close()
-
-    # Create BLAST database
-    blast_db_prefix = tempfile.mktemp(prefix="blastDB_")
-    makeblastdb_cmd = f"makeblastdb -in {lut_fa.name} -out {blast_db_prefix} -dbtype nucl -title LUT -parse_seqids -logfile /dev/null"
-    stdout, stderr = run_command(makeblastdb_cmd.split(), "BLAST database creation")
-    # print the size of the database
-    check_db_size_cmd = f"blastdbcmd -db {blast_db_prefix} -info"
-    stdout, stderr = run_command(check_db_size_cmd.split(), "Checking BLAST database size")
-    # pritn the first 2 lines of the output
-    stdout = stdout.split('\n')[0:2]
-    size = stdout[1].replace("\t", "")
-    logger.info(f"BLAST database size: {size}")
-    return blast_db_prefix
-
-
-def save_unique_fragments(reads_frag: list)-> tuple:
-    """
-    Save unique fragments from fragments to a FASTA file.
-
-    :param reads_frag: List of fragments as SeqRecords
-
-    :return: Path to the FASTA file containing unique fragments and a set of unique sequences
-    """
-    logger.info("Saving unique fragments to FASTA file")
-    unique_fragments = set(str(rec.seq) for rec in reads_frag)
+    log_entry = {}
     
-    # exclude all sequences that have a N in them
-    unique_fragments = [seq for seq in unique_fragments if 'N' not in seq]
+    # create the logname from the file_path
+    log_entry['Name'] = os.path.basename(file_path).replace('.fastq.gz', '')
     
-    logger.info(f"Number of unique fragments: {len(unique_fragments)}")
-    unique_reads = [SeqRecord(Seq(seq), id=str(i+1), description="")
-                    for i, seq in enumerate(unique_fragments)]
-    fragments_unique_fa = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".fa")
-    SeqIO.write(unique_reads, fragments_unique_fa.name, "fasta-2line")
-    SeqIO.write(unique_reads, "unique_reads.fa", "fasta-2line")
-    fragments_unique_fa.close()
-    return fragments_unique_fa.name, unique_fragments
+    path = os.path.join(data_dir, file_path)
 
+    # Count the reads in the FASTQ file
+    try:
+        with gzip.open(path, "rt") as handle:
+            read_count = sum(1 for _ in SeqIO.parse(handle, "fastq"))
+    except Exception as e:
+        logger.info(f"Error reading FASTQ file {path}: {e}")
+        return None
+    log_entry['Reads'] = read_count
+    
+    logger.info(f"Processing {file_path} with {read_count} reads")
 
-def align_against_library(fragments_unique_fa_name: str, blast_db_prefix: str)-> str:
-    """
-    Align unique fragments against the LUT database using BLASTn. BLAST output is saved to a file.
+    # Extraction of barcodes
+    # ============================
+    # Create a temporary file for the output
+    out_name_BC = tempfile.NamedTemporaryFile(prefix="BC_", suffix=".fastq.gz", delete=False).name
 
-    :param fragments_unique_fa_name: Path to the FASTA file containing unique fragments
-    :param blast_db_prefix: Path to the BLAST database prefix
-
-    :return: Path to the BLAST output file
-    """
-    # Get the number of threads
-    num_threads = multiprocessing.cpu_count()
-    blast_out_file = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".txt")
-    blast_out_file.name = "blast_output.txt"
-    blast_cmd = [
-        "blastn",
-        "-query", fragments_unique_fa_name,
-        "-db", blast_db_prefix,
-        "-outfmt", "10",
-        "-max_target_seqs", "25",
-        "-word_size", "7",
-        "-num_threads", str(num_threads),
-        "-out", blast_out_file.name
+    # Run the bbduk2 command to extract barcodes from the reads
+    bbduk2_command = ["bbmap/bbduk2.sh"] + bbduk2_args + [
+        f"threads={threads}",
+        f"in={path}",
+        f"out={out_name_BC}",
     ]
-    stdout, stderr =  run_command(blast_cmd, "BLAST alignment")
+    stdout, stderr = run_command(bbduk2_command, f"bbduk2 barcode extraction for {file_path}")
 
-    # Check for errors
-    if stderr:
-        logger.error(f"BLAST error: {stderr}")
-        raise Exception(f"BLAST error: {stderr}")
+    # Save the Barcode extraction result in the log entry
+    match = re.search(r"Result:\s*(\d+)", stderr)
+    if match:
+        log_entry['BCs'] = int(match.group(1))
+    else:
+        log_entry['BCs'] = 0
+
+    # Read the barcodes
+    try:
+        with gzip.open(out_name_BC, "rt") as handle:
+            reads_BC = list(SeqIO.parse(handle, "fastq"))
+    except Exception as e:
+        logger.error(f"Error reading FASTQ file {out_name_BC}: {e}")
+        return None
+    # Create a table with the barcodes and the ID
+    ids = [record.id for record in reads_BC]
+    bcs = [str(record.seq) for record in reads_BC]
+    barcode_table = pd.DataFrame({'ID': ids, 'BC': bcs})
+
+    # Starcode based barcode reduction
+    # ============================
+    # Create a temporary file for the output
+    out_name_BC_star = tempfile.NamedTemporaryFile(prefix="BCsc_", suffix=".txt", delete=False).name
+    # Run the starcode command to reduce the barcodes
+    starcode_command = f"gunzip -c {out_name_BC} | starcode -t {threads - 1} --print-clusters -d 1 -r5 -q -o {out_name_BC_star}"
+    _, stderr = run_command(starcode_command, f"starcode barcode reduction for {file_path}", shell=True)
+
+    # Create a table with the reduced barcodes
+    try:
+        table_BC_sc = pd.read_csv(out_name_BC_star, sep="\t", header=None, names=['scBC', '_', 'BC'], dtype=str)
+    except Exception as e:
+        logger.error(f"Error reading Starcode output file {out_name_BC_star}: {e}")
+        return None
+    # Split the barcodes by comma
+    table_BC_sc['BC'] = table_BC_sc['BC'].str.split(',')
+    # Explode the table to have one row per barcode
+    table_BC_sc = table_BC_sc.explode('BC')
+
+    # Replacing barcodes with Starcode reduced versions
+    # ============================
+    # Merge barcode_table with table_BC_sc on 'BC'
+    barcode_table = barcode_table.merge(table_BC_sc[['BC', 'scBC']], on='BC', how='inner')
+    # Rename columns
+    barcode_table.rename(columns={'BC': 'oldBC', 'scBC': 'BC'}, inplace=True)
+    # Save the number of unique old barcodes and remaining barcodes in the log entry
+    all_BCs = barcode_table['oldBC'].nunique()
+    sc_BCs = barcode_table['BC'].nunique()
+    SC_dropped_BC = all_BCs - sc_BCs
+    log_entry['allBCs'] = all_BCs
+    log_entry['scBCs'] = sc_BCs
+    log_entry['SCdroppedBC'] = SC_dropped_BC
+    # Delete the old barcodes column
+    barcode_table.drop(columns=['oldBC'], inplace=True)
     
-    return blast_out_file.name
-
-
-def read_blast_output(blast_out_file_name: str, unique_fragments: set, lut_df: pd.DataFrame)-> pd.DataFrame:
-    """
-    Read the BLAST output into a DataFrame and map every read to its corresponding LUTnr.
-    """
-    logger.info("Reading BLAST output")
-    blast_columns = ["Reads", "Sequence", "identity", "alignmentLength", "mismatches",
-                    "gapOpens", "q_start", "q_end", "s_start", "s_end",
-                    "evalue", "bitScore"]
-    blast_df = pd.read_csv(blast_out_file_name, header=None, names=blast_columns)
+    # Matching barcodes with information form the LUT and adding RNAcount
+    # ============================
+    # Reorganize the barcode_table to have BC and RNAcount
+    BCcount = barcode_table['BC'].value_counts().reset_index()
+    BCcount.columns = ['BC', 'RNAcount']
+    # Extract only BC that are in BCcount
+    foundFrags = library_fragments.merge(BCcount, on='BC', how='inner')
+    # Merge with lut_dna on 'LUTnr'
+    foundFrags = foundFrags.merge(lut_dna, on='LUTnr', how='inner')
+    # Delete the 'Names' and 'i.Structure' columns if they exist
+    for col in ['Names', 'i.Structure']:
+        if col in foundFrags.columns:
+            foundFrags.drop(columns=[col], inplace=True)
     
-    # Map the Reads and Sequence IDs back to the actual sequences
-    reads_index = {str(i+1): seq for i, seq in enumerate(unique_fragments)}
-    lut_seq_index = lut_df.set_index('LUTnr')['Sequence'].astype(str).to_dict()
-    blast_df['Reads'] = blast_df['Reads'].astype(str).map(reads_index)
-    blast_df['Sequence'] = blast_df['Sequence'].astype(str).map(lut_seq_index)
+    # Sorth then by RNAcount in descending order
+    foundFrags.sort_values(by='RNAcount', ascending=False, inplace=True)
+    output_filename = os.path.join(out_dir, f"found.{log_entry['Name']}.csv")
     
-    # wirte the blast_df to a file
-    blast_df.to_csv("blast_output.csv", index=False)
+    foundFrags.to_csv(output_filename, index=False)
     
-    return blast_df
-
-
-def create_full_table(blast_df: pd.DataFrame, lut_df: pd.DataFrame, reads_frag: list, reads_BC: list)-> pd.DataFrame:
-    """
-    Create a full table of all fragments that matched the LUT with their BLASTn results. For every fragment, only the top hit is kept.
+    logger.info(f"Finished processing {log_entry['Name']} found {log_entry['scBCs']} barcodes")    
     
-    :param blast_df: DataFrame containing the BLAST results
-    :param lut_df: DataFrame containing the LUT sequences
-    :param reads_frag: List of fragments as SeqRecords
-    :param reads_BC: List of barcodes as SeqRecords
-    """
-    logger.info("Creating full table with fragments and barcodes")
-    # Merge BLAST results with LUT data
-    blast_df = blast_df.merge(lut_df[['Sequence', 'LUTnr']], on='Sequence', how='inner')
-    blast_df.drop(columns=['Sequence'], inplace=True)
-
-    # Convert columns to appropriate data types
-    blast_df['bitScore'] = pd.to_numeric(blast_df['bitScore'])
-    blast_df['mismatches'] = pd.to_numeric(blast_df['mismatches'])
-
-    # Sort by Reads, LUTnr, and bitScore (descending for bitScore)
-    blast_df.sort_values(by=['Reads', 'LUTnr', 'bitScore'], ascending=[True, True, False], inplace=True)
-    # Keep only the first occurrence of each unique pair of Reads and LUTnr
-    blast_df.drop_duplicates(subset=['Reads', 'LUTnr'], keep='first', inplace=True)
-    # save the blast_df to a file
-    blast_df.to_csv("blast_results.csv", index=False)
-
-    # Create full table with fragments and barcodes pairs
-    full_table = pd.DataFrame({
-        'Reads': [str(rec.seq) for rec in reads_frag],
-        'BC': [str(rec.seq) for rec in reads_BC]
-    })
-
-    # Selecting only the top hit for each fragment from the BLAST results
-    blast_top_hit = blast_df.loc[blast_df.groupby('Reads')['bitScore'].idxmax()]
-    full_table = full_table.merge(blast_top_hit, on='Reads', how='inner')
-    
-    # Calculate the percentage of fragments that have been aligned to our DB (original created fragments)
-    alignment_percentage = len(full_table) / len(reads_frag) if reads_frag else 0
-    logger.info(f"Alignment percentage: {alignment_percentage:.2%}")
-
-    return full_table
-
-
-def starcode_based_barcode_reduction(barcodes_file: str)-> pd.DataFrame:
-    """
-    Perform barcode reduction using Starcode clustering.
-
-    :param barcodes_file: Path to the barcode file
-
-    :return: DataFrame containing the Starcode-reduced barcodes
-    """
-    logger.info("Running Starcode clustering")
-    # get the number of threads
-    num_threads = multiprocessing.cpu_count()
-    starcode_output = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".txt")
-    starcode_cmd = f"gzip -cd {barcodes_file} | starcode -t {num_threads-1} --print-clusters -d 1 -r5 -q -o {starcode_output.name}"
-    subprocess.run(starcode_cmd, shell=True, check=True)
-
-    # Read Starcode output
-    starcode_df = pd.read_csv(starcode_output.name, sep='\t', header=None, names=['scBC', 'count', 'BC_list'])
-    starcode_df['BC_list'] = starcode_df['BC_list'].str.split(',')
-
-    # Explode the BC_list to have one row per barcode and rename the columns
-    starcode_exploded = starcode_df.explode('BC_list')
-    starcode_exploded.rename(columns={'BC_list': 'BC'}, inplace=True)
-
-    return starcode_exploded
-
-
-def replace_barcodes_with_starcode_versions(full_table: pd.DataFrame, starcode_exploded: pd.DataFrame)-> pd.DataFrame:
-    """
-    Replace barcodes in the full table with their Starcode-reduced versions.
-
-    :param full_table: DataFrame containing the full table with fragments and barcodes
-    :param starcode_exploded: DataFrame containing the Starcode-reduced barcodes
-
-    :return: DataFrame containing the full table with Starcode-reduced barcodes
-    """
-    logger.info("Replacing barcodes with Starcode-reduced versions")
-    # combine the full table with the starcode exploded table based on the BC
-    full_table = full_table.merge(starcode_exploded[['BC', 'scBC']], on='BC', how='left')
-    # rename the coulmns and drop the old BC column
-    full_table.rename(columns={'BC': 'oldBC', 'scBC': 'BC'}, inplace=True)
-    full_table.drop(columns=['oldBC'], inplace=True)
-
-    return full_table
-
-
-def split_reads_into_single_and_multi_read_barcodes(full_table: pd.DataFrame)-> tuple:
-    """
-    Split reads into single-read and multi-read barcodes.
-
-    :param full_table: DataFrame containing the full table with fragments and barcodes
-
-    :return: Tuple containing the single-read and multi-read tables
-    """
-    logger.info("Splitting reads into single-read and multi-read barcodes")
-    barcode_counts = full_table['BC'].value_counts()
-    # get single read barcodes table
-    single_read_barcodes = barcode_counts[barcode_counts == 1].index
-    # get multi read barcodes table
-    multi_read_barcodes = barcode_counts[barcode_counts > 1].index
-
-    logger.info(f"Number of single-read barcodes: {len(single_read_barcodes)}")
-    logger.info(f"Number of multi-read barcodes: {len(multi_read_barcodes)}")
-
-    # create tables with single and multi read barcodes
-    temp_table_single = full_table[full_table['BC'].isin(single_read_barcodes)].copy()
-    temp_table_multi = full_table[full_table['BC'].isin(multi_read_barcodes)].copy()
-
-    # set the max read count, total read count, and mode for single read barcodes
-    temp_table_single['mCount'] = 1
-    temp_table_single['tCount'] = 1
-    temp_table_single['Mode'] = 'Amb'
-
-    return temp_table_single, temp_table_multi
-
-
-def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataFrame)-> tuple:
-    """
-    Split multi-read barcodes into clean and chimeric based on LUTnr.
-
-    :param temp_table_multi: DataFrame containing the multi-read barcodes
-
-    :return: Tuple containing the clean and chimeric multi-read tables
-    """
-    logger.info("Splitting multi-read barcodes into clean and chimeric")
-    temp_table_multi['mismatches'] = temp_table_multi['mismatches'].astype(float)
-
-    # Group by BC and LUTnr to compute statistics for every single pair
-    temp_table_multi_grouped = temp_table_multi.groupby(['BC', 'LUTnr']).agg({
-        'bitScore': 'mean',
-        'mismatches': 'median',
-        'Reads': 'count'
-    }).reset_index().rename(columns={'Reads': 'tCount'}) # tCount is the total count of reads for a given BC and LUTnr pair
-    
-    # save the temp_table_multi_grouped to a file
-    temp_table_multi_grouped.to_csv("temp_table_multi_grouped.csv", index=False)
-
-    # Identify clean and chimeric barcodes
-    bc_counts = temp_table_multi_grouped['BC'].value_counts()
-    # if their is only one BC for a given LUTnr, then it is a clean barcode
-    clean_barcodes = bc_counts[bc_counts == 1].index
-    # if their is more than one BC for a given LUTnr, then it is a chimeric barcode
-    chimeric_barcodes = bc_counts[bc_counts > 1].index
-
-    logger.info(f"Number of clean barcodes: {len(clean_barcodes)}")
-    logger.info(f"Number of chimeric barcodes: {len(chimeric_barcodes)}")
-
-    # create tables with clean and chimeric barcodes
-    temp_table_multi_clean = temp_table_multi_grouped[temp_table_multi_grouped['BC'].isin(clean_barcodes)].copy()
-    temp_table_multi_chimeric = temp_table_multi_grouped[temp_table_multi_grouped['BC'].isin(chimeric_barcodes)].copy()
-
-    # set the max read count, total read count, since we only have one barcode for this LUTnr and mode for clean barcode
-    temp_table_multi_clean['mCount'] = temp_table_multi_clean['tCount']
-    temp_table_multi_clean['Mode'] = 'Def'
-
-    return temp_table_multi_clean, temp_table_multi_chimeric
-
-def calculate_consensus_alignment(temp_table_multi_chimeric: pd.DataFrame)-> pd.DataFrame:
-    """
-    Calculate consensus alignment of chimeric barcodes. This means we are getting the barcode with the highest maximal read count for each LUTnr.
-
-    :param temp_table_multi_chimeric: DataFrame containing the chimeric multi-read barcodes
-
-    :return: DataFrame containing the consensus alignment for chimeric barcodes
-    """
-    logger.info("Calculating consensus alignment for chimeric barcodes")
-    # For every barcode LUTnr pair, set mCount to tCount
-    temp_table_multi_chimeric['mCount'] = temp_table_multi_chimeric['tCount']
-    # Sum the total count of reads for each barcode
-    temp_table_multi_chimeric['tCount'] = temp_table_multi_chimeric.groupby('BC')['tCount'].transform('sum')
-
-    # Select the LUTnr, barcode pair with the highest maximal read count
-    idx = temp_table_multi_chimeric.groupby('BC')['mCount'].idxmax()
-    temp_table_multi_consensus = temp_table_multi_chimeric.loc[idx].copy()
-    temp_table_multi_consensus['Mode'] = 'Def'
-
-    return temp_table_multi_consensus
-
-def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_consensus: pd.DataFrame, temp_table_single: pd.DataFrame)-> pd.DataFrame:
-    """
-    Combine the multi-read and single-read tables into the final output table.
-    """
-    logger.info("Combining tables to create final output")
-    # Combine clean and consensus tables
-    temp_table_multi_final = pd.concat([temp_table_multi_clean, temp_table_multi_consensus], ignore_index=True)
-    logger.info(f"Number of defintive barcodes: {len(temp_table_multi_final)}")
-    logger.info(f"Number of ambiguous barcodes: {len(temp_table_multi_consensus)}")
-    logger.info(f"Number of single-read barcodes: {len(temp_table_single)}")
-    output_table = pd.concat([temp_table_multi_final, temp_table_single], ignore_index=True)
-
-    return output_table
+    return log_entry
 
 def main():
     start_time = datetime.now()
-
+    threads = cpu_count()
+    
     # load config
     config = get_config("S4")
+    
+    # Create a logger
+    create_logger(config["log_dir"], "S4")
 
-    # read in the LUT file
-    lut_df = pd.read_csv(config["in_name_LUT"])
+    # Try to load the necessary data
+    try:
+        library_fragments = pd.read_csv(config["input_table"], dtype={7: str})
+        lut_dna = pd.read_csv(config["in_name_LUT"])
+    except Exception as e:
+        logger.error(f"Error loading data: {e}")
+        sys.exit(1)
+    # Try to load the sample inputs
+    try:
+        load_list = pd.read_csv(config["sample_inputs"], header=None)
+    except Exception as e:
+        logger.error(f"Error loading sample inputs: {e}")
+        sys.exit(1)
+    # check if the data directory exists
+    data_dir = config["sample_directory"]
+    output_dir = config["output_dir"]
+    # Create the output directory if it does not exist
+    if not os.path.isdir(output_dir):
+        os.makedirs(output_dir)
+    if not os.path.isdir(data_dir):
+        logger.error(f"Data directory {data_dir} does not exist")
+        sys.exit(1)
+    log_table = []
+    # get the settings for the barcode extraction
+    bbduk2_args_BC = config["bbduk2_args"]
 
-    # Load trimmed fragments and barcodes
-    reads_frag, reads_BC = load_frag_bc_reads(config["fragment_file"], config["barcode_file"])
+    # Analyze each tissue sample
+    for row in load_list.iterrows():
+        # Extract the file name from the first column
+        file_path = row[1][0]
+        log_entry = analyze_tissue(file_path, data_dir, output_dir, library_fragments, lut_dna, threads, bbduk2_args_BC)
+        if log_entry:
+            log_table.append(log_entry)
 
-    # Create BLAST database from LUT sequences
-    blast_db_prefix = make_customarray_reference_index(lut_df)
+    # Create a DataFrame from the log table
+    log_df = pd.DataFrame(log_table)
+    # Save the log table
+    log_df.to_csv(config["log_file_path"], index=False)
 
-    # Save unique fragments as FASTA file
-    fragments_unique_fa_name, unique_fragments = save_unique_fragments(reads_frag)
-
-    # Align against the library using BLAST
-    blast_out_file_name = align_against_library(fragments_unique_fa_name, blast_db_prefix)
-
-    # Read BLAST output
-    blast_df = read_blast_output(blast_out_file_name, unique_fragments, lut_df)
-
-    # Create full table with fragments and barcodes
-    full_table = create_full_table(blast_df, lut_df, reads_frag, reads_BC)
-
-    # Perform Starcode barcode reduction
-    starcode_exploded = starcode_based_barcode_reduction(config["barcode_file"])
-
-    # Replace barcodes with Starcode-reduced versions
-    full_table = replace_barcodes_with_starcode_versions(full_table, starcode_exploded)
-
-    # Split reads into single-read and multi-read barcodes
-    temp_table_single, temp_table_multi = split_reads_into_single_and_multi_read_barcodes(full_table)
-
-    # Split multi-read barcodes into clean and chimeric
-    temp_table_multi_clean, temp_table_multi_chimeric = split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi)
-
-    # Calculate consensus alignment for chimeric barcodes
-    temp_table_multi_consensus = calculate_consensus_alignment(temp_table_multi_chimeric)
-
-    # Combine all tables into final output
-    output_table = combine_tables(temp_table_multi_clean, temp_table_multi_consensus, temp_table_single)
-
-    # Save the output table
-    output_table.to_csv(config['out_name'], index=False)
-    logger.info(f"Output saved to {config['out_name']}")
-
-    # Print total analysis time
     logger.info(f"Total execution time: {datetime.now() - start_time}")
 
 if __name__ == "__main__":

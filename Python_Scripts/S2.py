@@ -32,15 +32,24 @@ from datetime import datetime
 from config import get_config
 
 
-# Initialize logging with custom format
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(message)s',
-    datefmt='%H:%M:%S',  # Only show hour, minute, and second
-    filemode='w',  # Overwrite log file
-    filename='Python_Scripts/Logs/S2.log'  # Log file name
+# function to create a global logger
+def create_logger(path: str, name: str) -> None:
+    """
+    Create a global logger with a custom format.
+    """
+    filename = path + name + ".log"
+    # Initialize logging with custom format
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(message)s',
+        datefmt='%H:%M:%S',  # Only show hour, minute, and second
+        filemode='w',  # Overwrite log file
+        filename=filename
+        
     )
-logger = logging.getLogger(__name__)
+    global logger  # Declare the logger as global
+    logger = logging.getLogger(name) # Create a logger
+    
 
 def run_command(command: list, description: str) -> tuple:
     """
@@ -73,6 +82,9 @@ def extract_summary(stdout: str) -> str:
 def main():
     start_time = datetime.now()
     config = get_config("S2")
+    
+    # Create a logger
+    create_logger(config["log_dir"], "S2")
 
     # File paths and threading info
     in_name_P5, in_name_P7 = config['in_name_P5'], config['in_name_P7']

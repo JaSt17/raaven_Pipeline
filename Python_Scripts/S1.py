@@ -15,16 +15,14 @@ Workflow:
 Inputs for the script are:
     - input_file: The path to the FASTA file
     - wSet: The path to the codon usage table
-    - 14_aa_overhangs: The overhangs to be added to the 14aa fragments
-    - 14_aa_G4S_overhangs: The overhangs to be added to the 14aa G4S fragments
-    - 14_aa_A5_overhangs: The overhangs to be added to the 14aa A5 fragments
-    - 22_aa_overhangs: The overhangs to be added to the 22aa fragments
+    - structure_dict: A dictionary with the structure as the key and the length and frequency as the values
+    - output_csv: The path to the output CSV file
     - output_name: The path to the output file
 
 Output of the script is:
     - A file containing all the generated fragments
 """
-
+import os
 from datetime import datetime
 from Bio import SeqIO
 from Bio.Seq import translate
@@ -33,7 +31,27 @@ import logging
 # local import
 from costum_functions import aatodna, load_wSet
 from config import get_config
-import copy
+import pandas as pd
+
+# function to create a global logger
+def create_logger(path: str, name: str) -> None:
+    """
+    Create a global logger with a custom format.
+    """
+    filename = path + name + ".log"
+    # ensure that the path exists
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    # Initialize logging with custom format
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(message)s',
+        datefmt='%H:%M:%S',  # Only show hour, minute, and second
+        filemode='w',  # Overwrite log file
+        filename=filename
+        
+    )
+    global logger  # Declare the logger as global
+    logger = logging.getLogger(name) # Create a logger
 
 
 def read_fasta(file_path: str) -> list:
@@ -45,11 +63,11 @@ def read_fasta(file_path: str) -> list:
     Note: Any additional notes about the sequence
     Number: The number of the sequence
     Name: The name of the sequence
-    AAfragment: The amino acid sequence of the sequence
+    Peptide: The amino acid sequence of the sequence
 
     :param file_path: The path to the FASTA file
 
-    :return: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, and AAfragment
+    :return: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, and Peptide
     """
     all_sequences = list(SeqIO.parse(file_path, "fasta"))
     aa_list = []
@@ -63,41 +81,43 @@ def read_fasta(file_path: str) -> list:
             "Class": this_id_split[0],
             "Family": this_id_split[1],
             "Strain": this_id_split[2],
-            "Note": this_id_split[3],
-            "Number": this_id_split[4],
+            "Number": int(this_id_split[4][1:]),
             "Name": this_id_split[5],
-            "AAfragment": str(this_aa)
+            "Peptide": str(this_aa)
         })
     return aa_list
 
 
-def make_all_frags(k: int, aa_list: list, length: int, frequency: int) -> list:
+def make_all_frags(k: int, aa_list: list, structure:str, length: int, frequency: int) -> list:
     """
     This function generates all possible fragments of a given length from a single amino acid sequence.
     
     :param k: The index of the amino acid sequence in the list
-    :param aa_list: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, and AAfragment
+    :param aa_list: A list of dictionaries with the keys Class, Family, Strain, Number, Name, and Peptide
     :param length: The length of the fragments
     :param frequency: The frequency at which to generate the fragments
     
-    :return: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, and AAfragment
+    :return: A list of dictionaries with the keys Class, Family, Strain, Number, Name, AAstart, AAstop, and Peptide
     """
     frag_list = []
-    this_full_aa = aa_list[k]["AAfragment"]
+    unique_frag = set()
+    this_full_aa = aa_list[k]["Peptide"]
     for l in range(0, (len(this_full_aa) - length) + 1, frequency):
             this_fragment = this_full_aa[l:l + length]
-            if this_fragment[0] != "M":  # Skipping fragments starting with 'M' (Start codon)
-                frag_list.append({
-                    "Class": aa_list[k]["Class"],
-                    "Family": aa_list[k]["Family"],
-                    "Strain": aa_list[k]["Strain"],
-                    "Note": aa_list[k]["Note"],
-                    "Number": aa_list[k]["Number"],
-                    "Name": aa_list[k]["Name"],
-                    "AAstart": l + 1,
-                    "AAstop": l + length,
-                    "AAfragment": this_fragment
-                })
+            if this_fragment not in unique_frag:
+                if this_fragment[0] != "M":  # Skipping fragments starting with 'M' (Start codon)
+                    frag_list.append({
+                        "Class": aa_list[k]["Class"],
+                        "Family": aa_list[k]["Family"],
+                        "Strain": aa_list[k]["Strain"],
+                        "Number": aa_list[k]["Number"],
+                        "Name": aa_list[k]["Name"],
+                        "AAstart": l,
+                        "AAend": l + length,
+                        "Structure": structure,
+                        "Peptide": this_fragment
+                    })
+                    unique_frag.add(this_fragment)
     return frag_list
 
 
@@ -106,16 +126,16 @@ def get_unique_fragments(frag_list: list) -> list:
     This function removes duplicate fragments from a list of fragments.
 
     Args:
-        frag_list (list): A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, and AAfragment
+        frag_list (list): A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, and Peptide
 
     Returns:
-        list: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, and AAfragment
+        list: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, and Peptide
     """
     unique_frag_list = []
     seen_fragments = set()
 
     for frag in frag_list:
-        fragment = frag["AAfragment"]
+        fragment = frag["Peptide"]
         if fragment not in seen_fragments:
             seen_fragments.add(fragment)
             unique_frag_list.append(frag)
@@ -123,16 +143,16 @@ def get_unique_fragments(frag_list: list) -> list:
     return unique_frag_list
 
 
-def generate_fragments(wSet: str, aa_list: dict, length: int, frequency:int = 1) -> list:
+def generate_fragments(wSet: str, aa_list: dict, structure:str, length: int, frequency:int = 1) -> list:
     """
     This function generates all possible fragments of a given length from a list of amino acid sequences.
 
-    :param aa_list: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, and AAfragment
-    :param min_length: The minimum length of the fragments
-    :param max_length: The maximum length of the fragments
-    :param frequency: The frequency at which to generate the fragments
-
-    :return: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, and AAfragment
+    Args:
+        wSet (str): The path to the codon usage table
+        aa_list (list): A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, and Peptide
+        structure (str): The structure of the fragments
+        length (int): The length of the fragments
+        frequency (int): The frequency at which to generate the fragments
     """
 
     frag_list = []
@@ -140,14 +160,14 @@ def generate_fragments(wSet: str, aa_list: dict, length: int, frequency:int = 1)
     # Use multiprocessing with Pool
     with Pool(cpu_count()) as p:
         # Map the function across all entries in aa_list
-        results = p.starmap(make_all_frags, [(k, aa_list, length, frequency) for k in range(len(aa_list))])
+        results = p.starmap(make_all_frags, [(k, aa_list, structure, length, frequency) for k in range(len(aa_list))])
     
     # Collect the results
     for result in results:
         frag_list.extend(result)
 
     # Filter out fragments containing 'X'
-    frag_list = [frag for frag in frag_list if not any(c in frag["AAfragment"] for c in "X")]
+    frag_list = [frag for frag in frag_list if not any(c in frag["Peptide"] for c in "X")]
 
     # get unique fragments
     frag_list = get_unique_fragments(frag_list)
@@ -162,8 +182,8 @@ def generate_fragments(wSet: str, aa_list: dict, length: int, frequency:int = 1)
     with Pool(cpu_count()) as p:
         frag_list = p.map(aatodna_parallel, args_list)
     
-    # Sort the fragments by 'AAfragment'
-    sorted_fragments = sorted(frag_list, key=lambda x: x["DNAfragment"])
+    # Sort the fragments by 'Peptide'
+    sorted_fragments = sorted(frag_list, key=lambda x: x["Sequence"])
     
     return sorted_fragments
 
@@ -174,7 +194,7 @@ def aatodna_parallel(args):
     """
     frag, wSet = args
     # Convert AA to DNA
-    frag["DNAfragment"] = aatodna(frag["AAfragment"], wSet)
+    frag["Sequence"] = aatodna(frag["Peptide"], wSet)
     return frag
 
 
@@ -183,70 +203,94 @@ def add_overhangs(fragments, five_prime, three_prime):
     """
     This function adds overhangs to the DNA fragments.
     
-    :param fragments: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, AAfragment, and DNAfragment
+    :param fragments: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, Peptide, and Sequence
     :param five_prime: The sequence of the 5' overhang
     :param three_prime: The sequence of the 3' overhang
     
-    :return: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, AAfragment, and DNAfragment
+    :return: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, Peptide, and Sequence
     """
     for frag in fragments:
-        frag["DNAfragment"] = f"{five_prime.lower()}{frag['DNAfragment']}{three_prime.lower()}"
+        frag["Sequence"] = f"{five_prime.lower()}{frag['Sequence']}{three_prime.lower()}"
     return fragments
+
+
+def create_LUTnr(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Create a lookup table (LUT) from a file with all fragment sequences.
+    
+    :param LUT_file: Path to the sequence file
+    
+    :return: LUT dataframe
+    """
+    LUT = df.copy()
+    # Change all sequences to uppercase
+    LUT['Sequence'] = LUT['Sequence'].str.upper()
+    # Drop duplicates
+    LUT = LUT.drop_duplicates()
+    # Create new columns for the LUTnr
+    LUT['LUTnr'] = ['seq_' + str(i+1) for i in range(len(LUT))]
+    
+    # Create new columns for the LUT 
+    # DNA sequnce length, start and end
+    LUT['start'] = LUT['AAstart']*3
+    LUT['end'] = LUT['AAend']*3
+    LUT['width'] = LUT['end'] - LUT['start']
+    
+    # Delete unnecessary columns
+    LUT = LUT.drop(columns=["Family", "Strain", "Number"])
+    
+    # Rename columns
+    LUT = LUT.rename(columns={"Class": "Category", "Name": "GeneName"})
+
+    return LUT
 
 
 # Main script
 def main():
     start_time = datetime.now()
 
-    # Initialize logging with custom format
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(message)s',
-        datefmt='%H:%M:%S',  # Only show hour, minute, and second
-        filemode='w',  # Overwrite log file
-        filename='Python_Scripts/Logs/S1.log'  # Log file name
-    )
-    logger = logging.getLogger(__name__)
-
     config = get_config("S1")
+    
+    # Create a logger
+    create_logger(config["log_dir"], "S1")
 
     # Read the input FASTA file
     aa_list = read_fasta(config["input_file"])
-
-    # Generate fragments as AA sequences
-    sorted_fragments_14aa = generate_fragments(config["wSet"], aa_list, 14, 1)
-    sorted_fragments_14aa_G4S = generate_fragments(config["wSet"], aa_list, 14, 3)
-    sorted_fragments_14aa_A5 = generate_fragments(config["wSet"], aa_list, 14, 3)
-    sorted_fragments_22aa = generate_fragments(config["wSet"], aa_list, 22, 3)
-
-    # Add overhangs for 14aa fragments
-    sorted_fragments_14aa = add_overhangs(sorted_fragments_14aa, config["14_aa_overhangs"][0], config["14_aa_overhangs"][1])
-    # Add overhangs for 14aa G4S fragments
-    sorted_fragments_14aa_G4S = add_overhangs(sorted_fragments_14aa_G4S, config["14_aa_G4S_overhangs"][0], config["14_aa_G4S_overhangs"][1])
-    # Add overhangs for 14aa A5 fragments
-    sorted_fragments_14aa_A5 = add_overhangs(sorted_fragments_14aa_A5, config["14_aa_A5_overhangs"][0], config["14_aa_A5_overhangs"][1])
-    # Add overhangs for 22aa fragments
-    sorted_fragments_22aa = add_overhangs(sorted_fragments_22aa, config["22_aa_overhangs"][0], config["22_aa_overhangs"][1])
-
-    logger.info(f"Number of 14aa fragments: {len(sorted_fragments_14aa)}")
-    logger.info(f"Number of 14aa G4S fragments: {len(sorted_fragments_14aa_G4S)}")
-    logger.info(f"Number of 14aa A5 fragments: {len(sorted_fragments_14aa_A5)}")
-    logger.info(f"Number of 22aa fragments: {len(sorted_fragments_22aa)}")
-
-    # Merge all separate fragment lists into one complete list
-    sorted_fragments = sorted_fragments_22aa + sorted_fragments_14aa + sorted_fragments_14aa_A5 + sorted_fragments_14aa_G4S
-    all_fragments = [frag['AAfragment'] for frag in sorted_fragments]
+    
+    # Generate fragments for each structure
+    sorted_fragments = []
+    for structure, info in config["structure_dict"].items():
+        # Generate fragments for the structure with the given length and frequency
+        temp_sorted_fragments = generate_fragments(config["wSet"], aa_list, structure, info["length"], info["freq"])
+        # add overhangs to the fragments
+        temp_sorted_fragments = add_overhangs(temp_sorted_fragments, info["overhangs"][0], info["overhangs"][1])
+        logger.info(f"Number of {structure} fragments: {len(temp_sorted_fragments)}")
+        sorted_fragments.extend(temp_sorted_fragments)
+    
+    # get all fragments
+    all_fragments = [frag['Peptide'] for frag in sorted_fragments]
     logger.info(f"Number of unique Amino Acid fragments: {len(set(set(all_fragments)))}")
-    logger.info(f"Number of written fragments: {len(all_fragments)}")
-
-    # Write the merged fragments to a file
+    logger.info(f"Number of total Amino Acid fragments: {len(all_fragments)}")
+    
+    # Create a Dataframe with the fragments and sort them by 'Structure', 'Number', and 'AAstart'
+    df = pd.DataFrame(sorted_fragments)
+    keys = ["Structure","Number","AAstart"]
+    # sort the dataframe by the keys
+    df = df.sort_values(by=keys)
+    
+    # Write the all fragments to a file
     with open(config["output_name"], "w") as f:
+        # write all Sequences in the df to the file
         f.write("Sequence\n")
-        for frag in sorted_fragments:
-            f.write(f"{frag['DNAfragment']}\n")
-    logger.info(f"Written fragments to file: {config['output_name']}")
-    logger.info(f"Execution time: {datetime.now() - start_time} seconds")
-
+        for seq in df["Sequence"]:
+            f.write(seq + "\n")
+            
+    LUT = create_LUTnr(df)
+    
+    # Write the LUT to a file
+    LUT.to_csv(config["output_csv"], index=False)
+    
+    logger.info(f"Total execution time: {datetime.now() - start_time}")
 
 if __name__ == "__main__":
     main()
