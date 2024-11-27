@@ -32,6 +32,13 @@ from config import get_config
 def create_logger(path: str, name: str) -> None:
     """
     Create a global logger with a custom format.
+    
+    Parameters:
+        path (str): The path to the log file
+        name (str): The name of the logger
+        
+    Returns:
+        None
     """
     filename = path + name + ".log"
     # Initialize logging with custom format
@@ -77,7 +84,7 @@ def main():
     library_barcodes["RNAcount"] = library_barcodes["tCount"]
     
     # reorder columns
-    library_barcodes = library_barcodes[['Category', 'GeneName', 'LUTnr',  'BC', 'AAstart', 'AAend', 'Structure', 'Peptide',
+    library_barcodes = library_barcodes[['Category', 'LUTnr',  'BC', 'AAstart', 'AAend', 'Structure', 'Peptide',
                                         'start', 'end', 'width', 'Sequence', 'bitScore',
                                         'mismatches', 'tCount', 'mCount', 'RNAcount', 'Mode']]
     

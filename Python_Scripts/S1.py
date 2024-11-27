@@ -37,6 +37,13 @@ import pandas as pd
 def create_logger(path: str, name: str) -> None:
     """
     Create a global logger with a custom format.
+    
+    Parameters:
+        path (str): The path to the log file
+        name (str): The name of the logger
+        
+    Returns:
+        None
     """
     filename = path + name + ".log"
     # ensure that the path exists

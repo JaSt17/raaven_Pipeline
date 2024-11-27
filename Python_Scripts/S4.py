@@ -44,6 +44,13 @@ from config import get_config
 def create_logger(path: str, name: str) -> None:
     """
     Create a global logger with a custom format.
+    
+    Parameters:
+        path (str): The path to the log file
+        name (str): The name of the logger
+        
+    Returns:
+        None
     """
     filename = path + name + ".log"
     # Initialize logging with custom format
@@ -61,11 +68,14 @@ def create_logger(path: str, name: str) -> None:
 
 def run_command(command, description: str, shell=False, verbose=False):
     """
-    Runs a subprocess command and returns stdout, stderr.
-
-    :param command: Command list to execute or string if shell=True
-    :param description: Description of the command for logging
-    :param shell: Whether to execute the command through the shell
+    Runs a subprocess command and returns stdout, stderr, and error status.
+    
+    Parameters:
+        command (list): The command to run
+        description (str): A description of the command
+        
+    Returns:
+        tuple: The stdout and stderr of the command
     """
     if verbose:
         logger.info(f"Running {description}")
@@ -91,12 +101,17 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
     """
     Analyze a single tissue sample based on its index in the load list.
 
-    :param file_path: path to the fastq file
-    :param data_dir: Directory containing the fastq files
-    :param library_fragments: DataFrame loaded from multipleContfragmentsComplete.pkl
-    :param lut_dna: DataFrame loaded from LUTdna.pkl
-    :param threads: Number of threads to use
-    :return: Dictionary containing log information for the sample
+    Parameters:
+        file_path (str): The path to the FASTQ file
+        data_dir (str): The directory containing the FASTQ files
+        out_dir (str): The directory to save the found fragments
+        library_fragments (pd.DataFrame): The library fragments
+        lut_dna (pd.DataFrame): The LUT data
+        threads (int): The number of threads to use
+        bbduk2_args (list): The arguments for bbduk2.sh
+        
+    Returns:
+        dict: A log entry with the results
     """
     log_entry = {}
     

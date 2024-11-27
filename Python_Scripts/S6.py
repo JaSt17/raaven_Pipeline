@@ -50,6 +50,13 @@ from config import get_config
 def create_logger(path: str, name: str) -> None:
     """
     Create a global logger with a custom format.
+    
+    Parameters:
+        path (str): The path to the log file
+        name (str): The name of the logger
+        
+    Returns:
+        None
     """
     filename = path + name + ".log"
     # Initialize logging with custom format
@@ -132,14 +139,9 @@ def get_ref_sequence_length_df(file_path:str) -> pd.DataFrame:
     seq = [str(seq_record.seq).strip() for seq_record in seqs_original]
     # get sequence ids
     ids = [seq_record.description for seq_record in seqs_original]
-    # get sequence categories
-    categories = [id.split(",")[0] for id in ids]
-    # get the GeneName
-    gene_names = [id.split(",")[5] for id in ids]
     
     # create a DataFrame with sreference sequence ids and lengths
-    ref_seq_len_df = pd.DataFrame({"Category": categories,
-                                    "GeneName": gene_names,
+    ref_seq_len_df = pd.DataFrame({"Category": ids,
                                     "seqlength": [len(s) for s in seq]})
     
     return ref_seq_len_df
@@ -184,7 +186,6 @@ def create_subsets(df: pd.DataFrame, subsets: dict) -> pd.DataFrame:
     df_list = [df]
     for subset_name, conditions in subsets.items():
         if conditions[0] == 'exclude':
-            # exclude the specified groups
             temp_df = df[~df['Group'].isin(conditions[1:])].copy()
             temp_df.loc[:, 'Group'] = subset_name
             df_list.append(temp_df)
@@ -308,7 +309,7 @@ def main():
     logger.info("Getting reference sequence lengths")
     ref_seq_len_df = get_ref_sequence_length_df(config["original_seq_file"])
     # add the reference sequence lengths to the combined data with the reference_name as the key
-    combined_data = pd.merge(combined_data, ref_seq_len_df, how="left", on=["Category", "GeneName"])
+    combined_data = pd.merge(combined_data, ref_seq_len_df, how="left", on="Category")
     
     logger.info("Creating Subsets")
     # Create subsets based on the specified conditions
@@ -320,7 +321,7 @@ def main():
     
     logger.info("Combining fragment information")
     # Define the key columns for the groupby operation
-    key_cols = ["Group", "Category", "GeneName", "AAstart", "AAend", "Structure", "Peptide", "start", "end", "width", "seqlength", "Sequence"]
+    key_cols = ["Group", "Category", "AAstart", "AAend", "Structure", "Peptide", "start", "end", "width", "seqlength", "Sequence"]
     # Combine information of identical fragments in a DataFrame
     combined_data = combine_information_of_identical_fragments(combined_data, key_cols)
     

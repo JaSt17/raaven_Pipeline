@@ -11,8 +11,8 @@ Workflow:
     - Save the paired barcodes and fragments in separate files
 
 Inputs for the script:
-    - in_name_P5: Path to the P5 sequencing file
-    - in_name_P7: Path to the P7 sequencing file
+    - in_name_barcode: Path to the barcode sequencing file
+    - in_name_fragment: Path to the P7 sequencing file
     - out_dir: Output directory path
     - out_name: Output files name
     
@@ -36,6 +36,13 @@ from config import get_config
 def create_logger(path: str, name: str) -> None:
     """
     Create a global logger with a custom format.
+    
+    Parameters:
+        path (str): The path to the log file
+        name (str): The name of the logger
+        
+    Returns:
+        None
     """
     filename = path + name + ".log"
     # Initialize logging with custom format
@@ -55,8 +62,12 @@ def run_command(command: list, description: str) -> tuple:
     """
     Runs a subprocess command and returns stdout, stderr, and error status.
     
-    :param command: Command list to execute
-    :param description: Description of the command for logging
+    Parameters:
+        command (list): The command to run
+        description (str): A description of the command
+        
+    Returns:
+        tuple: The stdout and stderr of the command
     """
     logger.info(f"Running {description}")
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
@@ -71,7 +82,11 @@ def extract_summary(stdout: str) -> str:
     """
     Extracts the summary from the stdout of a command.
     
-    :param stdout: stdout of the command
+    Parameters:
+        stdout (str): The stdout of a command
+    
+    Returns:
+        str: The summary
     """
     match = re.search(r"(Input:.*?Result:.*?bases\s*\(\d+\.\d+%\))", stdout, re.DOTALL)
     if match:
@@ -87,7 +102,7 @@ def main():
     create_logger(config["log_dir"], "S2")
 
     # File paths and threading info
-    in_name_P5, in_name_P7 = config['in_name_P5'], config['in_name_P7']
+    in_name_barcode, in_name_fragment = config['in_name_barcode'], config['in_name_fragment']
     out_dir, out_name = config['out_dir'], config['out_name']
     threads = os.cpu_count()
 
@@ -95,7 +110,7 @@ def main():
     # create a temporary file for the barcode extraction
     out_name_P5 = tempfile.NamedTemporaryFile(prefix="BC_", suffix=".fastq.gz", delete=False).name
     # extract the configuration for the barcode extraction and add the input and output files and the number of threads
-    bbduk2_args_BC = config['bbduk2_args_BC'] + [f"threads={threads}", f"in={in_name_P5}", f"out={out_name_P5}"]
+    bbduk2_args_BC = config['bbduk2_args_BC'] + [f"threads={threads}", f"in={in_name_barcode}", f"out={out_name_P5}"]
     # run bbduk2 with the configuration
     _, stderr = run_command(["bbmap/bbduk2.sh"] + bbduk2_args_BC, "bbduk2 barcode extraction")
     
@@ -104,13 +119,13 @@ def main():
     if summary:
         logger.info(f"bbduk2 barcode extraction summary:\n{summary}")
     # set the input file for the fragment extraction to the output file of the barcode extraction
-    in_name_P5 = out_name_P5
+    in_name_barcode = out_name_P5
 
     # BBDuk extraction for fragments
     # create a temporary file for the fragment extraction
     out_name_P7 = tempfile.NamedTemporaryFile(prefix="P7_", suffix=".fastq.gz", delete=False).name
     # extract the configuration for the fragment extraction and add the input and output files and the number of threads
-    bbduk2_args_Frag = config['bbduk2_args_Frag'] + [f"threads={threads}", f"in={in_name_P7}", f"out={out_name_P7}"]
+    bbduk2_args_Frag = config['bbduk2_args_Frag'] + [f"threads={threads}", f"in={in_name_fragment}", f"out={out_name_P7}"]
     # run bbduk2 with the configuration
     _, stderr = run_command(["bbmap/bbduk2.sh"] + bbduk2_args_Frag, "bbduk2 fragment extraction")
     
@@ -119,7 +134,7 @@ def main():
     if summary:
         logger.info(f"bbduk2 fragment extraction summary:\n{summary}")
     # set the input file for the pairing to the output file of the fragment extraction
-    in_name_P7 = out_name_P7
+    in_name_fragment = out_name_P7
 
     # create a dictionary with the temporary output file names for the paired and unpaired barcodes and fragments
     paired_outs = {
@@ -130,7 +145,7 @@ def main():
     }
     pairfq_args = [
         "pairfq", "makepairs", "-c", "gzip",
-        "-f", in_name_P5, "-r", in_name_P7,
+        "-f", in_name_barcode, "-r", in_name_fragment,
         "-fp", paired_outs["P5_paired"], "-rp", paired_outs["P7_paired"],
         "-fs", paired_outs["P5_singlet"], "-rs", paired_outs["P7_singlet"], "--stats"
     ]
@@ -148,7 +163,7 @@ def main():
     shutil.move(paired_outs["P7_paired"], os.path.join(out_dir, f"fragment_{out_name}.fastq.gz"))
 
     # Cleanup
-    for file_path in [in_name_P5, in_name_P7] + list(paired_outs.values()):
+    for file_path in [in_name_barcode, in_name_fragment] + list(paired_outs.values()):
         try:
             os.remove(file_path)
         except OSError as e:

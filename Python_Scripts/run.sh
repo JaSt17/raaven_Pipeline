@@ -20,6 +20,4 @@ conda activate python_pipeline
 ./Python_Scripts/S1.py
 ./Python_Scripts/S2.py
 ./Python_Scripts/S3.py
-./Python_Scripts/S4.py
 ./Python_Scripts/S5.py
-./Python_Scripts/S6.py

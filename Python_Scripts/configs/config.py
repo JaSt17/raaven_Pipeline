@@ -1,21 +1,27 @@
 """ This file contains the config dictionary that are used to store the configuration parameters for the pipeline. """
 
 # Define the data directory where the input and output files are stored
-data_dir = "raav-60/p005"
+data_dir = "Brave"
 # Define the directory where the logs are stored
 log_dir = data_dir + "/logs/"
 
 # configuration for Step 1 in the pipeline
 config_S1 = {
     # input file containing the DNA sequences to create the library from
-    "input_file": data_dir + "/input/reference_seq.fasta",
+    "input_file": data_dir + "/input/DNA-lib_RetrogradeTransport.fasta",
     # wSet file containing the hsa codon usage table
     "wSet": "input/wSet.csv",
     # dictionary containing the information about the different structures with
     # their name as the key and then the length, frequency, and overhangs as the values
     "structure_dict": {
-        "7aa": {"length": 7, "freq": 1,
-                "overhangs": ["AACCTCCAGAGAGGCAACGCT", "GCCAGACAAGCAGCTACCGCA"]}},
+        "14aa": {"length": 14, "freq": 1,
+                "overhangs": ["AACCTCCAGAGAGGCAACGCT", "GCCAGACAAGCAGCTACCGCA"]},
+        "14aaG4S": {"length": 14, "freq": 3,
+                    "overhangs": ["AACCTCCAGAGAGGCAACGGAGGCGGAGGAAGT", "GGAGGCGGCGGAAGCAGACAAGCAGCTACCGCA"]},
+        "14aaA5": {"length": 14, "freq": 3,
+                    "overhangs": ["AACCTCCAGAGAGGCAACGCTGCTGCAGCAGCC", "GCAGCTGCAGCTGCCAGACAAGCAGCTACCGCA"]},
+        "22aa": {"length": 22, "freq": 3,
+                    "overhangs": ["AACCTCCAGAGAGGCAACGCT", "GCCAGACAAGCAGCTACCGCA"]}},
     # output file names for the LUT csv and the list of all inserted fragments
     "output_csv": data_dir + "/LUT.csv",
     "output_name": data_dir + "/SortedFragments.txt",
@@ -24,15 +30,15 @@ config_S1 = {
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_barcode": data_dir + "/fastq_files/p005_R1.fastq.gz",
-    "in_name_fragment": data_dir + "/fastq_files/p005_R2.fastq.gz",
+    "in_name_P5": data_dir + "/fastq_files/DNA_pscAAVlib_1.fastq.gz",
+    "in_name_P7": data_dir + "/fastq_files/DNA_pscAAVlib_2.fastq.gz",
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": data_dir + "/barcode_fragment",
-    "out_name": "p005",
+    "out_name": "DNA_pscAAVlib_1",
     # arguments for the bbduk2 tool to extract the barcode and fragment sequences
     "bbduk2_args_BC" : [
         "k=18",
-        "hammingdistance=2",
+        "hammingdistance=3",
         "overwrite=true",
         "findbestmatch=t",
         "rcomp=f",
@@ -42,12 +48,12 @@ config_S2 = {
         "minlength=18",
         "maxlength=22",
         "ordered=t",
-        "lliteral=TGAACTTGGGACTTCG",
-        "rliteral=ATAACTTCGTATAATG",
+        "lliteral=GGCCTAGCGGCCGCTTTACTT",
+        "rliteral=ATAACTTCGTATAATGTATGC",
     ],
     "bbduk2_args_Frag" : [
         "k=16",
-        "hammingdistance=2",
+        "hammingdistance=3",
         "overwrite=true",
         "findbestmatch=t",
         "maskmiddle=t",
@@ -55,11 +61,11 @@ config_S2 = {
         "qhdist=1",
         "minavgquality=0",
         "maxns=0",
-        "minlength=20",
-        "maxlength=22",
+        "minlength=38",
+        "maxlength=78",
         "ordered=t",
-        "lliteral=CCAGAGAGGCAACGCT",
-        "rliteral=GCCAGACAAGCAGCTA",
+        "lliteral=ACCAACCTCCAGAGAGGCAACG",
+        "rliteral=CAGACAAGCAGCTACCGCAGAT",
     ],
     "log_dir": log_dir,
 }

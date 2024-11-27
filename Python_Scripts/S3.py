@@ -53,6 +53,13 @@ from config import get_config
 def create_logger(path: str, name: str) -> None:
     """
     Create a global logger with a custom format.
+    
+    Parameters:
+        path (str): The path to the log file
+        name (str): The name of the logger
+        
+    Returns:
+        None
     """
     filename = path + name + ".log"
     # Initialize logging with custom format
@@ -72,8 +79,12 @@ def run_command(command: list, description: str) -> tuple:
     """
     Runs a subprocess command and returns stdout, stderr, and error status.
     
-    :param command: Command list to execute
-    :param description: Description of the command for logging
+    Parameters: 
+        command (list): The command to run
+        description (str): A description of the command
+    
+    Returns:   
+        tuple: stdout and stderr
     """
     logger.info(f"Running {description}")
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
@@ -90,10 +101,12 @@ def load_frag_bc_reads(fragments_file: str, barcodes_file: str)-> tuple:
     """
     Load the fragments and barcodes from FASTQ files.
 
-    :param fragments_file: Path to the fragments FASTQ file
-    :param barcodes_file: Path to the barcodes FASTQ file
-
-    :return: A tuple containing the fragments and barcodes as lists of SeqRecords
+    Parameters:
+        fragments_file (str): Path to the fragments FASTQ file
+        barcodes_file (str): Path to the barcodes FASTQ file
+        
+    Returns:
+        tuple: List of fragments as SeqRecords and List of barcodes as SeqRecords
     """
     logger.info("Reading fragments and barcodes")
     with gzip.open(fragments_file, "rt") as handle:
@@ -112,9 +125,11 @@ def make_customarray_reference_index(lut_df: pd.DataFrame)-> str:
     """
     Create a BLAST database from LUT sequences.
 
-    :param lut_df: DataFrame containing the LUT sequences
+    Parameters:
+        lut_df (pd.DataFrame): DataFrame containing the LUT sequences
 
-    :return: Path to the BLAST database prefix
+    Returns:
+        str: Path to the BLAST database prefix
     """
     logger.info("Creating BLAST database from LUT sequences")
     lut_fa = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".fa")
@@ -141,9 +156,11 @@ def save_unique_fragments(reads_frag: list)-> tuple:
     """
     Save unique all found unique fragments from the library to a FASTA file.
 
-    :param reads_frag: List of fragments as SeqRecords
-
-    :return: Path to the FASTA file containing unique fragments and a set of unique sequences
+    Parameters:
+        reads_frag (list): List of fragments as SeqRecords
+        
+    Returns:
+        tuple: Path to the FASTA file containing unique fragments and the unique fragments
     """
     logger.info("Saving unique fragments to FASTA file")
     unique_fragments = set(str(rec.seq) for rec in reads_frag)
@@ -163,10 +180,12 @@ def align_against_library(fragments_unique_fa_name: str, blast_db_prefix: str)->
     """
     Align unique fragments against the LUT database using BLASTn. BLAST output is saved to a file.
 
-    :param fragments_unique_fa_name: Path to the FASTA file containing unique fragments
-    :param blast_db_prefix: Path to the BLAST database prefix
-
-    :return: Path to the BLAST output file
+    Parameters:
+        fragments_unique_fa_name (str): Path to the FASTA file containing unique fragments
+        blast_db_prefix (str): Path to the BLAST database prefix
+    
+    Returns:
+        str: Path to the BLAST output file
     """
     # Get the number of threads
     num_threads = multiprocessing.cpu_count()
@@ -194,6 +213,14 @@ def align_against_library(fragments_unique_fa_name: str, blast_db_prefix: str)->
 def read_blast_output(blast_out_file_name: str, unique_fragments: set, lut_df: pd.DataFrame)-> pd.DataFrame:
     """
     Read the BLAST output into a DataFrame and map every read to its corresponding LUTnr.
+    
+    Parameters:
+        blast_out_file_name (str): Path to the BLAST output file
+        unique_fragments (set): Set of unique fragments
+        lut_df (pd.DataFrame): DataFrame containing the LUT sequences
+    
+    Returns:
+        pd.DataFrame: DataFrame containing the BLAST results
     """
     logger.info("Reading BLAST output")
     blast_columns = ["Reads", "Sequence", "identity", "alignmentLength", "mismatches",
@@ -214,10 +241,14 @@ def create_full_table(blast_df: pd.DataFrame, lut_df: pd.DataFrame, reads_frag: 
     """
     Create a full table of all fragments that matched the LUT with their BLASTn results. For every fragment, only the top hit is kept.
     
-    :param blast_df: DataFrame containing the BLAST results
-    :param lut_df: DataFrame containing the LUT sequences
-    :param reads_frag: List of fragments as SeqRecords
-    :param reads_BC: List of barcodes as SeqRecords
+    Parameters:
+        blast_df (pd.DataFrame): DataFrame containing the BLAST results
+        lut_df (pd.DataFrame): DataFrame containing the LUT sequences
+        reads_frag (list): List of fragments as SeqRecords
+        reads_BC (list): List of barcodes as SeqRecords
+    
+    Returns:
+        pd.DataFrame: DataFrame containing the full table with fragments and barcodes
     """
     logger.info("Creating full table with fragments and barcodes")
     # Merge BLAST results with LUT data
@@ -254,9 +285,11 @@ def starcode_based_barcode_reduction(barcodes_file: str)-> pd.DataFrame:
     """
     Perform barcode reduction using Starcode clustering.
 
-    :param barcodes_file: Path to the barcode file
-
-    :return: DataFrame containing the Starcode-reduced barcodes
+    Parameters:
+        barcodes_file (str): Path to the barcodes FASTQ file
+        
+    Returns:
+        pd.DataFrame: DataFrame containing the Starcode-reduced barcodes
     """
     logger.info("Running Starcode clustering")
     # get the number of threads
@@ -280,10 +313,12 @@ def replace_barcodes_with_starcode_versions(full_table: pd.DataFrame, starcode_e
     """
     Replace barcodes in the full table with their Starcode-reduced versions.
 
-    :param full_table: DataFrame containing the full table with fragments and barcodes
-    :param starcode_exploded: DataFrame containing the Starcode-reduced barcodes
-
-    :return: DataFrame containing the full table with Starcode-reduced barcodes
+    Parameters:
+        full_table (pd.DataFrame): DataFrame containing the full table with fragments and barcodes
+        starcode_exploded (pd.DataFrame): DataFrame containing the Starcode-reduced barcodes
+        
+    Returns:
+        pd.DataFrame: DataFrame containing the full table with Starcode-reduced barcodes
     """
     logger.info("Replacing barcodes with Starcode-reduced versions")
     # combine the full table with the starcode exploded table based on the BC
@@ -299,9 +334,11 @@ def split_reads_into_single_and_multi_read_barcodes(full_table: pd.DataFrame)-> 
     """
     Split reads into single-read and multi-read barcodes.
 
-    :param full_table: DataFrame containing the full table with fragments and barcodes
-
-    :return: Tuple containing the single-read and multi-read tables
+    Parameters:
+        full_table (pd.DataFrame): DataFrame containing the full table with fragments and barcodes
+        
+    Returns:
+        tuple: DataFrames containing the single-read and multi-read barcodes
     """
     logger.info("Splitting reads into single-read and multi-read barcodes")
     barcode_counts = full_table['BC'].value_counts()
@@ -329,9 +366,11 @@ def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataF
     """
     Split multi-read barcodes into clean and chimeric based on LUTnr.
 
-    :param temp_table_multi: DataFrame containing the multi-read barcodes
-
-    :return: Tuple containing the clean and chimeric multi-read tables
+    Parameters:
+        temp_table_multi (pd.DataFrame): DataFrame containing the multi-read barcodes
+        
+    Returns:
+        tuple: DataFrames containing the clean and chimeric multi-read barcodes
     """
     logger.info("Splitting multi-read barcodes into clean and chimeric")
     temp_table_multi['mismatches'] = temp_table_multi['mismatches'].astype(float)
@@ -360,13 +399,16 @@ def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataF
 
     return temp_table_multi_clean, temp_table_multi_chimeric
 
+
 def calculate_consensus_alignment(temp_table_multi_chimeric: pd.DataFrame)-> pd.DataFrame:
     """
     Calculate consensus alignment of chimeric barcodes. This means we are getting the barcode with the highest maximal read count for each LUTnr.
 
-    :param temp_table_multi_chimeric: DataFrame containing the chimeric multi-read barcodes
-
-    :return: DataFrame containing the consensus alignment for chimeric barcodes
+    Parameters:
+        temp_table_multi_chimeric (pd.DataFrame): DataFrame containing the chimeric multi-read barcodes
+    
+    Returns:
+        pd.DataFrame: DataFrame containing the consensus alignment for chimeric barcodes
     """
     logger.info("Calculating consensus alignment for chimeric barcodes")
     # For every barcode LUTnr pair, set mCount to tCount
@@ -381,9 +423,18 @@ def calculate_consensus_alignment(temp_table_multi_chimeric: pd.DataFrame)-> pd.
 
     return temp_table_multi_consensus
 
+
 def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_consensus: pd.DataFrame, temp_table_single: pd.DataFrame)-> pd.DataFrame:
     """
     Combine the multi-read and single-read tables into the final output table.
+    
+    Parameters:
+        temp_table_multi_clean (pd.DataFrame): DataFrame containing the clean multi-read barcodes
+        temp_table_multi_consensus (pd.DataFrame): DataFrame containing the consensus alignment for chimeric barcodes
+        temp_table_single (pd.DataFrame): DataFrame containing the single-read barcodes
+        
+    Returns:
+        pd.DataFrame: DataFrame containing the final output table
     """
     logger.info("Combining tables to create final output")
     # Combine clean and consensus tables
@@ -395,6 +446,7 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_consen
     output_table = pd.concat([temp_table_multi_final, temp_table_single], ignore_index=True)
 
     return output_table
+
 
 def main():
     start_time = datetime.now()
