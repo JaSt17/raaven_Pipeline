@@ -56,18 +56,13 @@ def create_logger(path: str, name: str) -> None:
 
 def read_fasta(file_path: str) -> list:
     """
-    This function reads a FASTA file and returns a list of dictionaries with the following keys
-    Class: The class of the sequence
-    Family: The family of the sequence
-    Strain: The strain of the sequence
-    Note: Any additional notes about the sequence
-    Number: The number of the sequence
-    Name: The name of the sequence
-    Peptide: The amino acid sequence of the sequence
+    This function reads a FASTA file with the reference sequences and returns a list information about the sequences.
 
-    :param file_path: The path to the FASTA file
+    Parameters:
+        file_path (str): The path to the FASTA file
 
-    :return: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, and Peptide
+    Returns:
+        list: A list of dictionaries with the keys ID and Peptide
     """
     all_sequences = list(SeqIO.parse(file_path, "fasta"))
     aa_list = []
@@ -76,15 +71,12 @@ def read_fasta(file_path: str) -> list:
         this_seq = record.seq
         # Translate the DNA sequence to amino acids using the standard genetic code
         this_aa = translate(this_seq, table=1)
-        this_id_split = this_id.split(sep=",")
+        # change all '*' to 'm' (Met) in the amino acid sequence
+        this_aa = str(this_aa).replace("*", "M")
         aa_list.append({
-            "Class": this_id_split[0],
-            "Family": this_id_split[1],
-            "Strain": this_id_split[2],
-            "Number": int(this_id_split[4][1:]),
-            "Name": this_id_split[5],
-            "Peptide": str(this_aa)
-        })
+                "ID": this_id,
+                "Peptide": str(this_aa)
+            })
     return aa_list
 
 
@@ -92,12 +84,15 @@ def make_all_frags(k: int, aa_list: list, structure:str, length: int, frequency:
     """
     This function generates all possible fragments of a given length from a single amino acid sequence.
     
-    :param k: The index of the amino acid sequence in the list
-    :param aa_list: A list of dictionaries with the keys Class, Family, Strain, Number, Name, and Peptide
-    :param length: The length of the fragments
-    :param frequency: The frequency at which to generate the fragments
-    
-    :return: A list of dictionaries with the keys Class, Family, Strain, Number, Name, AAstart, AAstop, and Peptide
+    Parameters:
+        k (int): The index of the amino acid sequence in the aa_list
+        aa_list (list): A list of dictionaries with the keys ID and Peptide
+        structure (str): The structure of the fragments
+        length (int): The length of the fragments
+        frequency (int): The frequency at which to generate the fragments
+        
+    Returns:
+        list: A list of dictionaries with the keys ID, Peptide, AAstart, AAstop
     """
     frag_list = []
     unique_frag = set()
@@ -107,11 +102,7 @@ def make_all_frags(k: int, aa_list: list, structure:str, length: int, frequency:
             if this_fragment not in unique_frag:
                 if this_fragment[0] != "M":  # Skipping fragments starting with 'M' (Start codon)
                     frag_list.append({
-                        "Class": aa_list[k]["Class"],
-                        "Family": aa_list[k]["Family"],
-                        "Strain": aa_list[k]["Strain"],
-                        "Number": aa_list[k]["Number"],
-                        "Name": aa_list[k]["Name"],
+                        "ID": aa_list[k]["ID"],
                         "AAstart": l,
                         "AAend": l + length,
                         "Structure": structure,
@@ -125,11 +116,11 @@ def get_unique_fragments(frag_list: list) -> list:
     """
     This function removes duplicate fragments from a list of fragments.
 
-    Args:
-        frag_list (list): A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, and Peptide
-
+    Parameters:
+        frag_list (list): A list of dictionaries with the keys ID, Peptide, AAstart, and AAstop
+        
     Returns:
-        list: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, and Peptide
+        list: A list of dictionaries with the keys ID, Peptide, AAstart, and AA
     """
     unique_frag_list = []
     seen_fragments = set()
@@ -147,12 +138,15 @@ def generate_fragments(wSet: str, aa_list: dict, structure:str, length: int, fre
     """
     This function generates all possible fragments of a given length from a list of amino acid sequences.
 
-    Args:
+    Parameters:
         wSet (str): The path to the codon usage table
-        aa_list (list): A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, and Peptide
+        aa_list (list): A list of dictionaries with the keys ID and Peptide
         structure (str): The structure of the fragments
         length (int): The length of the fragments
         frequency (int): The frequency at which to generate the fragments
+        
+    Returns:
+        list: A list of dictionaries with the keys ID, Peptide, AAstart, AAstop
     """
 
     frag_list = []
@@ -188,9 +182,10 @@ def generate_fragments(wSet: str, aa_list: dict, structure:str, length: int, fre
     return sorted_fragments
 
 
-def aatodna_parallel(args):
+def aatodna_parallel(args: list) -> dict:
     """
     Wrapper function to convert an amino acid fragment to a DNA fragment using multiprocessing.
+    Transform the amino acid sequence to a DNA sequence optimized for human codon usage.
     """
     frag, wSet = args
     # Convert AA to DNA
@@ -199,15 +194,17 @@ def aatodna_parallel(args):
 
 
 # Function to add overhangs to the fragments
-def add_overhangs(fragments, five_prime, three_prime):
+def add_overhangs(fragments: list, five_prime: str, three_prime: str):
     """
     This function adds overhangs to the DNA fragments.
     
-    :param fragments: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, Peptide, and Sequence
-    :param five_prime: The sequence of the 5' overhang
-    :param three_prime: The sequence of the 3' overhang
-    
-    :return: A list of dictionaries with the keys Class, Family, Strain, Note, Number, Name, AAstart, AAstop, Peptide, and Sequence
+    Parameters:
+        fragments (list): A list of dictionaries with the keys ID, Peptide, AAstart, AAstop, and Sequence
+        five_prime (str): The 5' overhang sequence
+        three_prime (str): The 3' overhang sequence
+        
+    Returns:
+        list: A list of dictionaries with the keys ID, Peptide, AAstart, AAstop, and Sequence
     """
     for frag in fragments:
         frag["Sequence"] = f"{five_prime.lower()}{frag['Sequence']}{three_prime.lower()}"
@@ -218,9 +215,11 @@ def create_LUTnr(df: pd.DataFrame) -> pd.DataFrame:
     """
     Create a lookup table (LUT) from a file with all fragment sequences.
     
-    :param LUT_file: Path to the sequence file
-    
-    :return: LUT dataframe
+    Parameters:
+        df (pd.DataFrame): A DataFrame with the columns ID, Peptide, AAstart, AAstop, and Sequence
+        
+    Returns:
+        pd.DataFrame: A DataFrame with the columns LUTnr, ID, Peptide, AAstart, AAstop, and Sequence
     """
     LUT = df.copy()
     # Change all sequences to uppercase
@@ -236,11 +235,8 @@ def create_LUTnr(df: pd.DataFrame) -> pd.DataFrame:
     LUT['end'] = LUT['AAend']*3
     LUT['width'] = LUT['end'] - LUT['start']
     
-    # Delete unnecessary columns
-    LUT = LUT.drop(columns=["Family", "Strain", "Number"])
-    
     # Rename columns
-    LUT = LUT.rename(columns={"Class": "Category", "Name": "GeneName"})
+    LUT = LUT.rename(columns={"ID": "Category"})
 
     return LUT
 
@@ -272,9 +268,9 @@ def main():
     logger.info(f"Number of unique Amino Acid fragments: {len(set(set(all_fragments)))}")
     logger.info(f"Number of total Amino Acid fragments: {len(all_fragments)}")
     
-    # Create a Dataframe with the fragments and sort them by 'Structure', 'Number', and 'AAstart'
+    # Create a Dataframe with the fragments and sort them by 'Structure', and 'AAstart'
     df = pd.DataFrame(sorted_fragments)
-    keys = ["Structure","Number","AAstart"]
+    keys = ["Structure","AAstart"]
     # sort the dataframe by the keys
     df = df.sort_values(by=keys)
     
