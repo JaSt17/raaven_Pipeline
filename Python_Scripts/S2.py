@@ -45,6 +45,8 @@ def create_logger(path: str, name: str) -> None:
         None
     """
     filename = path + name + ".log"
+    # ensure that the path exists
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
     # Initialize logging with custom format
     logging.basicConfig(
         level=logging.INFO,

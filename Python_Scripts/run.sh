@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=pipeline
-#SBATCH --nodes=2
-#SBATCH --ntasks=2
+#SBATCH --nodes=4
+#SBATCH --ntasks=4
 #SBATCH --cpus-per-task=48
-#SBATCH --time=12:00:00
+#SBATCH --time=24:00:00
 #SBATCH -A lu2024-2-8
 #SBATCH -o pipeline%j.out
 #SBATCH -e pipeline%j.err
@@ -17,7 +17,32 @@ module load Anaconda3/2024.02-1
 source config_conda.sh
 conda activate python_pipeline
 
+# change the config file to p005
+cp Python_Scripts/configs/config_p005.py Python_Scripts/config.py
 ./Python_Scripts/S1.py
 ./Python_Scripts/S2.py
 ./Python_Scripts/S3.py
 ./Python_Scripts/S5.py
+
+# change the config file to p006
+cp Python_Scripts/configs/config_p006.py Python_Scripts/config.py
+#running only S2 and S§_NNK since p006 does not have reference data
+./Python_Scripts/S2.py
+./Python_Scripts/S3_NNK.py
+
+# change the config file to p007
+cp Python_Scripts/configs/config_p007.py Python_Scripts/config.py
+./Python_Scripts/S1.py
+./Python_Scripts/S2.py
+./Python_Scripts/S3.py
+./Python_Scripts/S5.py
+
+# change the config to the BRAVE config and rerun the BRAVE pipeline
+cp Python_Scripts/configs/config_BRAVE.py Python_Scripts/config.py
+
+./Python_Scripts/S1.py
+./Python_Scripts/S2.py
+./Python_Scripts/S3.py
+./Python_Scripts/S4.py
+./Python_Scripts/S5.py
+./Python_Scripts/S6.py
