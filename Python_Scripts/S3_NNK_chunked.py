@@ -35,6 +35,7 @@ Output of the script is:
 """
 
 import gzip
+import os
 import tempfile
 import subprocess
 import multiprocessing
@@ -85,7 +86,6 @@ def run_command(command: list, description: str) -> tuple:
     Returns:   
         tuple: stdout and stderr
     """
-    logger.info(f"Running {description}")
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
         stdout, stderr = process.communicate()
         if process.returncode != 0:
@@ -96,28 +96,34 @@ def run_command(command: list, description: str) -> tuple:
         return stdout, stderr
 
 
-def load_frag_bc_reads(fragments_file: str, barcodes_file: str)-> tuple:
+def load_frag_bc_reads_chunked(fragments_file: str, barcodes_file: str, chunk_size: int = 1000000):
     """
-    Load the fragments and barcodes from FASTQ files.
+    Load the fragments and barcodes from FASTQ files in chunks.
 
     Parameters:
         fragments_file (str): Path to the fragments FASTQ file
         barcodes_file (str): Path to the barcodes FASTQ file
-        
-    Returns:
-        tuple: List of fragments as SeqRecords and List of barcodes as SeqRecords
+        chunk_size (int): Number of records per chunk
+
+    Yields:
+        tuple: Lists of fragments and barcodes as SeqRecords
     """
-    logger.info("Reading fragments and barcodes")
-    with gzip.open(fragments_file, "rt") as handle:
-        reads_frag = list(SeqIO.parse(handle, "fastq"))
-    with gzip.open(barcodes_file, "rt") as handle:
-        reads_BC = list(SeqIO.parse(handle, "fastq"))
-        
-    unique_fragments = set(str(rec.seq) for rec in reads_frag)
-    unique_barcodes = set(str(rec.seq) for rec in reads_BC)
-    logger.info(f"Number of unique fragments: {len(unique_fragments)}")
-    logger.info(f"Number of unique barcodes: {len(unique_barcodes)}")
-    return reads_frag, reads_BC
+    def read_fastq_chunks(file_path):
+        with gzip.open(file_path, "rt") as handle:
+            chunk = []
+            for record in SeqIO.parse(handle, "fastq"):
+                chunk.append(record)
+                if len(chunk) >= chunk_size:
+                    yield chunk
+                    chunk = []
+            if chunk:
+                yield chunk
+
+    frag_gen = read_fastq_chunks(fragments_file)
+    bc_gen = read_fastq_chunks(barcodes_file)
+
+    for frag_chunk, bc_chunk in zip(frag_gen, bc_gen):
+        yield frag_chunk, bc_chunk
 
 
 def create_full_table(reads_frag: list, reads_BC: list)-> pd.DataFrame:
@@ -131,7 +137,6 @@ def create_full_table(reads_frag: list, reads_BC: list)-> pd.DataFrame:
     Returns:
         pd.DataFrame: DataFrame containing the full table with fragments and barcodes
     """
-    logger.info("Creating full table with fragments and barcodes")
 
     # Create full table with fragments and barcodes pair
     full_table = pd.DataFrame({
@@ -152,7 +157,6 @@ def create_LUTnrs(full_table: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: DataFrame containing the LUTnrs a for every fragment
     """
-    logger.info("Creating LUTnrs")
     # create a DataFrame thatonly contains unique fragments
     unique_fragments = full_table['Reads'].unique()
     lutnrs_df = pd.DataFrame({'Reads': unique_fragments})
@@ -168,31 +172,48 @@ def create_LUTnrs(full_table: pd.DataFrame) -> pd.DataFrame:
     return lutnrs_df
 
 
-def starcode_based_barcode_reduction(barcodes_file: str)-> pd.DataFrame:
+def starcode_based_barcode_reduction(full_table: pd.DataFrame) -> pd.DataFrame:
     """
-    Perform barcode reduction using Starcode clustering.
+    Perform barcode reduction using Starcode clustering on the unique barcodes from the full table.
 
     Parameters:
-        barcodes_file (str): Path to the barcodes FASTQ file
+        full_table (pd.DataFrame): DataFrame containing the full table with barcodes (column 'BC')
         
     Returns:
         pd.DataFrame: DataFrame containing the Starcode-reduced barcodes
     """
-    logger.info("Running Starcode clustering")
-    # get the number of threads
+    logger.info("Running Starcode clustering on unique barcodes from the full table")
+    
+    # Extract unique barcodes
+    unique_barcodes = full_table['BC'].unique()
+    
+    # Write unique barcodes to a temporary file
+    barcode_temp_file = tempfile.NamedTemporaryFile(delete=False, mode='w+')
+    barcode_temp_file.writelines(f"{bc}\n" for bc in unique_barcodes)
+    barcode_temp_file.close()
+    
+    # Run Starcode clustering
     num_threads = multiprocessing.cpu_count()
-    starcode_output = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".txt")
-    starcode_cmd = f"gzip -cd {barcodes_file} | starcode -t {num_threads-1} --print-clusters -d 1 -r5 -q -o {starcode_output.name}"
+    starcode_output = tempfile.NamedTemporaryFile(delete=False, suffix=".txt")
+    starcode_cmd = f"starcode -t {num_threads-1} --print-clusters -d 1 -r5 -q -i {barcode_temp_file.name} -o {starcode_output.name}"
     subprocess.run(starcode_cmd, shell=True, check=True)
 
     # Read Starcode output
     starcode_df = pd.read_csv(starcode_output.name, sep='\t', header=None, names=['scBC', 'count', 'BC_list'])
     starcode_df['BC_list'] = starcode_df['BC_list'].str.split(',')
 
-    # Explode the BC_list to have one row per barcode and rename the columns
+    # Explode the BC_list to create a mapping between original barcodes and Starcode-reduced barcodes
     starcode_exploded = starcode_df.explode('BC_list')
     starcode_exploded.rename(columns={'BC_list': 'BC'}, inplace=True)
 
+    # Clean up temporary files
+    for temp_file in [barcode_temp_file.name, starcode_output.name]:
+        try:
+            os.remove(temp_file)
+        except Exception as e:
+            logger.warning(f"Failed to delete temporary file {temp_file}: {e}")
+
+    logger.info("Starcode clustering completed")
     return starcode_exploded
 
 
@@ -333,6 +354,25 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_consen
 
     return output_table
 
+def process_chunk(frag_chunk, bc_chunk):
+        """
+        Process a single chunk of fragments and barcodes.
+
+        Parameters:
+            frag_chunk (list): Chunk of fragment reads as SeqRecords
+            bc_chunk (list): Chunk of barcode reads as SeqRecords
+            lut_df (pd.DataFrame): LUT DataFrame
+            blast_db_prefix (str): BLAST database prefix
+
+        Returns:
+            pd.DataFrame: Full table for the processed chunk
+        """
+
+        # Create full table with fragments and barcodes
+        chunk_table = create_full_table(frag_chunk, bc_chunk)
+ 
+        return chunk_table
+
 
 def main():
     start_time = datetime.now()
@@ -343,19 +383,34 @@ def main():
     # Create a logger
     create_logger(config["log_dir"], "S3")
 
-    # Load trimmed fragments and barcodes
-    reads_frag, reads_BC = load_frag_bc_reads(config["fragment_file"], config["barcode_file"])
+    # Parallelize processing of chunks
+    chunk_results = []
+    chunk_processing_args = []
 
-    # Create full table with fragments and barcodes
-    full_table = create_full_table(reads_frag, reads_BC)
+    # Prepare arguments for each chunk
+    for frag_chunk, bc_chunk in load_frag_bc_reads_chunked(config["fragment_file"], config["barcode_file"]):
+        chunk_processing_args.append((frag_chunk, bc_chunk))
     
+    logger.info(f"Number of chunks to process: {len(chunk_processing_args)}")
+
+    # Use multiprocessing Pool to process chunks in parallel
+    with multiprocessing.Pool(processes=multiprocessing.cpu_count() - 1) as pool:
+        chunk_results = pool.starmap(process_chunk, chunk_processing_args)
+    
+    # Concatenate all chunk tables
+    full_table = pd.concat(chunk_results, ignore_index=True)
+    # log the number of unique fragments and barcodes
+    logger.info(f"Number of unique fragments: {len(full_table['Reads'].unique())}")
+    logger.info(f"Number of unique barcodes: {len(full_table['BC'].unique())}")
+
     # Create LUTnrs
     LUT_df = create_LUTnrs(full_table)
+        
     # Merge the LUTnrs with the full table but only add the LUTnr column
-    full_table = full_table.merge(LUT_df[['Reads', 'LUTnr']], on='Reads', how='left')
-
+    full_table = full_table.merge(LUT_df[["Reads","LUTnr"]], on='Reads', how='left')
+    
     # Perform Starcode barcode reduction
-    starcode_exploded = starcode_based_barcode_reduction(config["barcode_file"])
+    starcode_exploded = starcode_based_barcode_reduction(full_table)
 
     # Replace barcodes with Starcode-reduced versions
     full_table = replace_barcodes_with_starcode_versions(full_table, starcode_exploded)
@@ -372,8 +427,9 @@ def main():
     # Combine all tables into final output
     output_table = combine_tables(temp_table_multi_clean, temp_table_multi_consensus, temp_table_single)
     
-    # add the LUTnr information to the output table
+    # add the LUTnr peptide to the output table
     output_table = output_table.merge(LUT_df, on="LUTnr", how='left')
+    
     # change reads to Sequence
     output_table.rename(columns={'Reads': 'Sequence'}, inplace=True)
 
