@@ -1,12 +1,9 @@
-0_data/
-1_quality_control/
-2_output/
 *.err
 *.out
 __pycache__/
 install_packages.sh
 bbmap/
-9_test_data/
+Brave_test/
 old/
 Brave/
 raav-60/
