@@ -30,8 +30,8 @@ config_S1 = {
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_P5": data_dir + "/fastq_files/DNA_pscAAVlib_1.fastq.gz",
-    "in_name_P7": data_dir + "/fastq_files/DNA_pscAAVlib_2.fastq.gz",
+    "in_name_barcode": data_dir + "/fastq_files/DNA_pscAAVlib_1.fastq.gz",
+    "in_name_fragment": data_dir + "/fastq_files/DNA_pscAAVlib_2.fastq.gz",
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": data_dir + "/barcode_fragment",
     "out_name": "DNA_pscAAVlib_1",
