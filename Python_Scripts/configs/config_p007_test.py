@@ -1,7 +1,7 @@
 """ This file contains the config dictionary that are used to store the configuration parameters for the pipeline. """
 
 # Define the data directory where the input and output files are stored
-data_dir = "raav-60/p005"
+data_dir = "raav-60/p007_test"
 # Define the directory where the logs are stored
 log_dir = data_dir + "/logs/"
 
@@ -24,11 +24,11 @@ config_S1 = {
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_barcode": data_dir + "/fastq_files/p005_R1.fastq.gz",
-    "in_name_fragment": data_dir + "/fastq_files/p005_R2.fastq.gz",
+    "in_name_barcode": data_dir + "/fastq_files/p007_R1.fastq.gz",
+    "in_name_fragment": data_dir + "/fastq_files/p007_R2.fastq.gz",
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": data_dir + "/barcode_fragment",
-    "out_name": "p005",
+    "out_name": "p007",
     # arguments for the bbduk2 tool to extract the barcode and fragment sequences
     "bbduk2_args_BC" : [
         "k=20",
@@ -42,8 +42,8 @@ config_S2 = {
         "minlength=26",
         "maxlength=28",
         "ordered=t",
-        "lliteral=GTACGTCTGAACTTGGGACT",
-        "rliteral=ATAACTTCGTATAATGTATGC",
+        "lliteral=GGCTTGTGTCTATCGCAAGA",
+        "rliteral=ATAACTTCGTATAATGTATGCT",
     ],
     "bbduk2_args_Frag" : [
         "k=18",

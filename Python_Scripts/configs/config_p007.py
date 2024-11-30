@@ -10,7 +10,7 @@ config_S1 = {
     # input file containing the DNA sequences to create the library from
     "input_file": data_dir + "/input/reference_seq.fasta",
     # wSet file containing the hsa codon usage table
-    "wSet": "input/wSet.csv",
+    "wSet": data_dir + "/input/wSet.csv",
     # dictionary containing the information about the different structures with
     # their name as the key and then the length, frequency, and overhangs as the values
     "structure_dict": {
