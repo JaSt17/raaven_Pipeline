@@ -37,6 +37,7 @@ Output of the script is:
 
 import gzip
 import os
+import psutil
 import tempfile
 import subprocess
 import multiprocessing
@@ -98,18 +99,46 @@ def run_command(command: list, description: str) -> tuple:
         return stdout, stderr
 
 
-def load_frag_bc_reads_chunked(fragments_file: str, barcodes_file: str, chunk_size: int = 1000000):
+def load_frag_bc_reads_chunked(fragments_file: str, barcodes_file: str, memory_fraction: float = 0.8):
     """
-    Load the fragments and barcodes from FASTQ files in chunks.
+    Load the fragments and barcodes from FASTQ files in dynamically sized chunks based on memory.
 
     Parameters:
-        fragments_file (str): Path to the fragments FASTQ file
-        barcodes_file (str): Path to the barcodes FASTQ file
-        chunk_size (int): Number of records per chunk
+        fragments_file (str): Path to the fragments FASTQ file.
+        barcodes_file (str): Path to the barcodes FASTQ file.
+        memory_fraction (float): Fraction of available memory to use (default: 0.8).
 
     Yields:
-        tuple: Lists of fragments and barcodes as SeqRecords
+        tuple: Lists of fragments and barcodes as SeqRecords.
     """
+    def get_optimal_chunk_size(average_record_size: int):
+        # Get total available memory and allocate per thread
+        available_memory = psutil.virtual_memory().available * memory_fraction
+        num_threads = multiprocessing.cpu_count()
+        memory_per_thread = available_memory / num_threads
+        
+        # Calculate chunk size based on memory per thread and average record size
+        return int(memory_per_thread // average_record_size)
+
+    def estimate_average_record_size(file_path):
+        # Sample a few records to estimate their average size in memory
+        with gzip.open(file_path, "rt") as handle:
+            records = list(SeqIO.parse(handle, "fastq"))
+            if not records:
+                return 0
+            return sum(len(record.seq) + len(record.letter_annotations.get("phred_quality", []))
+                       for record in records) // len(records)
+
+    # Estimate average record sizes for fragments and barcodes
+    avg_frag_size = estimate_average_record_size(fragments_file)
+    avg_bc_size = estimate_average_record_size(barcodes_file)
+
+    # Use the larger average record size for a conservative estimate
+    avg_record_size = max(avg_frag_size, avg_bc_size)
+
+    # Get the optimal chunk size
+    chunk_size = get_optimal_chunk_size(avg_record_size)
+
     def read_fastq_chunks(file_path):
         with gzip.open(file_path, "rt") as handle:
             chunk = []
