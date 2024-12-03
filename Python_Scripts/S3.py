@@ -459,12 +459,12 @@ def main():
 
     # read in the LUT file
     lut_df = pd.read_csv(config["in_name_LUT"])
+    
+    # Create BLAST database from LUT sequences
+    blast_db_prefix = make_customarray_reference_index(lut_df)
 
     # Load trimmed fragments and barcodes
     reads_frag, reads_BC = load_frag_bc_reads(config["fragment_file"], config["barcode_file"])
-
-    # Create BLAST database from LUT sequences
-    blast_db_prefix = make_customarray_reference_index(lut_df)
 
     # Save unique fragments as FASTA file
     fragments_unique_fa_name, unique_fragments = save_unique_fragments(reads_frag)

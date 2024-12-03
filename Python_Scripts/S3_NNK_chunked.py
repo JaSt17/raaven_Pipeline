@@ -34,9 +34,6 @@ Output of the script is:
         BC,LUTnr,bitScore,mismatches,tCount,mCount,Mode
 """
 
-
-
-import psutil
 import gzip
 import os
 import tempfile
@@ -46,6 +43,7 @@ import pandas as pd
 from Bio import SeqIO
 from Bio.Seq import translate
 from datetime import datetime
+from itertools import islice
 import logging
 import sys
 # local import
@@ -78,77 +76,101 @@ def create_logger(path: str, name: str) -> None:
     logger = logging.getLogger(name) # Create a logger
 
 
-def run_command(command: list, description: str) -> tuple:
+def run_command(command: list, description: str, shell=False) -> tuple:
     """
     Runs a subprocess command and returns stdout, stderr, and error status.
     
     Parameters: 
-        command (list): The command to run
+        command (list or str): The command to run
         description (str): A description of the command
+        shell (bool): Whether to execute the command through the shell
     
     Returns:   
         tuple: stdout and stderr
     """
-    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
+    # change the command to a string if it is a list if shell is True
+    if shell:
+        command = command[0]
+    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=shell) as process:
         stdout, stderr = process.communicate()
         if process.returncode != 0:
             logger.error(f"Error running {description} with code {process.returncode}")
             logger.error(stderr)
             sys.exit(1)
-
         return stdout, stderr
 
 
-def load_frag_bc_reads_chunked(fragments_file: str, barcodes_file: str, memory_fraction: float = 0.8):
+def load_frag_bc_reads_chunked(fragments_file: str, barcodes_file: str, num_chunks: int):
     """
-    Load the fragments and barcodes from FASTQ files in dynamically sized chunks based on memory.
+    Load the fragments and barcodes from FASTQ files, splitting the data into equally sized parts based on the number of chunks.
 
     Parameters:
         fragments_file (str): Path to the fragments FASTQ file.
         barcodes_file (str): Path to the barcodes FASTQ file.
-        memory_fraction (float): Fraction of available memory to use (default: 0.8).
+        num_chunks (int): Number of chunks to split the data into.
 
     Yields:
         tuple: Lists of fragments and barcodes as SeqRecords.
     """
-    def get_optimal_chunk_size(average_record_size: int):
-        # Get total available memory and allocate per thread
-        available_memory = psutil.virtual_memory().available * memory_fraction
-        num_threads = multiprocessing.cpu_count()
-        memory_per_thread = available_memory / num_threads
-        
-        # Calculate chunk size based on memory per thread and average record size
-        return int(memory_per_thread // average_record_size)
 
-    def estimate_average_record_size(file_path):
-        # Sample a few records to estimate their average size in memory
-        with gzip.open(file_path, "rt") as handle:
-            records = list(SeqIO.parse(handle, "fastq"))
-            if not records:
-                return 0
-            return sum(len(record.seq) + len(record.letter_annotations.get("phred_quality", []))
-                       for record in records) // len(records)
+    def count_fastq_records(file_path):
+        """
+        Counts the number of records in a gzipped FASTQ file using zcat and wc -l.
 
-    # Estimate average record sizes for fragments and barcodes
-    avg_frag_size = estimate_average_record_size(fragments_file)
-    avg_bc_size = estimate_average_record_size(barcodes_file)
+        Parameters:
+            file_path (str): Path to the FASTQ file.
 
-    # Use the larger average record size for a conservative estimate
-    avg_record_size = max(avg_frag_size, avg_bc_size)
+        Returns:
+            int: Total number of records.
+        """
+        cmd = [f"zcat {file_path} | wc -l"]
+        description = "Counting lines in FASTQ file"
 
-    # Get the optimal chunk size
-    chunk_size = get_optimal_chunk_size(avg_record_size)
+        stdout, stderr = run_command(cmd, description, shell=True)
+
+        if stderr:
+            logger.error(f"Error counting lines: {stderr}")
+            raise Exception(f"Error counting lines: {stderr}")
+
+        line_count = int(stdout.strip())
+        total_records = line_count // 4
+        return total_records
+
+    total_frag_records = count_fastq_records(fragments_file)
+    total_bc_records = count_fastq_records(barcodes_file)
+
+    if total_frag_records != total_bc_records:
+        logger.error("Number of records in fragments and barcodes files do not match.")
+        raise ValueError("Number of records in fragments and barcodes files do not match.")
+
+    total_records = total_frag_records
+    logger.info(f"Total number of barcode-fragment-pairs:: {total_records}")
+
+    # Calculate chunk sizes
+    base_chunk_size = total_records // num_chunks
+    remainder = total_records % num_chunks
+
+    # Create a list of chunk sizes that distribute the remainder evenly
+    chunk_sizes = [base_chunk_size + 1 if i < remainder else base_chunk_size for i in range(num_chunks)]
 
     def read_fastq_chunks(file_path):
+        """
+        Generator function to read chunks from a FASTQ file.
+
+        Parameters:
+            file_path (str): Path to the FASTQ file.
+
+        Yields:
+            list: A chunk of SeqRecords.
+        """
         with gzip.open(file_path, "rt") as handle:
-            chunk = []
-            for record in SeqIO.parse(handle, "fastq"):
-                chunk.append(record)
-                if len(chunk) >= chunk_size:
+            record_iter = SeqIO.parse(handle, "fastq")
+            for chunk_size in chunk_sizes:
+                chunk = list(islice(record_iter, chunk_size))
+                if chunk:
                     yield chunk
-                    chunk = []
-            if chunk:
-                yield chunk
+                else:
+                    break
 
     frag_gen = read_fastq_chunks(fragments_file)
     bc_gen = read_fastq_chunks(barcodes_file)
@@ -385,24 +407,20 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_consen
 
     return output_table
 
-def process_chunk(frag_chunk, bc_chunk):
-        """
-        Process a single chunk of fragments and barcodes.
+def process_chunk(args):
+    """
+    Process a single chunk of fragments and barcodes.
 
-        Parameters:
+    Parameters:
+        args (tuple): Tuple containing the following elements:
             frag_chunk (list): Chunk of fragment reads as SeqRecords
             bc_chunk (list): Chunk of barcode reads as SeqRecords
-            lut_df (pd.DataFrame): LUT DataFrame
-            blast_db_prefix (str): BLAST database prefix
-
-        Returns:
-            pd.DataFrame: Full table for the processed chunk
-        """
-
+    """
+    frag_chunk, bc_chunk = args
         # Create full table with fragments and barcodes
-        chunk_table = create_full_table(frag_chunk, bc_chunk)
- 
-        return chunk_table
+    chunk_table = create_full_table(frag_chunk, bc_chunk)
+
+    return chunk_table
 
 
 def main():
@@ -414,22 +432,32 @@ def main():
     # Create a logger
     create_logger(config["log_dir"], "S3")
 
-    # Parallelize processing of chunks
-    chunk_results = []
-    chunk_processing_args = []
-
+    # Determine the number of worker processes
+    num_workers = multiprocessing.cpu_count()
+    
     # Prepare arguments for each chunk
-    for frag_chunk, bc_chunk in load_frag_bc_reads_chunked(config["fragment_file"], config["barcode_file"]):
-        chunk_processing_args.append((frag_chunk, bc_chunk))
+    chunk_args = []
+    for frag_chunk, bc_chunk in load_frag_bc_reads_chunked(config["fragment_file"], config["barcode_file"], num_workers):
+        chunk_args.append((frag_chunk, bc_chunk))
     
-    logger.info(f"Number of chunks to process: {len(chunk_processing_args)}")
-
-    # Use multiprocessing Pool to process chunks in parallel
-    with multiprocessing.Pool(processes=multiprocessing.cpu_count() - 1) as pool:
-        chunk_results = pool.starmap(process_chunk, chunk_processing_args)
+    # Initialize multiprocessing Pool
+    with multiprocessing.Pool(processes=min(4, num_workers)) as pool:
+        # Use imap_unordered for better performance
+        chunk_results = pool.imap_unordered(process_chunk, chunk_args)
+        for i, chunk_table in enumerate(chunk_results):
+            chunk_table.to_pickle(f"chunk_{i}.pkl")
     
+    # Load all chunk tables
+    chunk_tables = [pd.read_pickle(f"chunk_{i}.pkl") for i in range(num_workers)]
+    # Remove temporary files
+    for i in range(num_workers):
+        try:
+            os.remove(f"chunk_{i}.pkl")
+        except Exception as e:
+            logger.warning(f"Failed to delete temporary file: {e}")
     # Concatenate all chunk tables
-    full_table = pd.concat(chunk_results, ignore_index=True)
+    full_table = pd.concat(chunk_tables, ignore_index=True)
+    
     # log the number of unique fragments and barcodes
     logger.info(f"Number of unique fragments: {len(full_table['Reads'].unique())}")
     logger.info(f"Number of unique barcodes: {len(full_table['BC'].unique())}")
