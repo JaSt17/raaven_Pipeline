@@ -132,7 +132,7 @@ def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, 
     return plt.show()
 
 
-def plot_quantities(df: pd.DataFrame, groups: list, names: list, max_value: dict, step_size: int = 10000):
+def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: int = 10000):
     """
     Creates a polar plot with concentric rings representing different groups.
     Each ring displays an arc proportional to the group's size relative to the maximum value.
@@ -155,7 +155,7 @@ def plot_quantities(df: pd.DataFrame, groups: list, names: list, max_value: dict
     plot : matplotlib.pyplot
     """
     # Filter the dataframe to include only specified groups
-    df = df.loc[df['Group'].isin(groups)]
+    df = df.loc[df['Group'].isin(groups.keys())]
     
     # Get unique LUTnr within each group
     df = df.groupby(['Group', 'LUTnr']).first().reset_index()
@@ -164,7 +164,7 @@ def plot_quantities(df: pd.DataFrame, groups: list, names: list, max_value: dict
     group_size = dict(df.groupby('Group').size())
     
     # Change the group names to the names provided
-    group_size = {names[i]: group_size[group] for i, group in enumerate(group_size)}
+    group_size = {groups[key]: value for key, value in group_size.items()}
     
     # Update the group sizes with the max_value provided
     group_size.update(max_value)
