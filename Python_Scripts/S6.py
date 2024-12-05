@@ -242,7 +242,7 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
     combined_data['bitScore'] = combined_data['bitScore_times_tCount'] / combined_data['tCount']
     
     # Compute the count adjusted for the number of found barcodes
-    combined_data['BC_count'] = df['BC'].str.split(',').apply(len)
+    combined_data['BC_count'] = combined_data['BC'].str.split(',').apply(len)
     combined_data['BC_adjusted_count'] = combined_data['BC_count'] * combined_data['Normalized_RNAcount']
     
     # Drop the intermediate column

@@ -3,7 +3,8 @@
 Author: Jaro Steindorff
 
 This script reads a FASTA file given by the path in the config file and generates all possible 
-fragments of a given length from the nucleotide sequences in that give file.
+fragments of a given length from the nucleotide sequences in that give file. Than it creates a Table with information
+of every fragment and writes it to a CSV file.
 
 Workflow:
     - Read the input FASTA file
@@ -20,18 +21,20 @@ Inputs for the script are:
     - output_name: The path to the output file
 
 Output of the script is:
-    - A file containing all the generated fragments
+    - A file containing all the generated fragments with the strutcture, start and end position, and the DNA sequence and protein sequence
 """
+
 import os
 from datetime import datetime
 from Bio import SeqIO
+import pandas as pd
 from Bio.Seq import translate
 from multiprocessing import Pool, cpu_count
 import logging
 # local import
 from costum_functions import aatodna, load_wSet
 from config import get_config
-import pandas as pd
+
 
 # function to create a global logger
 def create_logger(path: str, name: str) -> None:
@@ -158,7 +161,7 @@ def generate_fragments(wSet: str, aa_list: dict, structure:str, length: int, fre
 
     frag_list = []
 
-    # Use multiprocessing with Pool
+    # Use multiprocessing multiple fragments at once
     with Pool(cpu_count()) as p:
         # Map the function across all entries in aa_list
         results = p.starmap(make_all_frags, [(k, aa_list, structure, length, frequency) for k in range(len(aa_list))])
@@ -167,10 +170,10 @@ def generate_fragments(wSet: str, aa_list: dict, structure:str, length: int, fre
     for result in results:
         frag_list.extend(result)
 
-    # Filter out fragments containing 'X'
+    # Filter out fragments containing 'X' (unknown amino acid)
     frag_list = [frag for frag in frag_list if not any(c in frag["Peptide"] for c in "X")]
 
-    # get unique fragments
+    # get unique fragments for each structure
     frag_list = get_unique_fragments(frag_list)
 
     # Load codon usage table once
@@ -183,7 +186,7 @@ def generate_fragments(wSet: str, aa_list: dict, structure:str, length: int, fre
     with Pool(cpu_count()) as p:
         frag_list = p.map(aatodna_parallel, args_list)
     
-    # Sort the fragments by 'Peptide'
+    # Sort the fragments by the DNA sequence
     sorted_fragments = sorted(frag_list, key=lambda x: x["Sequence"])
     
     return sorted_fragments
@@ -231,7 +234,7 @@ def create_LUTnr(df: pd.DataFrame) -> pd.DataFrame:
     LUT = df.copy()
     # Change all sequences to uppercase
     LUT['Sequence'] = LUT['Sequence'].str.upper()
-    # Drop duplicates
+    # Drop duplicates if there are any
     LUT = LUT.drop_duplicates()
     # Create new columns for the LUTnr
     LUT['LUTnr'] = ['seq_' + str(i+1) for i in range(len(LUT))]
@@ -272,8 +275,8 @@ def main():
     
     # get all fragments
     all_fragments = [frag['Peptide'] for frag in sorted_fragments]
-    logger.info(f"Number of unique Amino Acid fragments: {len(set(set(all_fragments)))}")
-    logger.info(f"Number of total Amino Acid fragments: {len(all_fragments)}")
+    logger.info(f"Number of unique Amino Acid fragments (without overhangs): {len(set(set(all_fragments)))}")
+    logger.info(f"Number of unique Amino Acid fragments (with overhangs): {len(all_fragments)}")
     
     # Create a Dataframe with the fragments and sort them by 'Structure', and 'AAstart'
     df = pd.DataFrame(sorted_fragments)

@@ -1,6 +1,5 @@
 # Import necessary libraries
 import random
-from collections import defaultdict
 import pandas as pd
 from Bio.Seq import Seq
 
@@ -141,3 +140,4 @@ def aatodna(in_aa: str, wSet: pd.DataFrame, species: str = "hsa", opt: bool = Tr
         return optimized_dna_seq.upper()
 
     return dna_seq.upper()
+
