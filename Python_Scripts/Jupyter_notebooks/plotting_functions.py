@@ -3,7 +3,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-def plot_top_counts(df: pd.DataFrame, top_n: int, group_col: str=None, y_axis: str="RNAcount"):
+def plot_top_counts(df: pd.DataFrame, top_n: int, group_col: str=None, y_axis: str="RNAcount", y_label: str=None):
     """
     Plots the top N fragments based on a specified column.
     
@@ -26,12 +26,18 @@ def plot_top_counts(df: pd.DataFrame, top_n: int, group_col: str=None, y_axis: s
             sns.barplot(x='LUTnr', y=y_axis, data=df_top_n)
     else:
         sns.barplot(x='LUTnr', y=y_axis, hue='Group', data=df_top_n)
-    # if more than 50 fragments, don't show the x-axis labels
-    if top_n > 50:
+    # if more than 25 fragments, don't show the x-axis labels
+    if top_n > 25:
         plt.xticks([])
     else:
         plt.xticks(rotation=45, ha='right', fontsize=6)
     plt.title(f'Top {top_n} fragments in {group_col}')
+    
+    sns.despine()
+    
+    if y_label is not None:
+        plt.ylabel(y_label)
+    
     
     return plt.show()
 

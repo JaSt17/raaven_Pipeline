@@ -31,7 +31,7 @@ Inputs for the script are:
 
 Output of the script is:
     - A CSV file containing the found barcodes with the following columns:
-        BC,LUTnr,bitScore,mismatches,tCount,mCount,Mode
+        BC,LUTnr,bitScore,tCount,mCount,Mode
 """
 
 import gzip
@@ -189,20 +189,7 @@ def create_full_table(reads_frag: list, reads_BC: list)-> pd.DataFrame:
         'Reads': [str(rec.seq) for rec in reads_frag],
         'BC': [str(rec.seq) for rec in reads_BC]
     })
-
-    return full_table
-
-
-def create_LUTnrs(full_table: pd.DataFrame) -> pd.DataFrame:
-    """
-    Create a DataFrame with LUTnrs and their corresponding fragments.
-
-    Parameters:
-        full_table (pd.DataFrame): DataFrame containing the full table with fragments and barcodes
-        
-    Returns:
-        pd.DataFrame: DataFrame containing the LUTnrs a for every fragment
-    """
+    # create unique Lutnrs for each fragment and translate the fragment to a peptide
     # create a DataFrame thatonly contains unique fragments
     unique_fragments = full_table['Reads'].unique()
     lutnrs_df = pd.DataFrame({'Reads': unique_fragments})
@@ -214,59 +201,52 @@ def create_LUTnrs(full_table: pd.DataFrame) -> pd.DataFrame:
     lutnrs_df['LUTnr'] = lutnrs_df.index
     # add seq_ in front of the LUTnr
     lutnrs_df['LUTnr'] = 'seq_' + lutnrs_df['LUTnr'].astype(str)
+    
+    # merge the lutnrs_df with the full table
+    full_table = full_table.merge(lutnrs_df, on='Reads', how='left')
 
-    return lutnrs_df
+    return full_table
 
 
-def starcode_based_barcode_reduction(uniq_barcodes_file: str)-> pd.DataFrame:
+def starcode_based_reduction_and_replace(full_table: pd.DataFrame, input_file_name: str, columns_name: str)-> pd.DataFrame:
     """
-    Perform barcode reduction using Starcode clustering.
+    Perform reduction using Starcode clustering and replaces with the reduced versions.
 
     Parameters:
-        barcodes_file (str): Path to the barcodes FASTQ file
+        full_table (pd.DataFrame): DataFrame containing the full table with fragments and barcodes
+        columns_name (str): Name of the column containing the sequences
         
     Returns:
         pd.DataFrame: DataFrame containing the Starcode-reduced barcodes
     """
     logger.info("Running Starcode clustering")
+    
     # get the number of threads
     num_threads = multiprocessing.cpu_count()
     starcode_output = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".txt")
-    starcode_cmd = f"starcode -i {uniq_barcodes_file} -t {num_threads-1} --print-clusters -d 1 -r5 -q -o {starcode_output.name}"
+    starcode_cmd = f"gunzip -c {input_file_name} | starcode -t {num_threads-1} --print-clusters -d 1 -r5 -q -o {starcode_output.name}"
     subprocess.run(starcode_cmd, shell=True, check=True)
 
+    starcode_column = f"sc{columns_name}"
     # Read Starcode output
-    starcode_df = pd.read_csv(starcode_output.name, sep='\t', header=None, names=['scBC', 'count', 'BC_list'])
-    starcode_df['BC_list'] = starcode_df['BC_list'].str.split(',')
+    starcode_df = pd.read_csv(starcode_output.name, sep='\t', header=None, names=[starcode_column, 'count', 'seq_list'])
+    starcode_df['seq_list'] = starcode_df['seq_list'].str.split(',')
+    number_of_clusters = len(starcode_df)
 
-    # Explode the BC_list to have one row per barcode and rename the columns
-    starcode_exploded = starcode_df.explode('BC_list')
-    starcode_exploded.rename(columns={'BC_list': 'BC'}, inplace=True)
+    # Explode the seq_list to have one row per seq and rename the columns
+    starcode_exploded = starcode_df.explode('seq_list')
+    starcode_exploded.rename(columns={'seq_list': columns_name}, inplace=True)
     # only keep the unique barcodes
-    starcode_exploded.drop_duplicates(subset=['BC'], inplace=True)
+    starcode_exploded.drop_duplicates(subset=[columns_name], inplace=True)
+    logger.info(f"Number of unique {columns_name} after Starcode reduction: {number_of_clusters}")
     
-    logger.info(f"Number of unique barcodes after Starcode reduction: {len(starcode_exploded)}")
-    return starcode_exploded
-
-
-def replace_barcodes_with_starcode_versions(full_table: pd.DataFrame, starcode_exploded: pd.DataFrame)-> pd.DataFrame:
-    """
-    Replace barcodes in the full table with their Starcode-reduced versions.
-
-    Parameters:
-        full_table (pd.DataFrame): DataFrame containing the full table with fragments and barcodes
-        starcode_exploded (pd.DataFrame): DataFrame containing the Starcode-reduced barcodes
-        
-    Returns:
-        pd.DataFrame: DataFrame containing the full table with Starcode-reduced barcodes
-    """
-    logger.info("Replacing barcodes with Starcode-reduced versions")
-    # combine the full table with the starcode exploded table based on the BC
-    full_table = full_table.merge(starcode_exploded[['BC', 'scBC']], on='BC', how='left')
+    # combine the full table with the starcode exploded table based on the input column
+    logger.info(f"Replacing {columns_name} with Starcode-reduced versions")
+    full_table = full_table.merge(starcode_exploded[[columns_name, starcode_column]], on=columns_name, how='left')
     # rename the coulmns and drop the old BC column
-    full_table.rename(columns={'BC': 'oldBC', 'scBC': 'BC'}, inplace=True)
-    full_table.drop(columns=['oldBC'], inplace=True)
-
+    full_table.rename(columns={columns_name: 'old', starcode_column: columns_name}, inplace=True)
+    full_table.drop(columns=['old'], inplace=True)
+    
     return full_table
 
 
@@ -321,9 +301,9 @@ def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataF
 
     # Identify clean and chimeric barcodes
     bc_counts = temp_table_multi_grouped['BC'].value_counts()
-    # if their is only one BC for a given LUTnr, then it is a clean barcode
+    # if the barcode only appears once, then it is a clean barcode since it clearly maps to one LUTnr
     clean_barcodes = bc_counts[bc_counts == 1].index
-    # if their is more than one BC for a given LUTnr, then it is a chimeric barcode
+    # if the barcode appears more than once, then it is a chimeric barcode since it maps to multiple LUTnr
     chimeric_barcodes = bc_counts[bc_counts > 1].index
 
     # create tables with clean and chimeric barcodes
@@ -333,7 +313,6 @@ def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataF
     # set the max read count, total read count, since we only have one barcode for this LUTnr and mode for clean barcode
     temp_table_multi_clean['mCount'] = temp_table_multi_clean['tCount']
     temp_table_multi_clean['Mode'] = 'Def'
-    temp_table_multi_chimeric['Mode'] = 'Amb'
 
     return temp_table_multi_clean, temp_table_multi_chimeric
 
@@ -348,18 +327,18 @@ def get_valid_chimeric_barcodes(temp_table_multi_chimeric: pd.DataFrame, thresho
     Returns:
         pd.DataFrame: DataFrame containing the consensus alignment for chimeric barcodes
     """
-    logger.info(f"Extracting chimeric barcodes with maximal read count above {threshold}")
+    logger.info(f"Extracting chimeric barcodes with maximal read ratio above {threshold}")
     # For every barcode LUTnr pair, set mCount to tCount
     temp_table_multi_chimeric['mCount'] = temp_table_multi_chimeric['tCount']
     # Sum the total count of reads for each barcode
     temp_table_multi_chimeric['tCount'] = temp_table_multi_chimeric.groupby('BC')['tCount'].transform('sum')
-
-    # Select the LUTnr, barcode pair with the highest maximal read count
+    temp_table_multi_chimeric['Mode'] = 'Amb'
+    
     idx = temp_table_multi_chimeric.groupby('BC')['mCount'].idxmax()
     temp_table = temp_table_multi_chimeric.loc[idx].copy()
     
     # get the index of all rows where the maximal read count divided by the total read count is above the threshold
-    idx = temp_table['mCount'] / temp_table['tCount'] > threshold
+    idx = temp_table['mCount'] / temp_table['tCount'] >= threshold
     
     # set the mode to Def for all rows where the maximal read count divided by the total read count is above the threshold
     temp_table.loc[idx, 'Mode'] = 'Def'
@@ -405,10 +384,6 @@ def main():
     # Temporary directory for intermediate results
     temp_dir = tempfile.mkdtemp()
     chunk_files = []
-    lut_files = []
-    
-    # Save unique fragments and barcodes as FASTA file
-    fragments_unique_fa_name, barcodes_unique_fa_name = save_unique_fragments_barcodes(config["fragment_file"], config["barcode_file"])
 
     # Chunk size for reading fragments and barcodes
     chunk_size = config["chunk_size"]
@@ -419,45 +394,39 @@ def main():
         
         # Create a full table with fragments and barcodes from the chunk
         chunk_table = create_full_table(frag_chunk, bc_chunk)
-        # Create LUTnrs for the chunk
-        chunk_LUTnrs = create_LUTnrs(chunk_table)
-        # Merge the LUTnrs with the chunk table but only add the LUTnr column
-        chunk_table = chunk_table.merge(chunk_LUTnrs[['Reads', 'LUTnr']], on='Reads', how='left')
 
         # Save chunk results to temporary file
         chunk_file = os.path.join(temp_dir, f"chunk_{i}.pkl")
-        lut_file = os.path.join(temp_dir, f"lut_{i}.pkl")
         chunk_table.to_pickle(chunk_file)
-        chunk_LUTnrs.to_pickle(lut_file)
         chunk_files.append(chunk_file)
-        lut_files.append(lut_file)
 
     # Combine all chunk tables
     logger.info("Combining all chunks into the full table")
     full_table = pd.concat([pd.read_pickle(chunk_file) for chunk_file in chunk_files], ignore_index=True)
-    LUT_df = pd.concat([pd.read_pickle(lut_file) for lut_file in lut_files], ignore_index=True)
+    del chunk_files
     
-# Perform Starcode barcode reduction
-    starcode_exploded = starcode_based_barcode_reduction(barcodes_unique_fa_name)
-
-    # Replace barcodes with Starcode-reduced versions
-    full_table = replace_barcodes_with_starcode_versions(full_table, starcode_exploded)
+    save_unique_fragments_barcodes(config["fragment_file"], config["barcode_file"])
+    
+    # Perform fragment reduction using Starcode clustering
+    full_table = starcode_based_reduction_and_replace(full_table, config['fragment_file'], 'Reads')
+    
+    # Perform barcode reduction using Starcode clustering
+    full_table = starcode_based_reduction_and_replace(full_table, config['barcode_file'], 'BC')
 
     # Split reads into single-read and multi-read barcodes
     temp_table_single, temp_table_multi = split_reads_into_single_and_multi_read_barcodes(full_table)
+    del full_table
 
     # Split multi-read barcodes into clean and chimeric
     temp_table_multi_clean, temp_table_multi_chimeric = split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi)
 
-    if config["threshold"] < 1.0:
-        # Calculate consensus alignment for chimeric barcodes
-        temp_table_multi_chimeric = get_valid_chimeric_barcodes(temp_table_multi_chimeric, config["threshold"])
+    # Create consensus alignment for chimeric barcodes and get valid chimeric barcodes based on threshold
+    temp_table_multi_chimeric = get_valid_chimeric_barcodes(temp_table_multi_chimeric, config["threshold"])
 
     # Combine all tables into final output
     output_table = combine_tables(temp_table_multi_clean, temp_table_multi_chimeric, temp_table_single, config["threshold"])
+    del temp_table_multi_clean, temp_table_multi_chimeric, temp_table_single
 
-    # add the LUTnr information to the output table
-    output_table = output_table.merge(LUT_df, on="LUTnr", how='left')
     # change reads to Sequence
     output_table.rename(columns={'Reads': 'Sequence'}, inplace=True)
 

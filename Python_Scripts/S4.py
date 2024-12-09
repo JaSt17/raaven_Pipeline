@@ -108,12 +108,9 @@ def starcode_based_barcode_reduction(full_table: pd.DataFrame) -> pd.DataFrame:
     """
     logger.info("Running Starcode clustering on unique barcodes from the full table")
     
-    # Extract unique barcodes
-    unique_barcodes = full_table['BC'].unique()
-    
     # Write unique barcodes to a temporary file
     barcode_temp_file = tempfile.NamedTemporaryFile(delete=False, mode='w+')
-    barcode_temp_file.writelines(f"{bc}\n" for bc in unique_barcodes)
+    barcode_temp_file.writelines(f"{bc}\n" for bc in full_table['BC'])
     barcode_temp_file.close()
     
     # Run Starcode clustering
