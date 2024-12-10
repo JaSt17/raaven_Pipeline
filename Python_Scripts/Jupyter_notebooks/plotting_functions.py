@@ -42,7 +42,7 @@ def plot_top_counts(df: pd.DataFrame, top_n: int, group_col: str=None, y_axis: s
     return plt.show()
 
 
-def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, column: str, normalize: bool = False):
+def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, column: str, y_label: str=None):
     """
     Plots the Normalized_RNAcount for two groups across the relative length of a gene.
 
@@ -76,10 +76,6 @@ def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, 
     aggregated = filtered_df.groupby(['Group', 'AA_rel_bin'], observed=False)[column].sum().reset_index()
     # Pivot the data to have groups as columns
     pivot_df = aggregated.pivot(index='AA_rel_bin', columns='Group', values=column).fillna(0)
-    
-    if normalize:
-        # Normalize the data by taking the log2 of the columns
-        pivot_df = pivot_df.apply(lambda x: np.log2(x + 1))
 
     # Ensure both groups have data in all bins
     pivot_df = pivot_df.reindex(labels, fill_value=0)
@@ -98,10 +94,8 @@ def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, 
 
     # Customize the plot
     ax.set_xlabel('Relative Position in Gene (%)')
-    if normalize:
-        ax.set_ylabel('log2 of adjusted RNA Count')
-    else:
-        ax.set_ylabel('adjusted RNA Count')
+    if y_label is not None:
+        ax.set_ylabel(y_label)
     ax.set_title(f'{gene_name}')
     
     # Add a legend
@@ -147,10 +141,8 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
     Parameters:
     df : pd.DataFrame
         The input DataFrame containing at least 'Group' and 'LUTnr' columns.
-    groups : list
-        A list of group names to include in the plot.
-    names : list
-        Names of the groups to be displayed in the plot.
+    groups : dict
+        A dictionary where keys are group names in the DataFrame and values are the names to display on the plot.
     max_value : dict
         A dictionary where keys are group names and values are their corresponding maximum values.
         This is used to update and determine the scaling of the plot.
