@@ -293,6 +293,12 @@ def main():
             
     LUT = create_LUTnr(df)
     
+    # if there is a LibID add it to the LUT
+    try:
+        LUT["LibID"] = config["LibID"]
+    except KeyError:
+        pass
+    
     # Write the LUT to a file
     LUT.to_csv(config["output_csv"], index=False)
     

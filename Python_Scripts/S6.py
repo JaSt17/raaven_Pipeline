@@ -72,12 +72,14 @@ def create_logger(path: str, name: str) -> None:
     logger = logging.getLogger(name) # Create a logger
 
 
-def load_combined_data(dir_path: str) -> pd.DataFrame:
+def load_combined_data(dir_path: str, sample_inputs_path: str) -> pd.DataFrame:
     """
     Reads all CSV files in the specified directory and combines them into a single DataFrame.
+    Then rename the samples from different organisms to the same name.
 
     Parameters:
         dir_path (str): The path to the directory containing CSV files.
+        sample_inputs_path (str): The path to the file containing the sample inputs and the corresponding group names.
 
     Returns:
         pd.DataFrame: A DataFrame containing the combined data from all CSV files.
@@ -117,10 +119,21 @@ def load_combined_data(dir_path: str) -> pd.DataFrame:
 
     try:
         combined_data = pd.concat(data_frames, ignore_index=True)
-        return combined_data
     except ValueError as e:
         logger.info(f"Error combining data: {e}")
         return pd.DataFrame()
+    
+    # load in the sample inputs and the corresponding group names and transform it to a dictionary
+    sample_inputs = pd.read_csv(sample_inputs_path)
+    # remove the file extension from the sample names
+    sample_inputs['Sample'] = sample_inputs['Sample'].str.split(".").str[0]
+    sample_inputs_dict = dict(zip(sample_inputs["Sample"], sample_inputs["Group"]))
+    
+    # rename the samples from different organisms to the same name
+    combined_data['Group'] = combined_data['Group'].replace(sample_inputs_dict)
+    
+    return combined_data
+    
     
     
 def get_ref_sequence_length_df(file_path:str) -> pd.DataFrame:
@@ -145,26 +158,6 @@ def get_ref_sequence_length_df(file_path:str) -> pd.DataFrame:
                                     "seqlength": [len(s) for s in seq]})
     
     return ref_seq_len_df
-    
-
-def normalize_read_counts(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Normalize the read counts in a DataFrame by adjusting for the total RNA counts in each group.
-
-    Parameters:
-        df (pd.DataFrame): The input DataFrame containing read count columns.
-
-    Returns:
-        pd.DataFrame: The DataFrame with normalized read counts.
-    """
-    # Sum RNA counts per group and get the maximum RNAcount
-    group_totals = df.groupby("Group")["RNAcount"].transform("sum")
-    max_RNAcount = group_totals.max()
-    
-    # Calculate normalized counts in a vectorized way
-    df["Normalized_RNAcount"] = df["RNAcount"] / (group_totals / max_RNAcount)
-    
-    return df
 
 
 def create_subsets(df: pd.DataFrame, subsets: dict) -> pd.DataFrame:
@@ -207,6 +200,27 @@ def create_subsets(df: pd.DataFrame, subsets: dict) -> pd.DataFrame:
     df = pd.concat(df_list, ignore_index=True)
     
     return df
+    
+
+def normalize_read_counts(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Normalize the read counts in the data frame to adjust for difference in read depth.
+    The read counts are normalized by dividing the read count of each fragment by the sum of the read counts of all fragments in the same group.
+    This gives a ratio of the read count of each fragment to the total read count of the group.
+
+    Parameters:
+        df (pd.DataFrame): The input DataFrame containing read count columns.
+
+    Returns:
+        pd.DataFrame: The DataFrame with normalized read counts.
+    """
+    # create a new column with the sum of RNAcounts for each group
+    df['Group_RNAcount'] = df.groupby('Group')['RNAcount'].transform('sum')
+    
+    # create a new column with the sum of Normalized_RNAcounts for each group
+    df['RNAcount_ratio'] = df['RNAcount'] / df['Group_RNAcount']
+    
+    return df
 
 
 def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list) -> pd.DataFrame:
@@ -220,33 +234,28 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
     Returns:
         pd.DataFrame: The DataFrame with combined information for identical fragments.
     """
-    # Create a new column for weighted bitScore calculation
-    df['bitScore_times_tCount'] = df['bitScore'] * df['tCount']
     
     # Define aggregation functions
     aggregations = {
-        'bitScore_times_tCount': 'sum',
         'tCount': 'sum',
-        'mismatches': 'median',
         'mCount': 'sum',
         'BC': lambda x: ','.join(x.unique()),
         'LUTnr': lambda x: ','.join(x.unique()),
         'RNAcount': 'sum',
-        'Normalized_RNAcount': 'sum',
+        'RNAcount_ratio': 'sum',
     }
     
     # Perform groupby aggregation
     combined_data = df.groupby(key_cols).agg(aggregations).reset_index()
     
-    # Calculate the weighted average of bitScore
-    combined_data['bitScore'] = combined_data['bitScore_times_tCount'] / combined_data['tCount']
-    
-    # Compute the count adjusted for the number of found barcodes
+    # Compute the count adjusted for the number of found barcodes and the barcode ratio
     combined_data['BC_count'] = combined_data['BC'].str.split(',').apply(len)
-    combined_data['BC_adjusted_count'] = combined_data['BC_count'] * combined_data['Normalized_RNAcount']
+    Group_BC_count = combined_data.groupby('Group')['BC_count'].transform('sum')
+    combined_data['BC_ratio'] = combined_data['BC_count'] / Group_BC_count
     
-    # Drop the intermediate column
-    combined_data.drop(columns=['bitScore_times_tCount'], inplace=True)
+    
+    # barcode adjusted count ratio
+    combined_data['BC_adjusted_count_ratio'] = combined_data['RNAcount_ratio'] + combined_data['BC_ratio'] / 2
         
     combined_data['AAwidth'] = np.floor(combined_data['width'] / 3).astype(int)
     combined_data['AAseqlength'] = np.floor(combined_data['seqlength'] / 3).astype(int)
@@ -289,7 +298,7 @@ def main():
     create_logger(config["log_dir"], "S6")
     
     # Load the combined data from the specified directory
-    combined_data = load_combined_data(config["input_dir"])
+    combined_data = load_combined_data(config["input_dir"], config["sample_inputs"])
     if combined_data.empty:
         logger.info("No data loaded. Exiting.")
         return

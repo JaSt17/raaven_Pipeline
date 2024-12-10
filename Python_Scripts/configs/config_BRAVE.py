@@ -130,6 +130,7 @@ config_S6 = {
     # input file names are extracted from the previous step
     "original_seq_file": config_S1["input_file"],
     "input_dir": config_S4["output_dir"],
+    "sample_inputs": config_S4["sample_inputs"],
     "library_fragments": config_S5["output_table"],
     # group name for the library
     "library_name": "Plasmid_Library",

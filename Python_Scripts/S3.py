@@ -188,7 +188,7 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
     run_command(command, "Extract unique sequences", shell=True)
     
     number_of_unique_fragments, _ = run_command([f" echo $(( $(wc -l < {out_name_1}) / 2 ))"], "Extract unique sequences", shell=True)
-    logger.info(f"Number of unique fragments: {number_of_unique_fragments.strip()}")
+    logger.info(f"Number of fragment reads: {number_of_unique_fragments.strip()}")
     
     out_name_2 = "/".join(barcodes_file.split("/")[:-1]) + "/unique_barcodes.fasta"
     # Build shell command for extracting unique sequences
@@ -204,7 +204,7 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
     run_command(command, "Extract unique sequences", shell=True)
     
     number_of_unique_barcodes, _ = run_command([f" echo $(( $(wc -l < {out_name_2}) / 2 ))"], "Extract unique sequences", shell=True)
-    logger.info(f"Number of unique barcodes: {number_of_unique_barcodes.strip()}")
+    logger.info(f"Number of barcode reads: {number_of_unique_barcodes.strip()}")
 
     return out_name_1, out_name_2
 

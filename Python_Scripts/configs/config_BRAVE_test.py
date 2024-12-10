@@ -131,6 +131,7 @@ config_S6 = {
     "original_seq_file": config_S1["input_file"],
     "input_dir": config_S4["output_dir"],
     "library_fragments": config_S5["output_table"],
+    "sample_inputs": config_S4["sample_inputs"],
     # group name for the library
     "library_name": "Plasmid_Library",
     # dictionary containing the information about the different subsets that should be created

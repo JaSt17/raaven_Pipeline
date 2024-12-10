@@ -265,7 +265,7 @@ def main():
         sys.exit(1)
     # Try to load the sample inputs
     try:
-        load_list = pd.read_csv(config["sample_inputs"], header=None)
+        load_list = pd.read_csv(config["sample_inputs"])
     except Exception as e:
         logger.error(f"Error loading sample inputs: {e}")
         sys.exit(1)
@@ -285,7 +285,7 @@ def main():
     # Analyze each tissue sample
     for row in load_list.iterrows():
         # Extract the file name from the first column
-        file_path = row[1][0]
+        file_path = row[1]['Sample']
         log_entry = analyze_tissue(file_path, data_dir, output_dir, library_fragments, lut_dna, threads, bbduk2_args_BC)
         if log_entry:
             log_table.append(log_entry)
