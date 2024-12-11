@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=p007_analysis
-#SBATCH --nodes=5
-#SBATCH --ntasks=5
+#SBATCH --nodes=12
+#SBATCH --ntasks=12
 #SBATCH --cpus-per-task=48
 #SBATCH --time=48:00:00
 #SBATCH -A lu2024-2-8

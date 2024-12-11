@@ -3,7 +3,7 @@
 Author: Jaro Steindorff
 
 This script extracts barcodes from given cell samples, reduces them using the Starcode algorithm, and matches them with
-corresponding fragments. It processes a csv file with file_path and basename and saves the results in a log table and saves the found fragments in a csv file.
+corresponding fragments. It processes a csv file with Sample and Group and saves the results in a log table and saves the found fragments in a csv file.
 
 Workflow:
     - Load the library fragments and LUT data
@@ -34,7 +34,7 @@ import re
 import logging
 from datetime import datetime
 import pandas as pd
-from multiprocessing import cpu_count
+import multiprocessing
 import gzip
 from Bio import SeqIO
 # local import
@@ -114,7 +114,7 @@ def starcode_based_barcode_reduction(full_table: pd.DataFrame) -> pd.DataFrame:
     barcode_temp_file.close()
     
     # Run Starcode clustering
-    num_threads = cpu_count()
+    num_threads = multiprocessing.cpu_count()
     starcode_output = tempfile.NamedTemporaryFile(delete=False, suffix=".txt")
     starcode_cmd = f"starcode -t {num_threads-1} --print-clusters -d 1 -r5 -q -i {barcode_temp_file.name} -o {starcode_output.name}"
     subprocess.run(starcode_cmd, shell=True, check=True)
@@ -135,6 +135,22 @@ def starcode_based_barcode_reduction(full_table: pd.DataFrame) -> pd.DataFrame:
             logger.warning(f"Failed to delete temporary file {temp_file}: {e}")
 
     return starcode_exploded
+
+
+def extract_summary(stdout: str) -> str:
+    """ 
+    Extracts the summary from the stdout of a bbduk2 command.
+    
+    Parameters:
+        stdout (str): The stdout of the bbduk2 command
+        
+    Returns:
+        str: The summary of the bbduk2 command
+    """
+    match = re.search(r"(Input:.*?Result:.*?bases\s*\(\d+\.\d+%\))", stdout, re.DOTALL)
+    if match:
+        return match.group(1)
+    return None
 
 
 def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: pd.DataFrame,
@@ -184,13 +200,18 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
         f"out={out_name_BC}",
     ]
     stdout, stderr = run_command(bbduk2_command, f"bbduk2 barcode extraction for {file_path}")
+    
+    # Extract summary from the fragments extraction
+    summary = extract_summary(stderr)
+    if summary:
+        logger.info(f"bbduk2 extraction summary:\n{summary}")
 
     # Save the Barcode extraction result in the log entry
     match = re.search(r"Result:\s*(\d+)", stderr)
     if match:
-        log_entry['BCs'] = int(match.group(1))
+        log_entry['BC_reads'] = int(match.group(1))
     else:
-        log_entry['BCs'] = 0
+        log_entry['BC_reads'] = 0
 
     # Read the barcodes
     try:
@@ -218,7 +239,7 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
     all_BCs = barcode_table['oldBC'].nunique()
     sc_BCs = barcode_table['BC'].nunique()
     SC_dropped_BC = all_BCs - sc_BCs
-    log_entry['allBCs'] = all_BCs
+    log_entry['unique_BCs'] = all_BCs
     log_entry['scBCs'] = sc_BCs
     log_entry['SCdroppedBC'] = SC_dropped_BC
     # Delete the old barcodes column
@@ -241,14 +262,14 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
     
     foundFrags.to_csv(output_filename, index=False)
     
-    logger.info(f"Finished processing {log_entry['Name']} found {log_entry['scBCs']} barcodes")    
+    logger.info(f"Finished processing {log_entry['Name']} found: {log_entry['BC_reads']} barcode reads; {log_entry['unique_BCs']} unique barcodes; {log_entry['scBCs']} reduced barcodes")    
     
     return log_entry
 
 
 def main():
     start_time = datetime.now()
-    threads = cpu_count()
+    threads = multiprocessing.cpu_count()
     
     # load config
     config = get_config("S4")
