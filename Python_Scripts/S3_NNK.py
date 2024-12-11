@@ -277,14 +277,14 @@ def split_reads_into_single_and_multi_read_barcodes(full_table: pd.DataFrame)-> 
     # set the max read count, total read count, and mode for single read barcodes
     temp_table_single['mCount'] = 1
     temp_table_single['tCount'] = 1
-    temp_table_single['Mode'] = 'Amb'
+    temp_table_single['Mode'] = 'Single'
 
     return temp_table_single, temp_table_multi
 
 
-def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataFrame)-> tuple:
+def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataFrame) -> tuple:
     """
-    Split multi-read barcodes into clean and chimeric based on LUTnr.
+    Split multi-read barcodes into clean and chimeric based on LUTnr, including Peptide information.
 
     Parameters:
         temp_table_multi (pd.DataFrame): DataFrame containing the multi-read barcodes
@@ -294,24 +294,51 @@ def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataF
     """
     logger.info("Splitting multi-read barcodes into clean and chimeric")
 
-    # Group by BC and LUTnr to compute statistics for every single pair
+    # Group by BC and LUTnr to compute statistics and collect reads and peptides for every single pair
     temp_table_multi_grouped = temp_table_multi.groupby(['BC', 'LUTnr']).agg({
-        'Reads': 'count'
-    }).reset_index().rename(columns={'Reads': 'tCount'}) # tCount is the total count of reads for a given BC and LUTnr pair
+        'Reads': lambda x: list(x),  # Collect all reads in a list
+        'Reads': 'count',           # Count the number of reads
+        'Peptide': lambda x: list(x)  # Collect all peptides in a list
+    }).reset_index().rename(columns={'Reads': 'tCount'})  # tCount is the total count of reads for a given BC and LUTnr pair
 
     # Identify clean and chimeric barcodes
     bc_counts = temp_table_multi_grouped['BC'].value_counts()
-    # if the barcode only appears once, then it is a clean barcode since it clearly maps to one LUTnr
+    # If the barcode only appears once, it is clean since it maps to one LUTnr
     clean_barcodes = bc_counts[bc_counts == 1].index
-    # if the barcode appears more than once, then it is a chimeric barcode since it maps to multiple LUTnr
+    # If the barcode appears more than once, it is chimeric since it maps to multiple LUTnr
     chimeric_barcodes = bc_counts[bc_counts > 1].index
 
-    # create tables with clean and chimeric barcodes
+    # Separate tables with clean and chimeric barcodes
     temp_table_multi_clean = temp_table_multi_grouped[temp_table_multi_grouped['BC'].isin(clean_barcodes)].copy()
     temp_table_multi_chimeric = temp_table_multi_grouped[temp_table_multi_grouped['BC'].isin(chimeric_barcodes)].copy()
 
-    # set the max read count, total read count, since we only have one barcode for this LUTnr and mode for clean barcode
-    temp_table_multi_clean['mCount'] = temp_table_multi_clean['tCount']
+    # Add the `Reads` and `Peptide` columns to clean and chimeric tables
+    clean_reads = temp_table_multi[temp_table_multi['BC'].isin(clean_barcodes)].groupby(['BC', 'LUTnr']).agg({
+        'Reads': lambda x: list(x),
+        'Peptide': lambda x: list(x)
+    }).reset_index()
+
+    chimeric_reads = temp_table_multi[temp_table_multi['BC'].isin(chimeric_barcodes)].groupby(['BC', 'LUTnr']).agg({
+        'Reads': lambda x: list(x),
+        'Peptide': lambda x: list(x)
+    }).reset_index()
+
+    # Ensure the `Reads` and `Peptide` columns are unique lists for clean and chimeric barcodes
+    clean_reads['Reads'] = clean_reads['Reads'].apply(lambda x: x[0])
+    clean_reads['Peptide'] = clean_reads['Peptide'].apply(lambda x: x[0])
+
+    chimeric_reads['Reads'] = chimeric_reads['Reads'].apply(lambda x: x[0])
+    chimeric_reads['Peptide'] = chimeric_reads['Peptide'].apply(lambda x: x[0])
+    
+    # remove the 'Peptide' column from the tables before merging
+    temp_table_multi_clean.drop(columns=['Peptide'], inplace=True)
+    temp_table_multi_chimeric.drop(columns=['Peptide'], inplace=True)
+
+    temp_table_multi_clean = pd.merge(temp_table_multi_clean, clean_reads, on=['BC', 'LUTnr'])
+    temp_table_multi_chimeric = pd.merge(temp_table_multi_chimeric, chimeric_reads, on=['BC', 'LUTnr'])
+
+    # Set additional metadata for clean barcodes
+    temp_table_multi_clean['mCount'] = temp_table_multi_clean['tCount']  # Maximum count is total count for clean
     temp_table_multi_clean['Mode'] = 'Def'
 
     return temp_table_multi_clean, temp_table_multi_chimeric
@@ -330,18 +357,23 @@ def get_valid_chimeric_barcodes(temp_table_multi_chimeric: pd.DataFrame, thresho
     logger.info(f"Extracting chimeric barcodes with maximal read ratio above {threshold}")
     # For every barcode LUTnr pair, set mCount to tCount
     temp_table_multi_chimeric['mCount'] = temp_table_multi_chimeric['tCount']
-    # Sum the total count of reads for each barcode
-    temp_table_multi_chimeric['tCount'] = temp_table_multi_chimeric.groupby('BC')['tCount'].transform('sum')
-    temp_table_multi_chimeric['Mode'] = 'Amb'
     
-    idx = temp_table_multi_chimeric.groupby('BC')['mCount'].idxmax()
-    temp_table = temp_table_multi_chimeric.loc[idx].copy()
+    # sort the table by BC and mCount
+    temp_table_multi_chimeric = temp_table_multi_chimeric.sort_values(by=['BC', 'mCount'], ascending=[True, False])
+    
+    temp_table = temp_table_multi_chimeric.groupby('BC').agg({
+        'mCount': 'max',
+        'tCount': 'sum',
+        'Reads': lambda x: list(x),
+        'Peptide': lambda x: list(x),
+    }).reset_index()
     
     # get the index of all rows where the maximal read count divided by the total read count is above the threshold
     idx = temp_table['mCount'] / temp_table['tCount'] >= threshold
     
     # set the mode to Def for all rows where the maximal read count divided by the total read count is above the threshold
     temp_table.loc[idx, 'Mode'] = 'Def'
+    temp_table.loc[~idx, 'Mode'] = 'Chimeric'
 
     return temp_table
 
