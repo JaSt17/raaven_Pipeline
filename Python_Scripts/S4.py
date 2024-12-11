@@ -252,8 +252,10 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
     BCcount.columns = ['BC', 'RNAcount']
     # Extract only BC that are in BCcount
     foundFrags = library_fragments.merge(BCcount, on='BC', how='inner')
-    # Merge with lut_dna on 'LUTnr'
-    foundFrags = foundFrags.merge(lut_dna, on='LUTnr', how='inner')
+    if lut_dna is not None:
+        # Merge with lut_dna on 'LUTnr'
+        foundFrags = foundFrags.merge(lut_dna, on='LUTnr', how='inner')
+
     
     # Save the found fragments
     # ============================
@@ -280,7 +282,10 @@ def main():
     # Try to load the necessary data
     try:
         library_fragments = pd.read_csv(config["input_table"], dtype={7: str})
-        lut_dna = pd.read_csv(config["in_name_LUT"])
+        if config["in_name_LUT"] is not None:
+            lut_dna = pd.read_csv(config["in_name_LUT"])
+        else:
+            lut_dna = None
     except Exception as e:
         logger.error(f"Error loading data: {e}")
         sys.exit(1)
