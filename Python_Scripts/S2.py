@@ -7,7 +7,7 @@ This script extracts barcodes and fragments from sequencing files, pairs them, a
 Workflow:
     - Use bbduk2.sh to extract barcodes from the given barcode sequencing file
     - Use bbduk2.sh to extract fragments from the given fragment sequencing file
-    - Pair the barcodes and fragments using fastq_pair
+    - Pair the barcodes and fragments using bbmap/repair.sh
     - Save the paired barcodes and fragments in separate files
 
 Inputs for the script:
@@ -25,7 +25,6 @@ import os
 import sys
 import subprocess
 import tempfile
-import shutil
 import re
 import logging
 from datetime import datetime
@@ -144,40 +143,45 @@ def main():
     if summary:
         logger.info(f"bbduk2 fragment extraction summary:\n{summary}")
     in_name_fragment = out_name_P7
+    
+    # creating the output directory if it does not exist
+    os.makedirs(out_dir, exist_ok=True)
+    # define the output file names in the output directory
+    paired_barcode_out = os.path.join(out_dir, f"barcode_{out_name}.fastq.gz")
+    paired_fragment_out = os.path.join(out_dir, f"fragment_{out_name}.fastq.gz")
 
-    # Pair barcodes and fragments using fastq_pair
-    fastq_pair_command = [
-        "fastq_pair",
-        in_name_barcode,
-        in_name_fragment
+    # Create the reformat.sh command
+    reformat_command = [
+        "bbmap/repair.sh",
+        f"in1={in_name_barcode}",
+        f"in2={in_name_fragment}",
+        f"out1={paired_barcode_out}",
+        f"out2={paired_fragment_out}",
+        "repair",
+        "overwrite=true",
+        f"threads={threads}",
     ]
 
-    _, stderr = run_command(fastq_pair_command, "fastq_pair")
+    # Run the reformat.sh command
+    _, stderr = run_command(reformat_command, "reformat.sh")
+        
+    # Regular expressions to extract the number and percentage of paired and singleton reads
+    paired_reads_match = re.search(r"Pairs:\s+(\d+)\sreads\s\(([\d.]+)%\)", stderr)
+    unpaired_reads_match = re.search(r"Singletons:\s+(\d+)\sreads\s\(([\d.]+)%\)", stderr)
+    # Extract numbers and percentages if matches are found
+    paired_reads = int(paired_reads_match.group(1)) if paired_reads_match else 0
+    paired_percentage = float(paired_reads_match.group(2)) if paired_reads_match else 0.0
+    unpaired_reads = int(unpaired_reads_match.group(1)) if unpaired_reads_match else 0
+    unpaired_percentage = float(unpaired_reads_match.group(2)) if unpaired_reads_match else 0.0
 
-    # Change the names of the output files
-    P5_paired_out = in_name_barcode.replace(".fastq.gz", "_paired_1.fastq")
-    P7_paired_out = in_name_fragment.replace(".fastq.gz", "_paired_2.fastq")
-    P5_unpaired_out = in_name_barcode.replace(".fastq.gz", "_unmatched_1.fastq")
-    P7_unpaired_out = in_name_fragment.replace(".fastq.gz", "_unmatched_2.fastq")
+    # Print the results
+    logger.info(f"Paired reads: {paired_reads} ({paired_percentage}%)")
+    logger.info(f"Unpaired reads: {unpaired_reads} ({unpaired_percentage}%)")
 
-    # Update names for consistency
-    name_dict = {
-        P5_paired_out: f"barcode_{out_name}.fastq",
-        P7_paired_out: f"fragment_{out_name}.fastq",
-        P5_unpaired_out: f"barcode_unpaired_{out_name}.fastq",
-        P7_unpaired_out: f"fragment_unpaired_{out_name}.fastq",
-    }
-
-
-    # Save outputs
-    os.makedirs(out_dir, exist_ok=True)
-    for name in name_dict:
-        if os.path.exists(name):
-            shutil.move(name, os.path.join(out_dir, name_dict[name]))
-
-    logger.info(f"Finished extraction of barcodes and fragments")
+    # Log final messages
     logger.info(f"Output files saved in {out_dir}")
     logger.info(f"Total execution time: {datetime.now() - start_time}")
+
 
 if __name__ == "__main__":
     main()
