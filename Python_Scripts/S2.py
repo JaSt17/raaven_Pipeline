@@ -7,7 +7,7 @@ This script extracts barcodes and fragments from sequencing files, pairs them, a
 Workflow:
     - Use bbduk2.sh to extract barcodes from the given barcode sequencing file
     - Use bbduk2.sh to extract fragments from the given fragment sequencing file
-    - Pair the barcodes and fragments using bbmap/repair.sh
+    - Pair the barcodes and fragments using seqkit pair
     - Save the paired barcodes and fragments in separate files
 
 Inputs for the script:
@@ -23,6 +23,7 @@ Outputs of the script:
 
 import os
 import sys
+import shutil
 import subprocess
 import tempfile
 import re
@@ -114,12 +115,12 @@ def main():
     # get the number of available threads
     threads = os.cpu_count()
     
-    # BBDuk extraction for barcodes
-    out_name_P5 = tempfile.NamedTemporaryFile(prefix="BC_", suffix=".fastq.gz", delete=False).name
+    os.makedirs(out_dir, exist_ok=True)
+    out_name_barcode = os.path.join(out_dir, f"barcode_{out_name}.fastq.gz")
     bbduk2_args_BC = config["bbduk2_args_BC"] + [
         f"threads={threads}",
         f"in={in_name_barcode}",
-        f"out={out_name_P5}",
+        f"out={out_name_barcode}",
     ]
     _, stderr = run_command(["bbmap/bbduk2.sh"] + bbduk2_args_BC, "bbduk2 barcode extraction")
     
@@ -127,14 +128,13 @@ def main():
     summary = extract_summary(stderr)
     if summary:
         logger.info(f"bbduk2 barcode extraction summary:\n{summary}")
-    in_name_barcode = out_name_P5
 
     # BBDuk extraction for fragments
-    out_name_P7 = tempfile.NamedTemporaryFile(prefix="Frag_", suffix=".fastq.gz", delete=False).name
+    out_name_fragment = os.path.join(out_dir, f"fragment_{out_name}.fastq.gz")
     bbduk2_args_Frag = config["bbduk2_args_Frag"] + [
         f"threads={threads}",
         f"in={in_name_fragment}",
-        f"out={out_name_P7}",
+        f"out={out_name_fragment}",
     ]
     _, stderr = run_command(["bbmap/bbduk2.sh"] + bbduk2_args_Frag, "bbduk2 fragment extraction")
     
@@ -142,46 +142,50 @@ def main():
     summary = extract_summary(stderr)
     if summary:
         logger.info(f"bbduk2 fragment extraction summary:\n{summary}")
-    in_name_fragment = out_name_P7
+
+    # Use seqkit pair
+    seqkit_command = [f"seqkit pair -1 {out_name_barcode} -2 {out_name_fragment} -u"]
+
+    logger.info("Running seqkit pair to synchronize paired-end reads.")
+    _, stderr = run_command(seqkit_command, "seqkit pair", shell=True)
     
-    # creating the output directory if it does not exist
+    # Regular expressions
+    paired_reads_regex = r"(\d+)\s+paired-end reads"
+    unpaired_reads_regex = r"(\d+)\s+unpaired reads"
+
+    # Extract paired reads
+    paired_reads_match = re.search(paired_reads_regex, stderr)
+    paired_reads = int(paired_reads_match.group(1)) if paired_reads_match else 0
+
+    # Extract unpaired reads with file paths
+    unpaired_reads_matches = re.findall(unpaired_reads_regex, stderr)
+
+    # Print results
+    logger.info(f"Paired reads: {paired_reads}")
+    logger.info(f"Unpaired barcode reads: {unpaired_reads_matches[0]}")
+    logger.info(f"Unpaired fragment reads: {unpaired_reads_matches[1]}")
+    
     os.makedirs(out_dir, exist_ok=True)
-    # define the output file names in the output directory
     paired_barcode_out = os.path.join(out_dir, f"barcode_{out_name}.fastq.gz")
     paired_fragment_out = os.path.join(out_dir, f"fragment_{out_name}.fastq.gz")
+    
+    # output names 
+    seqkit_barcode_out = out_name_barcode.replace(".fastq.gz", ".paired.fastq.gz")
+    seqkit_fragment_out = out_name_fragment.replace(".fastq.gz", ".paired.fastq.gz")
+    seqkit_barcode_unpaired = out_name_barcode.replace(".fastq.gz", ".unpaired.fastq.gz")
+    seqkit_fragment_unpaired = out_name_fragment.replace(".fastq.gz", ".unpaired.fastq.gz")
+    
+    # use shutil to move the files to the output directory
+    shutil.move(seqkit_barcode_out, paired_barcode_out)
+    shutil.move(seqkit_fragment_out, paired_fragment_out)
+    
+    #remove the unpaired files
+    os.remove(seqkit_barcode_unpaired)
+    os.remove(seqkit_fragment_unpaired)
 
-    # Create the reformat.sh command
-    reformat_command = [
-        "bbmap/repair.sh",
-        f"in1={in_name_barcode}",
-        f"in2={in_name_fragment}",
-        f"out1={paired_barcode_out}",
-        f"out2={paired_fragment_out}",
-        "repair",
-        "overwrite=true",
-        f"threads={threads}",
-    ]
-
-    # Run the reformat.sh command
-    _, stderr = run_command(reformat_command, "reformat.sh")
-        
-    # Regular expressions to extract the number and percentage of paired and singleton reads
-    paired_reads_match = re.search(r"Pairs:\s+(\d+)\sreads\s\(([\d.]+)%\)", stderr)
-    unpaired_reads_match = re.search(r"Singletons:\s+(\d+)\sreads\s\(([\d.]+)%\)", stderr)
-    # Extract numbers and percentages if matches are found
-    paired_reads = int(paired_reads_match.group(1)) if paired_reads_match else 0
-    paired_percentage = float(paired_reads_match.group(2)) if paired_reads_match else 0.0
-    unpaired_reads = int(unpaired_reads_match.group(1)) if unpaired_reads_match else 0
-    unpaired_percentage = float(unpaired_reads_match.group(2)) if unpaired_reads_match else 0.0
-
-    # Print the results
-    logger.info(f"Paired reads: {paired_reads} ({paired_percentage}%)")
-    logger.info(f"Unpaired reads: {unpaired_reads} ({unpaired_percentage}%)")
-
-    # Log final messages
-    logger.info(f"Output files saved in {out_dir}")
+    logger.info(f"Paired reads saved to: {paired_barcode_out}")
+    logger.info(f"Paired fragments saved to: {paired_fragment_out}")
     logger.info(f"Total execution time: {datetime.now() - start_time}")
-
 
 if __name__ == "__main__":
     main()
