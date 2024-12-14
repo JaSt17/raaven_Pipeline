@@ -144,7 +144,7 @@ def main():
         logger.info(f"bbduk2 fragment extraction summary:\n{summary}")
 
     # Use seqkit pair
-    seqkit_command = [f"seqkit pair -1 {out_name_barcode} -2 {out_name_fragment} -u"]
+    seqkit_command = [f"seqkit pair -1 {out_name_barcode} -2 {out_name_fragment} -u -j {threads}"]
 
     logger.info("Running seqkit pair to synchronize paired-end reads.")
     _, stderr = run_command(seqkit_command, "seqkit pair", shell=True)
