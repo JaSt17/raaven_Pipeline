@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=undetermined_analysis
-#SBATCH --nodes=12
-#SBATCH --ntasks=12
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
 #SBATCH --cpus-per-task=48
-#SBATCH --time=48:00:00
+#SBATCH --time=24:00:00
 #SBATCH -A lu2024-2-8
 #SBATCH -o undetermined_analysis%j.out
 #SBATCH -e undetermined_analysis%j.err
