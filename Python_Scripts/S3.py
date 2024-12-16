@@ -188,7 +188,7 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
     run_command(command, "Extract unique sequences", shell=True)
     
     number_of_unique_fragments, _ = run_command([f" echo $(( $(wc -l < {out_name_1}) / 2 ))"], "Extract unique sequences", shell=True)
-    logger.info(f"Number of fragment reads: {number_of_unique_fragments.strip()}")
+    logger.info(f"Number of unique fragment reads: {number_of_unique_fragments.strip()}")
     
     out_name_2 = "/".join(barcodes_file.split("/")[:-1]) + "/unique_barcodes.fasta"
     # Build shell command for extracting unique sequences
@@ -204,7 +204,7 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
     run_command(command, "Extract unique sequences", shell=True)
     
     number_of_unique_barcodes, _ = run_command([f" echo $(( $(wc -l < {out_name_2}) / 2 ))"], "Extract unique sequences", shell=True)
-    logger.info(f"Number of barcode reads: {number_of_unique_barcodes.strip()}")
+    logger.info(f"Number of unique barcode reads: {number_of_unique_barcodes.strip()}")
 
     return out_name_1, out_name_2
 
@@ -506,7 +506,7 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_consen
     logger.info(f"  Number of barcodes mapping to only one fragment: {len(temp_table_multi_clean)}")
     logger.info(f"  Number of barcodes mapping to more than one fragment: {len(temp_table_multi_consensus)}")
     logger.info(f"      From these {len(temp_table_multi_consensus[temp_table_multi_consensus['Mode'] == 'Def'])} are clean barcodes (ratio above {threshold})")
-    logger.info(f"      From these {len(temp_table_multi_consensus[temp_table_multi_consensus['Mode'] == 'Amb'])} are chimeric barcodes (ratio below {threshold})")
+    logger.info(f"      From these {len(temp_table_multi_consensus[temp_table_multi_consensus['Mode'] == 'Chimeric'])} are chimeric barcodes (ratio below {threshold})")
     logger.info(f"Number of barcodes-fragment pairs sequenced only once: {len(temp_table_single)}")
     output_table = pd.concat([temp_table_multi_final, temp_table_single], ignore_index=True)
 
