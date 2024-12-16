@@ -311,9 +311,6 @@ def main():
     # Add the library fragments to the combined data
     combined_data = pd.concat([library_fragments, combined_data], ignore_index=True)
     
-    # Only take the subset that have Mode == "Def" which are definitive Barcodes that have more than 1 read
-    combined_data = combined_data[combined_data["Mode"] == "Def"]
-    
     # Get the reference sequence lengths
     logger.info("Getting reference sequence lengths")
     ref_seq_len_df = get_ref_sequence_length_df(config["original_seq_file"])

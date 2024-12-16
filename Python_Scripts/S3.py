@@ -470,30 +470,28 @@ def get_valid_chimeric_barcodes(temp_table_multi_chimeric: pd.DataFrame, thresho
     # sort the table by BC and mCount
     temp_table_multi_chimeric = temp_table_multi_chimeric.sort_values(by=['BC', 'mCount'], ascending=[True, False])
     
-    temp_table = temp_table_multi_chimeric.groupby('BC').agg({
-        'mCount': 'max',
+    temp_table_tcount = temp_table_multi_chimeric.groupby('BC').agg({
         'tCount': 'sum',
-        'Reads': lambda x: list(x),
-        'Peptide': lambda x: list(x),
     }).reset_index()
+    # remove the tCount column from the table
+    temp_table_multi_chimeric.drop(columns=['tCount'], inplace=True)
     
-    # get the index of all rows where the maximal read count divided by the total read count is above the threshold
-    idx = temp_table['mCount'] / temp_table['tCount'] >= threshold
+    # merge the tCount column to the temp_table_multi_chimeric
+    temp_table_multi_chimeric = pd.merge(temp_table_multi_chimeric, temp_table_tcount, on='BC')
     
-    # set the mode to Def for all rows where the maximal read count divided by the total read count is above the threshold
-    temp_table.loc[idx, 'Mode'] = 'Def'
-    temp_table.loc[~idx, 'Mode'] = 'Chimeric'
+    # Set the mode based on the threshold for the maximal read count divided by the total read count
+    temp_table_multi_chimeric['Mode'] = temp_table_multi_chimeric.apply(lambda x: 'Def' if x['mCount'] / x['tCount'] >= threshold else 'Chimeric', axis=1)
 
-    return temp_table
+    return temp_table_multi_chimeric
 
 
-def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_consensus: pd.DataFrame, temp_table_single: pd.DataFrame, threshold:float)-> pd.DataFrame:
+def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimeric: pd.DataFrame, temp_table_single: pd.DataFrame, threshold:float)-> pd.DataFrame:
     """
     Combine the multi-read and single-read tables into the final output table.
     
     Parameters:
         temp_table_multi_clean (pd.DataFrame): DataFrame containing the clean multi-read barcodes
-        temp_table_multi_consensus (pd.DataFrame): DataFrame containing the consensus alignment for chimeric barcodes
+        temp_table_multi_chimeric (pd.DataFrame): DataFrame containing the consensus alignment for chimeric barcodes
         temp_table_single (pd.DataFrame): DataFrame containing the single-read barcodes
         
     Returns:
@@ -501,16 +499,18 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_consen
     """
     logger.info("Combining tables to create final output")
     # Combine clean and consensus tables
-    temp_table_multi_final = pd.concat([temp_table_multi_clean, temp_table_multi_consensus], ignore_index=True)
+    temp_table_multi_final = pd.concat([temp_table_multi_clean, temp_table_multi_chimeric], ignore_index=True)
     logger.info(f"Number of barcodes-fragment pairs sequenced more than once: {len(temp_table_multi_final)}")
     logger.info(f"  Number of barcodes mapping to only one fragment: {len(temp_table_multi_clean)}")
-    logger.info(f"  Number of barcodes mapping to more than one fragment: {len(temp_table_multi_consensus)}")
-    logger.info(f"      From these {len(temp_table_multi_consensus[temp_table_multi_consensus['Mode'] == 'Def'])} are clean barcodes (ratio above {threshold})")
-    logger.info(f"      From these {len(temp_table_multi_consensus[temp_table_multi_consensus['Mode'] == 'Chimeric'])} are chimeric barcodes (ratio below {threshold})")
+    logger.info(f"  Number of barcodes mapping to more than one fragment: {len(temp_table_multi_chimeric)}")
+    logger.info(f"      From these {len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Def'])} are clean barcodes (ratio above {threshold})")
+    logger.info(f"      From these {len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Chimeric'])} are chimeric barcodes (ratio below {threshold})")
     logger.info(f"Number of barcodes-fragment pairs sequenced only once: {len(temp_table_single)}")
-    output_table = pd.concat([temp_table_multi_final, temp_table_single], ignore_index=True)
 
-    return output_table
+    Def_barcodes = temp_table_multi_final[temp_table_multi_final['Mode'] == 'Def']
+    Chimeric_barcodes = temp_table_multi_final[temp_table_multi_final['Mode'] == 'Chimeric']
+    
+    return Def_barcodes, Chimeric_barcodes
 
 
 def main():
@@ -529,7 +529,7 @@ def main():
     blast_db_prefix = make_customarray_reference_index(lut_df)
 
     # Save unique fragments and barcodes as FASTA file
-    fragments_unique_fa_name, barcodes_unique_fa_name = save_unique_fragments_barcodes(config["fragment_file"], config["barcode_file"])
+    fragments_unique_fa_name, _ = save_unique_fragments_barcodes(config["fragment_file"], config["barcode_file"])
 
     # Align against the library using BLAST
     blast_out_file_name = align_against_library(fragments_unique_fa_name, blast_db_prefix)
@@ -574,12 +574,17 @@ def main():
     temp_table_multi_chimeric = get_valid_chimeric_barcodes(temp_table_multi_chimeric, config["threshold"])
 
     # Combine all tables into final output
-    output_table = combine_tables(temp_table_multi_clean, temp_table_multi_chimeric, temp_table_single, config["threshold"])
+    def_barcodes_table, chimeric_barcode_table = combine_tables(temp_table_multi_clean, temp_table_multi_chimeric, temp_table_single, config["threshold"])
+    del temp_table_multi_clean, temp_table_multi_chimeric
 
-    # Save the output table
-    output_table.to_csv(config['out_name'], index=False)
-    logger.info(f"Output saved to {config['out_name']}")
-
+    # Save the output tables
+    def_barcodes_table.to_csv(config['out_name'], index=False)
+    logger.info(f"Definitiv barcodes saved to {config['out_name']}")
+    chimeric_barcode_table.to_csv(config['out_name'].replace(".csv", "_chimeric.csv"), index=False)
+    logger.info(f"Chimeric barcodes saved to {config['out_name'].replace('.csv', '_chimeric.csv')}")
+    temp_table_single.to_csv(config['out_name'].replace(".csv", "_single.csv"), index=False)
+    logger.info(f"Single barcodes saved to {config['out_name'].replace('.csv', '_single.csv')}")
+    
     # Print total analysis time
     logger.info(f"Total execution time: {datetime.now() - start_time}")
 

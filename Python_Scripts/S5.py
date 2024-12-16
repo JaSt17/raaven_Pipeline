@@ -67,6 +67,16 @@ def main():
         fragments_pos = pd.read_csv(config["in_name_LUT"], dtype={0: str})
     except FileNotFoundError as e:
         logger.error(f"Could not find input file: {e}")
+        try:
+            library_barcodes = pd.read_csv(config["input_table"], dtype={7: str})
+            # add column RNAcount and set it to tcount
+            library_barcodes.rename(columns={"tCount": "RNAcount"}, inplace=True)
+            library_barcodes.to_csv(config["output_table"], index=False)
+            logger.info(f"Could not find fragments position file, saved library fragments with RNAcount to {config['output_table']}")
+            sys.exit(1)
+        except FileNotFoundError as e:
+            logger.error(f"Could not find input file: {e}")
+            sys.exit(1)
         sys.exit(1)
     
     logger.info(f"Number of unique fragments in the library: {len(library_barcodes['LUTnr'].unique())}")
@@ -74,19 +84,21 @@ def main():
     logger.info(f"Percentage of fragments found in the library: {len(library_barcodes['LUTnr'].unique()) / len(fragments_pos['LUTnr'].unique()) * 100:.2f}%")
     
     # merge library_barcodes with the LUT 
-    library_barcodes = pd.merge(library_barcodes, fragments_pos, on="LUTnr", how="inner")
+    library_barcodes = pd.merge(library_barcodes, fragments_pos, on=["LUTnr","Peptide"], how="inner")
     
     # remove unnecessary columns Reads,identity,alignmentLength,gapOpens,q_start,q_end,s_start,s_end,evalue,
-    unessary_columns = ["Reads", "identity", "alignmentLength", "gapOpens", "q_start", "q_end", "s_start", "s_end", "evalue"]
-    library_barcodes = library_barcodes.drop(columns=unessary_columns)
+    unessary_columns = ["Reads", "identity", "alignmentLength", "gapOpens", "q_start", "q_end", "s_start", "s_end", "evalue",'bitScore','mismatches',]
+    # remove each column if it exists
+    for col in unessary_columns:
+        if col in library_barcodes.columns:
+            library_barcodes.drop(col, axis=1, inplace=True)    
     
-    # add column RNAcount and set it to tcount
-    library_barcodes["RNAcount"] = library_barcodes["tCount"]
+    # rename tcount to RNAcount
+    library_barcodes.rename(columns={"tCount": "RNAcount"}, inplace=True)
     
     # reorder columns
     library_barcodes = library_barcodes[['Category', 'LUTnr',  'BC', 'AAstart', 'AAend', 'Structure', 'Peptide',
-                                        'start', 'end', 'width', 'Sequence', 'bitScore',
-                                        'mismatches', 'tCount', 'mCount', 'RNAcount', 'Mode']]
+                                        'start', 'end', 'width', 'Sequence', 'tCount', 'mCount', 'RNAcount', 'Mode']]
     
     # save the merged library_barcodes
     library_barcodes.to_csv(config["output_table"], index=False)
