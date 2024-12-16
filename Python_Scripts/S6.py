@@ -217,6 +217,10 @@ def normalize_read_counts(df: pd.DataFrame) -> pd.DataFrame:
     # create a new column with the sum of RNAcounts for each group
     df['Group_RNAcount'] = df.groupby('Group')['RNAcount'].transform('sum')
     
+    # ensure  that both columns are being treated as floats
+    df['Group_RNAcount'] = df['Group_RNAcount'].astype(float)
+    df['RNAcount'] = df['RNAcount'].astype(float)
+    
     # create a new column with the sum of Normalized_RNAcounts for each group
     df['RNAcount_ratio'] = df['RNAcount'] / df['Group_RNAcount']
     

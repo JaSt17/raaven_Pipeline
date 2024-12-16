@@ -22,7 +22,7 @@ cp Python_Scripts/configs/config_BRAVE.py Python_Scripts/config.py
 #./Python_Scripts/S1.py
 #./Python_Scripts/S2.py
 ./Python_Scripts/S3.py
-./Python_Scripts/S4.py
+#./Python_Scripts/S4.py
 ./Python_Scripts/S5.py
 ./Python_Scripts/S6.py
 

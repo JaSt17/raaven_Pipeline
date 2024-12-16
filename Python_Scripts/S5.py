@@ -97,8 +97,8 @@ def main():
     library_barcodes.rename(columns={"tCount": "RNAcount"}, inplace=True)
     
     # reorder columns
-    library_barcodes = library_barcodes[['Category', 'LUTnr',  'BC', 'AAstart', 'AAend', 'Structure', 'Peptide',
-                                        'start', 'end', 'width', 'Sequence', 'tCount', 'mCount', 'RNAcount', 'Mode']]
+    library_barcodes = library_barcodes[['Category','Mode','Structure', 'LUTnr',  'BC', 'AAstart', 'AAend', 'Peptide',
+                                        'start', 'end', 'width', 'Sequence', 'mCount', 'RNAcount']]
     
     # save the merged library_barcodes
     library_barcodes.to_csv(config["output_table"], index=False)
