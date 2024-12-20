@@ -1,7 +1,7 @@
 """ This file contains the config dictionary that are used to store the configuration parameters for the pipeline. """
 
 # Define the data directory where the input and output files are stored
-data_dir = "raav-60/p005"
+data_dir = "raav-60/p005_test"
 # Define the directory where the logs are stored
 log_dir = data_dir + "/logs/"
 
@@ -74,7 +74,7 @@ config_S3 = {
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
     "threshold": 1.0,
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue
-    "chunk_size": 25000000,
+    "chunk_size": 10000000,
     # output file name for the library barcodes
     "out_name": data_dir + "/library_barcodes.csv",
     "log_dir": log_dir,

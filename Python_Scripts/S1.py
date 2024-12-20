@@ -263,6 +263,19 @@ def main():
     # Read the input FASTA file
     aa_list = read_fasta(config["input_file"])
     
+    # write a human codon optimized reference file
+    # create a dataframe with all sequences form the aa_list
+    ref_hco = pd.DataFrame(aa_list)
+    # Load codon usage table once
+    wSet = load_wSet(config["wSet"])
+    # Prepare arguments for multiprocessing
+    ref_hco['Sequence'] = ref_hco['Peptide'].apply(lambda x: aatodna(x, wSet))
+    # write the reference file to a file
+    output_file = config["input_file"].replace(".fasta", "_HCO.fasta")
+    with open(output_file, "w") as f:
+        for i, row in ref_hco.iterrows():
+            f.write(f">{row['ID']}\n{row['Sequence']}\n")
+    
     # Generate fragments for each structure
     sorted_fragments = []
     for structure, info in config["structure_dict"].items():
