@@ -74,7 +74,7 @@ config_S3 = {
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
     "threshold": 1.0,
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue
-    "chunk_size": 10000000,
+    "chunk_size": 25000000,
     # output file name for the library barcodes
     "out_name": data_dir + "/library_barcodes.csv",
     "log_dir": log_dir,

@@ -39,7 +39,8 @@ Output of the script is:
 """
 
 import gzip
-import os
+import tables
+import gc
 import tempfile
 import subprocess
 import multiprocessing
@@ -179,7 +180,7 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
     command = [
         f"zcat {fragments_file} | "
         "awk 'NR % 4 == 2' | "
-        f"sort --parallel={num_threads} --buffer-size=1G | "
+        f"sort --parallel={num_threads}| "
         f"uniq | grep -v 'N' | "
         "awk '{print \">\" NR \"\\n\" $0}' > "
         f"{out_name_1}"
@@ -187,15 +188,15 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
     # Execute shell command
     run_command(command, "Extract unique sequences", shell=True)
     
-    number_of_unique_fragments, _ = run_command([f" echo $(( $(wc -l < {out_name_1}) / 2 ))"], "Extract unique sequences", shell=True)
-    logger.info(f"Number of unique fragment reads: {number_of_unique_fragments.strip()}")
+    number_of_unique_fragments, _ = run_command([f"zcat {fragments_file} | awk 'NR % 4 == 2' | wc -l "], "Extract unique sequences", shell=True)
+    logger.info(f"Number of fragment reads: {number_of_unique_fragments.strip()}")
     
     out_name_2 = "/".join(barcodes_file.split("/")[:-1]) + "/unique_barcodes.fasta"
     # Build shell command for extracting unique sequences
     command = [
         f"zcat {barcodes_file} | "
         "awk 'NR % 4 == 2' | "
-        f"sort --parallel={num_threads} --buffer-size=1G | "
+        f"sort --parallel={num_threads}| "
         f"uniq | grep -v 'N' | "
         "awk '{print \">\" NR \"\\n\" $0}' > "
         f"{out_name_2}"
@@ -203,8 +204,8 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
     # Execute shell command
     run_command(command, "Extract unique sequences", shell=True)
     
-    number_of_unique_barcodes, _ = run_command([f" echo $(( $(wc -l < {out_name_2}) / 2 ))"], "Extract unique sequences", shell=True)
-    logger.info(f"Number of unique barcode reads: {number_of_unique_barcodes.strip()}")
+    number_of_unique_barcodes, _ = run_command([f"zcat {barcodes_file} | awk 'NR % 4 == 2' | wc -l "], "Extract unique sequences", shell=True)
+    logger.info(f"Number of barcode reads: {number_of_unique_barcodes.strip()}")
 
     return out_name_1, out_name_2
 
@@ -537,12 +538,12 @@ def main():
     # Read BLAST output
     blast_df = read_blast_output(blast_out_file_name, fragments_unique_fa_name, lut_df)
     
-    # Temporary directory for intermediate results
-    temp_dir = tempfile.mkdtemp()
-    chunk_files = []
-    # Chunk size for reading fragments and barcodes
-    chunk_size = config['chunk_size']
-
+    # output file_name
+    output_file = config["out_name"].replace(".csv", ".h5")
+    
+    chunk_size = config["chunk_size"]
+    write_mode = 'w'
+    
     # Process fragments and barcodes in chunks
     for i, (frag_chunk, bc_chunk) in enumerate(load_frag_bc_reads_chunked(config["fragment_file"], config["barcode_file"], chunk_size)):
         logger.info(f"Processing chunk {i + 1}")
@@ -550,14 +551,20 @@ def main():
         # Create full table for the chunk
         chunk_table = create_full_table(blast_df, lut_df, frag_chunk, bc_chunk)
 
-        # Save chunk results to temporary file
-        chunk_file = os.path.join(temp_dir, f"chunk_{i}.pkl")
-        chunk_table.to_pickle(chunk_file)
-        chunk_files.append(chunk_file)
+        # Write chunk directly to final output file in HDF5 or Parquet format
+        chunk_table.to_hdf(output_file, key='data', mode=write_mode, format='table', append=(write_mode == 'a'))
 
-    # Combine all chunk tables
-    logger.info("Combining all chunks into the full table")
-    full_table = pd.concat([pd.read_pickle(chunk_file) for chunk_file in chunk_files], ignore_index=True)
+        # After the first write, change mode to 'append'
+        write_mode = 'a'
+
+        # Explicitly free memory
+        del frag_chunk, bc_chunk, chunk_table
+        gc.collect()
+
+    logger.info(f"All chunks have been written to {output_file}")
+    
+    # read the full table from the output file
+    full_table = pd.read_hdf(output_file, key='data')
 
     # Perform Starcode barcode reduction and replace barcodes with reduced versions
     full_table = starcode_based_reduction_and_replace(full_table, config['barcode_file'], 'BC')

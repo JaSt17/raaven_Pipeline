@@ -154,7 +154,7 @@ def get_ref_sequence_length_df(file_path:str) -> pd.DataFrame:
     ids = [seq_record.description for seq_record in seqs_original]
     
     # create a DataFrame with sreference sequence ids and lengths
-    ref_seq_len_df = pd.DataFrame({"Category": ids,
+    ref_seq_len_df = pd.DataFrame({"Origion_seq": ids,
                                     "seqlength": [len(s) for s in seq]})
     
     return ref_seq_len_df
@@ -205,8 +205,6 @@ def create_subsets(df: pd.DataFrame, subsets: dict) -> pd.DataFrame:
 def normalize_read_counts(df: pd.DataFrame) -> pd.DataFrame:
     """
     Normalize the read counts in the data frame to adjust for difference in read depth.
-    The read counts are normalized by dividing the read count of each fragment by the sum of the read counts of all fragments in the same group.
-    This gives a ratio of the read count of each fragment to the total read count of the group.
 
     Parameters:
         df (pd.DataFrame): The input DataFrame containing read count columns.
@@ -214,16 +212,13 @@ def normalize_read_counts(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: The DataFrame with normalized read counts.
     """
-    # create a new column with the sum of RNAcounts for each group
-    df['Group_RNAcount'] = df.groupby('Group')['RNAcount'].transform('sum')
+    # Ensure data types are float once
+    df = df.astype({'RNAcount': 'float32'})  # Convert 'RNAcount' column to float32 for memory efficiency
     
-    # ensure  that both columns are being treated as floats
-    df['Group_RNAcount'] = df['Group_RNAcount'].astype(float)
-    df['RNAcount'] = df['RNAcount'].astype(float)
-    
-    # create a new column with the sum of Normalized_RNAcounts for each group
-    df['RNAcount_ratio'] = df['RNAcount'] / df['Group_RNAcount']
-    
+    # Compute the group-wise sum once and normalize
+    group_sum = df.groupby('Group')['RNAcount'].transform('sum')
+    df['RNAcount_ratio'] = df['RNAcount'] / group_sum
+
     return df
 
 
@@ -241,10 +236,8 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
     
     # Define aggregation functions
     aggregations = {
-        'tCount': 'sum',
         'mCount': 'sum',
-        'BC': lambda x: ','.join(x.unique()),
-        'LUTnr': lambda x: ','.join(x.unique()),
+        'BC': lambda x: ','.join(pd.unique(x)),
         'RNAcount': 'sum',
         'RNAcount_ratio': 'sum',
     }
@@ -252,22 +245,22 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
     # Perform groupby aggregation
     combined_data = df.groupby(key_cols).agg(aggregations).reset_index()
     
-    # Compute the count adjusted for the number of found barcodes and the barcode ratio
-    combined_data['BC_count'] = combined_data['BC'].str.split(',').apply(len)
-    Group_BC_count = combined_data.groupby('Group')['BC_count'].transform('sum')
-    combined_data['BC_ratio'] = combined_data['BC_count'] / Group_BC_count
-    
-    
-    # barcode adjusted count ratio
+    # Compute the BC_count and BC_ratio
+    combined_data['BC_count'] = combined_data['BC'].str.count(',') + 1
+    group_bc_count = combined_data.groupby('Group', observed=True)['BC_count'].transform('sum')
+    combined_data['BC_ratio'] = combined_data['BC_count'] / group_bc_count
+
+    # Barcode adjusted count ratio
     combined_data['BC_adjusted_count_ratio'] = combined_data['RNAcount_ratio'] + combined_data['BC_ratio'] / 2
-        
-    combined_data['AAwidth'] = np.floor(combined_data['width'] / 3).astype(int)
-    combined_data['AAseqlength'] = np.floor(combined_data['seqlength'] / 3).astype(int)
-    
-    # Calculate AA_pos and AA_rel_pos
-    combined_data['AA_pos'] = np.floor(combined_data['AAstart'] + combined_data['AAwidth'] / 2).astype(int)
+
+    # Vectorized computation for AAwidth and AAseqlength
+    combined_data['AAwidth'] = (combined_data['width'] // 3).astype(int)
+    combined_data['AAseqlength'] = (combined_data['seqlength'] // 3).astype(int)
+
+    # Compute AA_pos and AA_rel_pos
+    combined_data['AA_pos'] = (combined_data['AAstart'] + combined_data['AAwidth'] / 2).astype(int)
     combined_data['AA_rel_pos'] = combined_data['AA_pos'] / combined_data['AAseqlength']
-    
+
     return combined_data
 
 
@@ -319,7 +312,7 @@ def main():
     logger.info("Getting reference sequence lengths")
     ref_seq_len_df = get_ref_sequence_length_df(config["original_seq_file"])
     # add the reference sequence lengths to the combined data with the reference_name as the key
-    combined_data = pd.merge(combined_data, ref_seq_len_df, how="left", on="Category")
+    combined_data = pd.merge(combined_data, ref_seq_len_df, how="left", on="Origion_seq")
     
     logger.info("Creating Subsets")
     # Create subsets based on the specified conditions
@@ -331,7 +324,7 @@ def main():
     
     logger.info("Combining fragment information")
     # Define the key columns for the groupby operation
-    key_cols = ["Group", "Category", "AAstart", "AAend", "Structure", "Peptide", "start", "end", "width", "seqlength", "Sequence"]
+    key_cols = ["Group", "Origion_seq", "LUTnr", "AAstart", "AAend", "Structure", "Peptide", "start", "end", "width", "seqlength", "Sequence"]
     # Combine information of identical fragments in a DataFrame
     combined_data = combine_information_of_identical_fragments(combined_data, key_cols)
     

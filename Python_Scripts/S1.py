@@ -246,7 +246,7 @@ def create_LUTnr(df: pd.DataFrame) -> pd.DataFrame:
     LUT['width'] = LUT['end'] - LUT['start']
     
     # Rename columns
-    LUT = LUT.rename(columns={"ID": "Category"})
+    LUT = LUT.rename(columns={"ID": "Origion_seq"})
 
     return LUT
 
