@@ -25,7 +25,6 @@ import os
 import sys
 import shutil
 import subprocess
-import tempfile
 import re
 import logging
 from datetime import datetime
@@ -142,46 +141,6 @@ def main():
     summary = extract_summary(stderr)
     if summary:
         logger.info(f"bbduk2 fragment extraction summary:\n{summary}")
-        
-    # Use vsearch to match the fragment reads to the reference sequence
-    logger.info("Running vsearch to match fragment reads to the reference sequence.")
-    
-    # set the reference sequence to the human codon-optimized reference sequence
-    db = config["input_file"].replace(".fasta", "_HCO.fasta")
-    
-    with tempfile.NamedTemporaryFile(delete=True, mode='w+', suffix='.txt') as vsearch_out, \
-        tempfile.NamedTemporaryFile(delete=True, mode='w+', suffix='.txt') as keep_fragments:
-        
-        # Run vsearch and store the output in a temporary file
-        vsearch_command = [
-            f"zcat {out_name_fragment} | "
-            f"vsearch --usearch_global - "
-            f"--db {db} "
-            "--id 1.0 "
-            f"--blast6out {vsearch_out.name} "
-            f"--threads {threads}"
-        ]
-        _, stderr = run_command(vsearch_command, "vsearch", shell=True)
-
-        match = re.search(r"(\d+ of \d+ \(\d+\.\d+%\))", stderr)
-        if match:
-            info = match.group(0)
-            logger.info(f"Ratio of matching fragment reads to the reference sequence: {info}")
-
-        # Use awk to extract the matching fragment reads from the vsearch output
-        awk_command = [f"awk '{{print $1}}' {vsearch_out.name} > {keep_fragments.name}"]
-        _, stderr = run_command(awk_command, "awk", shell=True)
-
-        # Use seqkit to extract the matching fragment reads
-        seqkit_command = [
-            f"seqkit grep -f {keep_fragments.name} {out_name_fragment} "
-            f"-o filtered_fragments.fastq.gz -j {threads}"
-        ]
-        _, stderr = run_command(seqkit_command, "seqkit grep", shell=True)
-
-        # Move the filtered fragment reads to the output directory
-        shutil.move("filtered_fragments.fastq.gz", out_name_fragment)
-    
 
     # Use seqkit pair
     seqkit_command = [f"seqkit pair -1 {out_name_barcode} -2 {out_name_fragment} -u -j {threads}"]

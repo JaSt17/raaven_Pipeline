@@ -232,8 +232,6 @@ def create_LUTnr(df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: A DataFrame with the columns LUTnr, ID, Peptide, AAstart, AAstop, and Sequence
     """
     LUT = df.copy()
-    # Change all sequences to uppercase
-    LUT['Sequence'] = LUT['Sequence'].str.upper()
     # Drop duplicates if there are any
     LUT = LUT.drop_duplicates()
     # Create new columns for the LUTnr

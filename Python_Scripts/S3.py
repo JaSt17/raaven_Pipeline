@@ -129,37 +129,6 @@ def load_frag_bc_reads_chunked(fragments_file: str, barcodes_file: str, chunk_si
             yield frag_chunk, bc_chunk
 
 
-def make_customarray_reference_index(lut_df: pd.DataFrame)-> str:
-    """
-    Create a BLAST database from LUT sequences.
-
-    Parameters:
-        lut_df (pd.DataFrame): DataFrame containing the LUT sequences
-
-    Returns:
-        str: Path to the BLAST database prefix
-    """
-    logger.info("Creating BLAST database from LUT sequences")
-    lut_fa = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".fa")
-    lut_records = [SeqRecord(Seq(row['Sequence']), id=str(row['LUTnr']), description="")
-                    for _, row in lut_df.iterrows()]
-    SeqIO.write(lut_records, lut_fa.name, "fasta")
-    lut_fa.close()
-
-    # Create BLAST database
-    blast_db_prefix = tempfile.mktemp(prefix="blastDB_")
-    makeblastdb_cmd = f"makeblastdb -in {lut_fa.name} -out {blast_db_prefix} -dbtype nucl -title LUT -parse_seqids -logfile /dev/null"
-    stdout, stderr = run_command(makeblastdb_cmd.split(), "BLAST database creation")
-    # print the size of the database
-    check_db_size_cmd = f"blastdbcmd -db {blast_db_prefix} -info"
-    stdout, stderr = run_command(check_db_size_cmd.split(), "Checking BLAST database size")
-    # pritn the first 2 lines of the output
-    stdout = stdout.split('\n')[0:2]
-    size = stdout[1].replace("\t", "")
-    logger.info(f"BLAST database size: {size}")
-    return blast_db_prefix
-
-
 def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
     """
     Save all found unique fragments and barcodes from the library to a FASTA file.
@@ -188,8 +157,12 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
     # Execute shell command
     run_command(command, "Extract unique sequences", shell=True)
     
-    number_of_unique_fragments, _ = run_command([f"zcat {fragments_file} | awk 'NR % 4 == 2' | wc -l "], "Extract unique sequences", shell=True)
-    logger.info(f"Number of fragment reads: {number_of_unique_fragments.strip()}")
+    number_of_unique_fragments, _ = run_command(
+        [f"echo $(( $(cat {out_name_1} | wc -l) / 2 ))"], 
+        "Extract unique sequences", 
+        shell=True
+    )
+    logger.info(f"Number of unique fragment reads: {number_of_unique_fragments.strip()}")
     
     out_name_2 = "/".join(barcodes_file.split("/")[:-1]) + "/unique_barcodes.fasta"
     # Build shell command for extracting unique sequences
@@ -204,82 +177,21 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
     # Execute shell command
     run_command(command, "Extract unique sequences", shell=True)
     
-    number_of_unique_barcodes, _ = run_command([f"zcat {barcodes_file} | awk 'NR % 4 == 2' | wc -l "], "Extract unique sequences", shell=True)
-    logger.info(f"Number of barcode reads: {number_of_unique_barcodes.strip()}")
+    number_of_unique_barcodes, _ = run_command(
+        [f"echo $(( $(cat {out_name_2} | wc -l) / 2 ))"], 
+        "Extract unique sequences", 
+        shell=True
+    )
+    logger.info(f"Number of unique barcode reads: {number_of_unique_barcodes.strip()}")
 
     return out_name_1, out_name_2
 
 
-def align_against_library(fragments_unique_fa_name: str, blast_db_prefix: str)-> str:
+def create_full_table(lut_df: pd.DataFrame, reads_frag: list, reads_BC: list)-> pd.DataFrame:
     """
-    Align unique fragments against the LUT database using BLASTn. BLAST output is saved to a file.
-
-    Parameters:
-        fragments_unique_fa_name (str): Path to the FASTA file containing unique fragments
-        blast_db_prefix (str): Path to the BLAST database prefix
-    
-    Returns:
-        str: Path to the BLAST output file
-    """
-    # Get the number of threads
-    num_threads = multiprocessing.cpu_count()
-    blast_out_file = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".txt")
-    blast_cmd = [
-        "blastn",
-        "-query", fragments_unique_fa_name,
-        "-db", blast_db_prefix,
-        "-outfmt", "10",
-        "-max_target_seqs", "25",
-        "-word_size", "7",
-        "-num_threads", str(num_threads),
-        "-out", blast_out_file.name
-    ]
-    stdout, stderr =  run_command(blast_cmd, "BLAST alignment")
-
-    # Check for errors
-    if stderr:
-        logger.error(f"BLAST error: {stderr}")
-        raise Exception(f"BLAST error: {stderr}")
-    
-    return blast_out_file.name
-
-
-def read_blast_output(blast_out_file_name: str, unique_fragments_name: str, lut_df: pd.DataFrame)-> pd.DataFrame:
-    """
-    Read the BLAST output into a DataFrame and map every read to its corresponding LUTnr.
+    Create a full table of all found fragments with their corresponding barcodes and matching LUT data.
     
     Parameters:
-        blast_out_file_name (str): Path to the BLAST output file
-        unique_fragments (set): Set of unique fragments
-        lut_df (pd.DataFrame): DataFrame containing the LUT sequences
-    
-    Returns:
-        pd.DataFrame: DataFrame containing the BLAST results
-    """
-    # Read in the unique fragments fasta file where the id is the key and the sequence is the value
-    unique_fragments = SeqIO.parse(unique_fragments_name, "fasta")
-    
-    logger.info("Reading BLAST output")
-    blast_columns = ["Reads", "Sequence", "identity", "alignmentLength", "mismatches",
-                    "gapOpens", "q_start", "q_end", "s_start", "s_end",
-                    "evalue", "bitScore"]
-    blast_df = pd.read_csv(blast_out_file_name, header=None, names=blast_columns)
-    
-    # Map the Reads and Sequence IDs back to the actual sequences
-    reads_index = {seq.id: str(seq.seq) for seq in unique_fragments}
-    lut_seq_index = lut_df.set_index('LUTnr')['Sequence'].astype(str).to_dict()
-    blast_df['Reads'] = blast_df['Reads'].astype(str).map(reads_index)
-    blast_df['Sequence'] = blast_df['Sequence'].astype(str).map(lut_seq_index)
-    
-    return blast_df
-
-
-def create_full_table(blast_df: pd.DataFrame, lut_df: pd.DataFrame, reads_frag: list, reads_BC: list)-> pd.DataFrame:
-    """
-    Create a full table of all fragments that matched the LUT with their BLASTn results. For every fragment, only the top hit is kept.
-    
-    Parameters:
-        blast_df (pd.DataFrame): DataFrame containing the BLAST results
         lut_df (pd.DataFrame): DataFrame containing the LUT sequences
         reads_frag (list): List of fragments as SeqRecords
         reads_BC (list): List of barcodes as SeqRecords
@@ -287,33 +199,19 @@ def create_full_table(blast_df: pd.DataFrame, lut_df: pd.DataFrame, reads_frag: 
     Returns:
         pd.DataFrame: DataFrame containing the full table with fragments and barcodes
     """
-    # Merge BLAST results with LUT data
-    blast_df = blast_df.merge(lut_df[['Sequence', 'LUTnr', 'Peptide']], on='Sequence', how='inner')
-    blast_df.drop(columns=['Sequence'], inplace=True)
-
-    # Convert columns to appropriate data types
-    blast_df['bitScore'] = pd.to_numeric(blast_df['bitScore'])
-    blast_df['mismatches'] = pd.to_numeric(blast_df['mismatches'])
-
-    # Sort by Reads, LUTnr, and bitScore (descending for bitScore)
-    blast_df.sort_values(by=['Reads', 'LUTnr', 'bitScore'], ascending=[True, True, False], inplace=True)
-    # Keep only the best match of the found fragments to the reference
-    blast_df.drop_duplicates(subset=['Reads', 'LUTnr'], keep='first', inplace=True)
-
     # Create full table with all found fragments and barcodes combinations
     full_table = pd.DataFrame({
-        'Reads': [str(rec.seq) for rec in reads_frag],
+        'Sequence': [str(rec.seq) for rec in reads_frag],
         'BC': [str(rec.seq) for rec in reads_BC]
     })
-
-    # Selecting only the top hit for each fragment from the BLAST results
-    blast_top_hit = blast_df.loc[blast_df.groupby('Reads')['bitScore'].idxmax()]
-    # keeping only found fragments with the highest bitScore hit in the Blast search in the full table
-    full_table = full_table.merge(blast_top_hit, on='Reads', how='inner')
+    # extract the Sequnce without linkers from the LUT
+    lut_df['Sequence'] = lut_df['Sequence'].str.extract(r'([ATGC]+)')
     
-    # Calculate the percentage of fragments that have been aligned to our DB (original created fragments)
-    alignment_percentage = len(full_table) / len(reads_frag) if reads_frag else 0
-    logger.info(f"Percentage of fragments that matched to the LUT: {alignment_percentage:.2%}")
+    # Merge the full table with the LUT data based on the Sequence
+    full_table = full_table.merge(lut_df[['Sequence', 'LUTnr', 'Peptide']], on='Sequence', how='inner')
+
+    # rename the Fragment column to Reads
+    full_table.rename(columns={'Sequence': 'Reads'}, inplace=True)
 
     return full_table
 
@@ -526,17 +424,8 @@ def main():
     # read in the LUT file
     lut_df = pd.read_csv(config["in_name_LUT"])
     
-    # Create BLAST database from LUT sequences
-    blast_db_prefix = make_customarray_reference_index(lut_df)
-
     # Save unique fragments and barcodes as FASTA file
-    fragments_unique_fa_name, _ = save_unique_fragments_barcodes(config["fragment_file"], config["barcode_file"])
-
-    # Align against the library using BLAST
-    blast_out_file_name = align_against_library(fragments_unique_fa_name, blast_db_prefix)
-
-    # Read BLAST output
-    blast_df = read_blast_output(blast_out_file_name, fragments_unique_fa_name, lut_df)
+    _, _ = save_unique_fragments_barcodes(config["fragment_file"], config["barcode_file"])
     
     # output file_name
     output_file = config["out_name"].replace(".csv", ".h5")
@@ -549,7 +438,7 @@ def main():
         logger.info(f"Processing chunk {i + 1}")
 
         # Create full table for the chunk
-        chunk_table = create_full_table(blast_df, lut_df, frag_chunk, bc_chunk)
+        chunk_table = create_full_table(lut_df, frag_chunk, bc_chunk)
 
         # Write chunk directly to final output file in HDF5 or Parquet format
         chunk_table.to_hdf(output_file, key='data', mode=write_mode, format='table', append=(write_mode == 'a'))

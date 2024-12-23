@@ -23,7 +23,8 @@ inverted_codon_table = {
             'G': ['GGG', 'GGC', 'GGA', 'GGT'],
             'M': ['ATG'],
             'Y': ['TAC', 'TAT'],
-            'D': ['GAC', 'GAT']
+            'D': ['GAC', 'GAT'],
+            'X': ['TAA', 'TAG', 'TGA']
             }
 
 
@@ -42,7 +43,7 @@ def load_wSet(file_path: str) -> pd.DataFrame:
     return wSet
 
 
-def gene_codon(seq: str, wSet: pd.DataFrame, organism: str = "ec", max_opt: bool = True, scale: float = 0.5, numcode: int = 1) -> str:
+def gene_codon(seq: str, wSet: pd.DataFrame, organism: str = "hsa", max_opt: bool = True, scale: float = 0.5, numcode: int = 1) -> str:
     """
     Optimizes the codon usage for a given organism.
     
@@ -66,6 +67,8 @@ def gene_codon(seq: str, wSet: pd.DataFrame, organism: str = "ec", max_opt: bool
     
     # Translate the sequence to amino acids
     amino_seq = str(Seq(seq).translate(table=numcode))
+    # change the stop codon to X
+    amino_seq = amino_seq.replace("*", "X")
     
     optimized_seq = []
 
@@ -129,7 +132,8 @@ def aatodna(in_aa: str, wSet: pd.DataFrame, species: str = "hsa", opt: bool = Tr
     'T': 'acc',
     'V': 'gtg',
     'W': 'tgg',
-    'Y': 'tac'
+    'Y': 'tac',
+    'X': 'tga'
     }
 
     # Translate amino acid sequence to DNA sequence
