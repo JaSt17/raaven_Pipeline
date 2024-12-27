@@ -9,6 +9,7 @@ config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
     "in_name_barcode": data_dir + "/fastq_files/Undetermined_R1.fastq.gz",
     "in_name_fragment": data_dir + "/fastq_files/Undetermined_R2.fastq.gz",
+    "input_file": data_dir + "/input/reference_seq_p007.fasta",
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": data_dir + "/barcode_fragment",
     "out_name": "undetermined_p007",
@@ -26,7 +27,7 @@ config_S2 = {
         "maxlength=27",
         "ordered=t",
         "lliteral=GGCTTGTGTCTATCGCAAGA",
-        "rliteral=ATAACTTCGTATAATGTATGC",
+        "rliteral=ATAACTTCGTATAATGTATGCT",
     ],
     "bbduk2_args_Frag" : [
         "k=18",
@@ -38,11 +39,11 @@ config_S2 = {
         "qhdist=1",
         "minavgquality=0",
         "maxns=0",
-        "minlength=25",
-        "maxlength=25",
+        "minlength=21",
+        "maxlength=21",
         "ordered=t",
-        "lliteral=ACCAACCTCCAGAGAGGCAACG",
-        "rliteral=CAGACAAGCAGCTACCGCAGAT",
+        "lliteral=CAACCTCCAGAGAGGCAACGCT",
+        "rliteral=GCCAGACAAGCAGCTACCGCAG",
     ],
     "log_dir": log_dir,
 }

@@ -1,7 +1,7 @@
 """ This file contains the config dictionary that are used to store the configuration parameters for the pipeline. """
 
 # Define the data directory where the input and output files are stored
-data_dir = "raav-60/p007_test"
+data_dir = "raav-60/p007"
 # Define the directory where the logs are stored
 log_dir = data_dir + "/logs/"
 
