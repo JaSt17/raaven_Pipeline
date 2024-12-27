@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=undetermined_analysis
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
+#SBATCH --nodes=4
+#SBATCH --ntasks=4
 #SBATCH --cpus-per-task=48
 #SBATCH --time=24:00:00
 #SBATCH -A lu2024-2-8
@@ -29,7 +29,7 @@ mv raav-60/undetermined/logs/S2.log raav-60/undetermined/logs/S2_undetermined_p0
 # change the config filte to undetermined_p006.py
 cp Python_Scripts/configs/config_undetermined_p006.py Python_Scripts/config.py
 # run the second step of the pipeline
-./Python_Scripts/S2.py
+./Python_Scripts/S2_NNK.py
 # rename the S2.log file to S2_undetermined_p006.log
 mv raav-60/undetermined/logs/S2.log raav-60/undetermined/logs/S2_undetermined_p006.log
 
