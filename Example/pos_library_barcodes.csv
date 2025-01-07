@@ -1,0 +1,914 @@
+Origion_seq,Mode,Structure,LUTnr,BC,AAstart,AAend,Peptide,start,end,width,Sequence,mCount,RNAcount
+"Herpes simplex virus type 2,HSV-2-pUS8,No,,#75,HSV-2-pUS8",Def,7aa,seq_11107,TAGGAAGCCTTAAGGATACCAATCTTC,118,125,AVVNESL,354,375,21,aacctccagagaggcaacgctGCCGTGGTGAACGAGAGCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_37935,TCGAAACAAACAAATCTACACATAATG,804,811,PMKALYP,2412,2433,21,aacctccagagaggcaacgctCCCATGAAGGCCCTGTACCCCgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP1,M20301.1,,#101,TMEV-VP1-M20301.1",Def,7aa,seq_4843,TCGAAACAAACCAGTCAGCACGCCCTG,50,57,NIESTFV,150,171,21,aacctccagagaggcaacgctAACATCGAGAGCACCTTCGTGgccagacaagcagctaccgca,3,3
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_9542,TCGAAACAAACCCTCACACAAACAAGC,99,106,YISMGKS,297,318,21,aacctccagagaggcaacgctTACATCAGCATGGGCAAGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_26412,TCGAAACAAAGCTTCAATCCCTCGAAC,339,346,PTDPPSA,1017,1038,21,aacctccagagaggcaacgctCCCACCGACCCCCCCAGCGCCgccagacaagcagctaccgca,2,2
+"Measles virus,MV-F,Edmonston,,#78,MV-F-Edmonston",Def,7aa,seq_20374,TCGAAACAAGTATACAATCGCTCAAAG,234,241,QALSYAL,702,723,21,aacctccagagaggcaacgctCAGGCCCTGAGCTACGCCCTGgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,00NE097,,#104,HIV-gp120-00NE097",Def,7aa,seq_2986,TCGAAACAATCCCAGCCGGGAGGGTGC,31,38,TSANISS,93,114,21,aacctccagagaggcaacgctACCAGCGCCAACATCAGCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL1,No,,#65,HSV-2-pUL1",Def,7aa,seq_13370,TCGAAACACATCAACGCTTATATAAGT,144,151,VRAGCVN,432,453,21,aacctccagagaggcaacgctGTGCGGGCCGGCTGCGTGAACgccagacaagcagctaccgca,2,2
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_26721,TCGAAACACATCTAGCTACAAACCAAG,345,352,TVNSLIS,1035,1056,21,aacctccagagaggcaacgctACCGTGAACAGCCTGATCAGCgccagacaagcagctaccgca,2,2
+"Measles virus,MV-F,Edmonston,,#78,MV-F-Edmonston",Def,7aa,seq_23453,TCGAAACACATGCAGAAAGATGTACTC,285,292,IAYPTLS,855,876,21,aacctccagagaggcaacgctATCGCCTACCCCACCCTGAGCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_32829,TCGAAACACGCACACAATCCCTCAAGC,480,487,QAVPPRP,1440,1461,21,aacctccagagaggcaacgctCAGGCCGTGCCCCCCCGGCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL44,No,,#56,HSV-1-pUL44",Def,7aa,seq_17196,TCGAAACACGTATATAATCATACGAGT,192,199,DSAPNLT,576,597,21,aacctccagagaggcaacgctGACAGCGCCCCCAACCTGACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_38483,TCGAAACACTCCTTCGAGTAATGGCTC,875,882,VTDMVMR,2625,2646,21,aacctccagagaggcaacgctGTGACCGACATGGTGATGCGGgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP1,1095/Japan 97,,#90,EV71-VP1-1095/Japan 97",Def,7aa,seq_3258,TCGAAACATACCTGTCCACACAGACAG,33,40,VSSHRLD,99,120,21,aacctccagagaggcaacgctGTGAGCAGCCACCGGCTGGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_33814,TCGAAACATAGAATCCTATAAGTCCTG,511,518,RLAHGRV,1533,1554,21,aacctccagagaggcaacgctCGGCTGGCCCACGGCCGGGTGgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_32625,TCGAAACATGCATGCGCTTGTTGAATC,474,481,GGTGGNV,1422,1443,21,aacctccagagaggcaacgctGGCGGCACCGGCGGCAACGTGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_5047,TCGAAACCAAGGTTTAAACATTCGAAT,51,58,WESDPSG,153,174,21,aacctccagagaggcaacgctTGGGAGAGCGACCCCAGCGGCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H2N2,,#88,H2N2-HA",Def,7aa,seq_20886,TCGAAACCAATACGCACAGACACACAG,241,248,FSWTLLD,723,744,21,aacctccagagaggcaacgctTTCAGCTGGACCCTGCTGGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_33870,TCGAAACCATCCTTGCCACAAACATAC,513,520,AAGYLDV,1539,1560,21,aacctccagagaggcaacgctGCCGCCGGCTACCTGGACGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL19,No,,#76,HSV-2-pUL19",Def,7aa,seq_37682,TCGAAACCCACACACACACATTCAATG,776,783,NRNDGRL,2328,2349,21,aacctccagagaggcaacgctAACCGGAACGACGGCCGGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS6,No,,#59,HSV-1-pUS6",Def,7aa,seq_24192,TCGAAACCCACACTCGATCCATCCCAG,298,305,EDSALLE,894,915,21,aacctccagagaggcaacgctGAGGACAGCGCCCTGCTGGAGgccagacaagcagctaccgca,2,2
+"Neurotrophin,BDNF,No,,#6,BDNF",Def,7aa,seq_9544,TCGAAACCCACCTAGCTAGAAATCCAC,99,106,YLDAANM,297,318,21,aacctccagagaggcaacgctTACCTGGACGCCGCCAACATGgccagacaagcagctaccgca,2,2
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_20290,TCGAAACCCATGATCCTGCCAACATTT,233,240,TWENHCT,699,720,21,aacctccagagaggcaacgctACCTGGGAGAACCACTGCACCgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP4,No,,#93,EV71-VP4",Def,7aa,seq_659,TCGAAACCCGGCTGGATATCAACCTAC,7,14,QRSGSHE,21,42,21,aacctccagagaggcaacgctCAGCGGAGCGGCAGCCACGAGgccagacaagcagctaccgca,2,2
+"Neurotrophin,NGF,No,,#1,NGF",Def,7aa,seq_16916,TCGAAACCCTCAAGTAAACATTCATAG,188,195,FVKALTT,564,585,21,aacctccagagaggcaacgctTTCGTGAAGGCCCTGACCACCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_3931,TCGAAACCCTCACATAATGCCGCGTTC,40,47,DGRGLVL,120,141,21,aacctccagagaggcaacgctGACGGCCGGGGCCTGGTGCTGgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_33635,TCGAAACCCTCGAACGTGGCCACGCAC,505,512,SPGGDSG,1515,1536,21,aacctccagagaggcaacgctAGCCCCGGCGGCGACAGCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_2160,TCGAAACCCTCGAATCAATGTGCCAAT,22,29,LLSTIEV,66,87,21,aacctccagagaggcaacgctCTGCTGAGCACCATCGAGGTGgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 1,HSV-1-pUL16,No,,#50,HSV-1-pUL16",Def,7aa,seq_3416,TCGAAACCCTGACATCTATCAACACAC,35,42,DDLGTDV,105,126,21,aacctccagagaggcaacgctGACGACCTGGGCACCGACGTGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,PrPc,No,,#11,PrPc",Def,7aa,seq_13267,TCGAAACCTACCCAGGCTCCCTTCTAG,143,150,DWEDRYY,429,450,21,aacctccagagaggcaacgctGACTGGGAGGACCGGTACTACgccagacaagcagctaccgca,4,4
+"Poliovirus,VP1,PV2,,#118,PV2-VP1",Def,7aa,seq_16611,TCGAAACCTATATTTATATATTTAATC,184,191,YTYGAPP,552,573,21,aacctccagagaggcaacgctTACACCTACGGCGCCCCCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_36972,TCGAAACCTTCCTATAAATATTTACAT,705,712,CEGHARE,2115,2136,21,aacctccagagaggcaacgctTGCGAGGGCCACGCCCGGGAGgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 2,HSV-2-pUS7,No,,#74,HSV-2-pUS7",Def,7aa,seq_27102,TCGAAACGAAGCTTCGTAGGAGCAAGT,352,359,VVLLSVS,1056,1077,21,aacctccagagaggcaacgctGTGGTGCTGCTGAGCGTGAGCgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_26171,TCGAAACGAGCCTATAATGGCATACGC,334,341,AFGEEVH,1002,1023,21,aacctccagagaggcaacgctGCCTTCGGCGAGGAGGTGCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_35176,TCGAAACGATCACAGCCATCATTGTGC,573,580,VPVAADN,1719,1740,21,aacctccagagaggcaacgctGTGCCCGTGGCCGCCGACAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_24139,TCGAAACGATGCCGCCCACGAACACTC,297,304,AASTWTS,891,912,21,aacctccagagaggcaacgctGCCGCCAGCACCTGGACCAGCgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_3030,TCGAAACGCACAAACGTGGACGTACTC,31,38,PGPVTEV,93,114,21,aacctccagagaggcaacgctCCCGGCCCCGTGACCGAGGTGgccagacaagcagctaccgca,3,3
+"Influenza A virus,HA,H3N2,,#89,H3N2-HA",Def,7aa,seq_28667,TCGAAACGCAGGAATCATTAATGGAAC,384,391,STQAAID,1152,1173,21,aacctccagagaggcaacgctAGCACCCAGGCCGCCATCGACgccagacaagcagctaccgca,2,2
+"Canine adenovirus 2,Fiber,SH01,,#108,CAV-2-F-SH01",Def,7aa,seq_20399,TCGAAACGCTGCAATCAGCCCAGGTTG,234,241,ALVATPP,702,723,21,aacctccagagaggcaacgctGCCCTGGTGGCCACCCCCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_31580,TCGAAACGTGCCAACGATCCCAGAAGT,448,455,LIAYQPL,1344,1365,21,aacctccagagaggcaacgctCTGATCGCCTACCAGCCCCTGgccagacaagcagctaccgca,2,2
+"Neurotrophin,BDNF,No,,#6,BDNF",Def,7aa,seq_5316,TCGAAAGAAACAAACCCATCAACACAC,54,61,LDEDQKV,162,183,21,aacctccagagaggcaacgctCTGGACGAGGACCAGAAGGTGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_14466,TCGAAAGAAATAAGGGTACATACGAAT,158,165,SEKSTNL,474,495,21,aacctccagagaggcaacgctAGCGAGAAGAGCACCAACCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL1,No,,#52,HSV-1-pUL1",Def,7aa,seq_10716,TCGAAAGAAGCGTACACGCAAACGCAT,114,121,NTQETET,342,363,21,aacctccagagaggcaacgctAACACCCAGGAGACCGAGACCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV6,,#126,AAV6-VP1",Def,7aa,seq_35586,TCGAAAGACACACTTATATCCACCTGC,597,604,VMGALPG,1791,1812,21,aacctccagagaggcaacgctGTGATGGGCGCCCTGCCCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_15074,TCGAAAGACGGCAATCCACGTGCCAAT,165,172,APDREGL,495,516,21,aacctccagagaggcaacgctGCCCCCGACCGGGAGGGCCTGgccagacaagcagctaccgca,2,2
+"Horseradish peroxidase,Horseradish peroxidase,,,#135,HRP",Def,7aa,seq_8459,TCGAAAGACTCCTAGACGCCAATAAAC,87,94,VESACPR,261,282,21,aacctccagagaggcaacgctGTGGAGAGCGCCTGCCCCCGGgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-C,No,,#39,JEV-C",Def,7aa,seq_2771,TCGAAAGATACCTTCCCACACATCTGG,28,35,GVKRVVM,84,105,21,aacctccagagaggcaacgctGGCGTGAAGCGGGTGGTGATGgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H2N2,,#88,H2N2-HA",Def,7aa,seq_12897,TCGAAAGATTGCAGTACGCCATCCCTC,139,146,HTTTGGS,417,438,21,aacctccagagaggcaacgctCACACCACCACCGGCGGCAGCgccagacaagcagctaccgca,3,3
+"Neurotoxin,BoNT/A Hc,No,,#18,BoNT/A Hc",Def,7aa,seq_28445,TCGAAAGCAGGCATGACACGCTCCATC,379,386,DVGNLSQ,1137,1158,21,aacctccagagaggcaacgctGACGTGGGCAACCTGAGCCAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_35084,TCGAAAGCCACCAACGCATCTTTAAGG,568,575,GEIQATW,1704,1725,21,aacctccagagaggcaacgctGGCGAGATCCAGGCCACCTGGgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_37173,TCGAAAGCCGGCAATCATCCCATATAC,722,729,TPYELTP,2166,2187,21,aacctccagagaggcaacgctACCCCCTACGAGCTGACCCCCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_25342,TCGAAAGCTACCTTCGCATAAGGCAAC,320,327,NVTFMAW,960,981,21,aacctccagagaggcaacgctAACGTGACCTTCATGGCCTGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_39265,TCGAAAGGATGACATGCGCCCTTAAGC,1032,1039,LLRVTDG,3096,3117,21,aacctccagagaggcaacgctCTGCTGCGGGTGACCGACGGCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,TH90129_1,,#102,HIV-gp120-TH90129_1",Def,7aa,seq_5263,TCGAAAGGCACACGTCAGCCCACCCTC,54,61,NVTETFN,162,183,21,aacctccagagaggcaacgctAACGTGACCGAGACCTTCAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40712,TCGAAATAAGGCCTCCAGTCATGATAC,1783,1790,ERLPAKY,5349,5370,21,aacctccagagaggcaacgctGAGCGGCTGCCCGCCAAGTACgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_39146,TCGAAATAATCCTACACGTAAACCTAG,1005,1012,PGQFGDI,3015,3036,21,aacctccagagaggcaacgctCCCGGCCAGTTCGGCGACATCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_32002,TCGAAATAATGCAAGCATGACTCCTAG,458,465,LNPLGWL,1374,1395,21,aacctccagagaggcaacgctCTGAACCCCCTGGGCTGGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS4,No,,#71,HSV-2-pUS4",Def,7aa,seq_12425,TCGAAATACGGAAAGGATTGCTCCAAT,133,140,GGEPPSP,399,420,21,aacctccagagaggcaacgctGGCGGCGAGCCCCCCAGCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS8,No,,#75,HSV-2-pUS8",Def,7aa,seq_31620,TCGAAATACTGATAGCCGCGATCCATT,449,456,RASATGP,1347,1368,21,aacctccagagaggcaacgctCGGGCCAGCGCCACCGGCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_19802,TCGAAATACTTGTGCACGGAATCACAG,226,233,LLRSPGR,678,699,21,aacctccagagaggcaacgctCTGCTGCGGAGCCCCGGCCGGgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/G Hc,No,,#24,BoNT/G Hc",Def,7aa,seq_17456,TCGAAATATACCCACCAAGCCACCCAC,195,202,VWIKDFN,585,606,21,aacctccagagaggcaacgctGTGTGGATCAAGGACTTCAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_32954,TCGAAATATACGCATCAAGCAGGATGT,483,490,DQVPWLA,1449,1470,21,aacctccagagaggcaacgctGACCAGGTGCCCTGGCTGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_38158,TCGAAATATAGATTCACTTGATGAATG,829,836,EEGGDFD,2487,2508,21,aacctccagagaggcaacgctGAGGAGGGCGGCGACTTCGACgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_19060,TCGAAATATTGACACAAATCCTTGAAC,216,223,GADGVGN,648,669,21,aacctccagagaggcaacgctGGCGCCGACGGCGTGGGCAACgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_37815,TCGAAATCAGCCCATCAACCTTCAAAG,791,798,AFDTLPI,2373,2394,21,aacctccagagaggcaacgctGCCTTCGACACCCTGCCCATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_36888,TCGAAATCATTAAAGGATTATGGACTG,698,705,LTYLTAT,2094,2115,21,aacctccagagaggcaacgctCTGACCTACCTGACCGCCACCgccagacaagcagctaccgca,2,2
+"Lectin,ConA,No,,#16,ConA",Def,7aa,seq_7626,TCGAAATCCACGTACGCACAAACCCAT,78,85,VDLDNVL,234,255,21,aacctccagagaggcaacgctGTGGACCTGGACAACGTGCTGgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_20682,TCGAAATCCAGCTATCCAGCCATCCAC,238,245,GDTFDLM,714,735,21,aacctccagagaggcaacgctGGCGACACCTTCGACCTGATGgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_22209,TCGAAATCCATCCTGCCGCCATCAATT,263,270,TLKDAWE,789,810,21,aacctccagagaggcaacgctACCCTGAAGGACGCCTGGGAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_15867,TCGAAATCCATGCACCCGTGATCCAAT,175,182,LPEGTPA,525,546,21,aacctccagagaggcaacgctCTGCCCGAGGGCACCCCCGCCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H3N2,,#89,H3N2-HA",Def,7aa,seq_13480,TCGAAATCCTCCCATATATCATCACAG,146,153,TQDGGSS,438,459,21,aacctccagagaggcaacgctACCCAGGACGGCGGCAGCAGCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/C Hc,No,,#20,BoNT/C Hc",Def,7aa,seq_8391,TCGAAATCCTTATATACGGAATGCTTG,87,94,KWVSNLP,261,282,21,aacctccagagaggcaacgctAAGTGGGTGAGCAACCTGCCCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,00NE097,,#104,HIV-gp120-00NE097",Def,7aa,seq_11202,TCGAAATCTACCAGTCAGCCCTGGAGC,119,126,AGFAILR,357,378,21,aacctccagagaggcaacgctGCCGGCTTCGCCATCCTGCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS4,No,,#58,HSV-1-pUS4",Def,7aa,seq_3949,TCGAAATCTATCATCCAACGCGTCAAT,40,47,GRPSHEA,120,141,21,aacctccagagaggcaacgctGGCCGGCCCAGCCACGAGGCCgccagacaagcagctaccgca,2,2
+"Canine adenovirus 2,Fiber,SH01,,#108,CAV-2-F-SH01",Def,7aa,seq_25247,TCGAAATCTGCATATACACCCACGCTT,318,325,QNGTIGA,954,975,21,aacctccagagaggcaacgctCAGAACGGCACCATCGGCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41683,TCGAAATGATGGATCGCATCTTTCTAG,2768,2775,RRLTRPA,8304,8325,21,aacctccagagaggcaacgctCGGCGGCTGACCCGGCCCGCCgccagacaagcagctaccgca,2,2
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_16623,TCGAAATGCACCAACCTACCCTTCATC,185,192,TFRGRVL,555,576,21,aacctccagagaggcaacgctACCTTCCGGGGCCGGGTGCTGgccagacaagcagctaccgca,2,2
+"Vesicular stomatitis Indiana virus,G protein,Orsay,,#130,VSV-Orsay-G",Def,7aa,seq_32710,TCGAAATGTGTAAAGCCACACGTCCAG,477,484,HTKKRQI,1431,1452,21,aacctccagagaggcaacgctCACACCAAGAAGCGGCAGATCgccagacaagcagctaccgca,2,2
+"Neurotrophin,NGF,No,,#1,NGF",Def,7aa,seq_14932,TCGAAGCACGCCTGTACGTGTACCCAC,164,171,NPVESGC,492,513,21,aacctccagagaggcaacgctAACCCCGTGGAGAGCGGCTGCgccagacaagcagctaccgca,2,2
+"Vesicular stomatitis Indiana virus,G protein,Orsay,,#130,VSV-Orsay-G",Def,7aa,seq_29663,TCGAAGCGCTGCAATACATACATCCAT,404,411,FEHPHIQ,1212,1233,21,aacctccagagaggcaacgctTTCGAGCACCCCCACATCCAGgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H3N2,,#89,H3N2-HA",Def,7aa,seq_2322,TCGAAGGAAACCTATCCGTCCGTACTG,24,31,STATLCL,72,93,21,aacctccagagaggcaacgctAGCACCGCCACCCTGTGCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_20256,TCGAAGGACACACTGCCATCTTGCAGT,232,239,LFSPGET,696,717,21,aacctccagagaggcaacgctCTGTTCAGCCCCGGCGAGACCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_9684,TCGAAGGACACGCACCCAGCAGCCCGC,101,108,DKLFAVW,303,324,21,aacctccagagaggcaacgctGACAAGCTGTTCGCCGTGTGGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_22814,TCGAAGGACGTATATATTGGATTAATT,273,280,ETQASPP,819,840,21,aacctccagagaggcaacgctGAGACCCAGGCCAGCCCCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_37646,TCGAAGGCAAGCCATACATAAAGCTTT,772,779,TADFNRN,2316,2337,21,aacctccagagaggcaacgctACCGCCGACTTCAACCGGAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL53,No,,#57,HSV-1-pUL53",Def,7aa,seq_20815,TCGAAGGCATCGTGCGAATGCACAAAG,240,247,GACAITY,720,741,21,aacctccagagaggcaacgctGGCGCCTGCGCCATCACCTACgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_38522,TCGAAGGCCACAAATAAAGATTTACGG,881,888,YKDLKID,2643,2664,21,aacctccagagaggcaacgctTACAAGGACCTGAAGATCGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL19,No,,#76,HSV-2-pUL19",Def,7aa,seq_31374,TCGAAGGCCAGACAGCCATAAGTCATC,443,450,GKDHQVL,1329,1350,21,aacctccagagaggcaacgctGGCAAGGACCACCAGGTGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_39042,TCGAAGGCCATATGCAAGTGTTTCATT,980,987,DRVVLTS,2940,2961,21,aacctccagagaggcaacgctGACCGGGTGGTGCTGACCAGCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,ThCMAr4492,,#42,JEV-E-ThCMAr4492",Def,7aa,seq_27512,TCGAAGGCCATCATTGAGTACTCACTT,360,367,VATSSSN,1080,1101,21,aacctccagagaggcaacgctGTGGCCACCAGCAGCAGCAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS7,No,,#74,HSV-2-pUS7",Def,7aa,seq_24318,TCGAAGGCCATGTTTACGTACGTAATT,300,307,GVSCAVN,900,921,21,aacctccagagaggcaacgctGGCGTGAGCTGCGCCGTGAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL16,No,,#50,HSV-1-pUL16",Def,7aa,seq_20626,TCGAAGGCCGGCAACCCGTGCACACTC,238,245,NHPGGCE,714,735,21,aacctccagagaggcaacgctAACCACCCCGGCGGCTGCGAGgccagacaagcagctaccgca,2,2
+"Lectin,PSA Chain-C,No,,#15,PSA Chain-C",Def,7aa,seq_6815,TCGAAGGCCTGCAACACTCCAACCTGT,69,76,VINAPNS,207,228,21,aacctccagagaggcaacgctGTGATCAACGCCCCCAACAGCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,TH90129_1,,#102,HIV-gp120-TH90129_1",Def,7aa,seq_621,TCGAAGGCTATGTACACACATGCATAC,6,13,YGVPVWK,18,39,21,aacctccagagaggcaacgctTACGGCGTGCCCGTGTGGAAGgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,tat,CM240,,#105,HIV-tat-CM240",Def,7aa,seq_3882,TCGAAGGCTTTGCGTGTACCTAGCCTT,40,47,KGLGISY,120,141,21,aacctccagagaggcaacgctAAGGGCCTGGGCATCAGCTACgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_36739,TCGAAGTAATGAATCGCGCGTGGACTT,683,690,RHQKLVF,2049,2070,21,aacctccagagaggcaacgctCGGCACCAGAAGCTGGTGTTCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/A Hc,No,,#18,BoNT/A Hc",Def,7aa,seq_28066,TCGAAGTATAGACGGGCATCATGGTAC,371,378,ILSALEI,1113,1134,21,aacctccagagaggcaacgctATCCTGAGCGCCCTGGAGATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_35345,TCGAAGTCCATCAGTCAACATACAAGT,584,591,NSMRISS,1752,1773,21,aacctccagagaggcaacgctAACAGCATGCGGATCAGCAGCgccagacaagcagctaccgca,2,2
+"Measles virus,MV-H,Edmonston,,#77,MV-H-Edmonston",Def,7aa,seq_29075,TCGAAGTCCTCGCATACTTACGCGATC,392,399,LCENPEW,1176,1197,21,aacctccagagaggcaacgctCTGTGCGAGAACCCCGAGTGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_34483,TCGAAGTCTGCCAAGGTTCATACACTG,537,544,EQRERAR,1611,1632,21,aacctccagagaggcaacgctGAGCAGCGGGAGCGGGCCCGGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_36259,TCGAAGTGAACAAGCACGCCAACATTG,647,654,TSPRHLS,1941,1962,21,aacctccagagaggcaacgctACCAGCCCCCGGCACCTGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL44,No,,#56,HSV-1-pUL44",Def,7aa,seq_514,TCGAAGTGAACAATTCCATATATACTC,5,12,VGLAVVL,15,36,21,aacctccagagaggcaacgctGTGGGCCTGGCCGTGGTGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41175,TCGAAGTGCATCTTTAATTATACCAGG,2257,2264,LTARLES,6771,6792,21,aacctccagagaggcaacgctCTGACCGCCCGGCTGGAGAGCgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP4,No,,#93,EV71-VP4",Def,7aa,seq_5408,TCGAATCAAATGAACATAGCAGCGTTG,55,62,PVKDIFT,165,186,21,aacctccagagaggcaacgctCCCGTGAAGGACATCTTCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL53,No,,#57,HSV-1-pUL53",Def,7aa,seq_7482,TCGAATCAATGAAATAAAGGAACGAAG,77,84,HAHICYA,231,252,21,aacctccagagaggcaacgctCACGCCCACATCTGCTACGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40070,TCGAATCACGTGAGTATACGAATCCTT,1272,1279,LHAEGTA,3816,3837,21,aacctccagagaggcaacgctCTGCACGCCGAGGGCACCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_570,TCGAATCACTGAAACAATGCTGTAAGT,6,13,PHSTMER,18,39,21,aacctccagagaggcaacgctCCCCACAGCACCATGGAGCGGgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-M,No,,#33,WNV-M",Def,7aa,seq_14194,TCGAATCATGGCCACCCGCATGCACGT,154,161,FAILLLL,462,483,21,aacctccagagaggcaacgctTTCGCCATCCTGCTGCTGCTGgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,Mocala,,#31,RV-G-Mocala",Def,7aa,seq_26054,TCGAATCCAACCTATACGTCCTTATAC,332,339,DRWADIL,996,1017,21,aacctccagagaggcaacgctGACCGGTGGGCCGACATCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL44,No,,#56,HSV-1-pUL44",Def,7aa,seq_11659,TCGAATCCAGCATGCCATTCTACCTTG,124,131,VWCDRRD,372,393,21,aacctccagagaggcaacgctGTGTGGTGCGACCGGCGGGACgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,Mocala,,#31,RV-G-Mocala",Def,7aa,seq_19969,TCGAATCCAGCGCACCCACGCTCCTAG,228,235,GKPGIRL,684,705,21,aacctccagagaggcaacgctGGCAAGCCCGGCATCCGGCTGgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/D Hc,No,,#21,BoNT/D Hc",Def,7aa,seq_7594,TCGAATCCCAGCTGTACGCCCATGATC,78,85,DLTNSHN,234,255,21,aacctccagagaggcaacgctGACCTGACCAACAGCCACAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_39584,TCGAATCCCGCCTATCATTGTACATTC,1111,1118,TATVRNP,3333,3354,21,aacctccagagaggcaacgctACCGCCACCGTGCGGAACCCCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,TH90129_1,,#102,HIV-gp120-TH90129_1",Def,7aa,seq_25270,TCGAATCCCGGCAATGAATCAATGCAT,318,325,VITKLGS,954,975,21,aacctccagagaggcaacgctGTGATCACCAAGCTGGGCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_27534,TCGAATCCTAGGTTTCCAGCCACAATC,361,368,SPFPALV,1083,1104,21,aacctccagagaggcaacgctAGCCCCTTCCCCGCCCTGGTGgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP1,DQ401688.1,,#100,TMEV-VP-DQ401688.1",Def,7aa,seq_9634,TCGAATCGAACGTACCATTATTTGATG,100,107,VNGANFP,300,321,21,aacctccagagaggcaacgctGTGAACGGCGCCAACTTCCCCgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP3,No,,#92,EV71-VP3",Def,7aa,seq_10757,TCGAATCGCATCCAGACGTGTGGGTTG,114,121,LEVTFMF,342,363,21,aacctccagagaggcaacgctCTGGAGGTGACCTTCATGTTCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_6727,TCGAATGACACATGCCCATCCGGAATC,68,75,VEERAPD,204,225,21,aacctccagagaggcaacgctGTGGAGGAGCGGGCCCCCGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL14,No,,#49,HSV-1-pUL14",Def,7aa,seq_8953,TCGAATGACACGCGTACACACTGCAAC,93,100,HRRYLDP,279,300,21,aacctccagagaggcaacgctCACCGGCGGTACCTGGACCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_15781,TCGAATGACACGTAGCCAGACTGCAAT,174,181,PRGDDGA,522,543,21,aacctccagagaggcaacgctCCCCGGGGCGACGACGGCGCCgccagacaagcagctaccgca,2,2
+"Neurotrophin,BDNF,No,,#6,BDNF",Def,7aa,seq_1858,TCGAATGATACCCAGACTTCTACGTGT,19,26,RTHGTLE,57,78,21,aacctccagagaggcaacgctCGGACCCACGGCACCCTGGAGgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP3,No,,#98,TMEV-VP3",Def,7aa,seq_18723,TCGAATGATATGCACCCAGAATGCCAC,212,219,SAGDDFT,636,657,21,aacctccagagaggcaacgctAGCGCCGGCGACGACTTCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_10347,TCGAATGATTTGCTTACTTAAACAAAC,109,116,PKTYLLG,327,348,21,aacctccagagaggcaacgctCCCAAGACCTACCTGCTGGGCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/B Hc,No,,#19,BoNT/B Hc",Def,7aa,seq_21257,TCGAATGCCACGATCCAAGGTATCATT,247,254,EERYKIQ,741,762,21,aacctccagagaggcaacgctGAGGAGCGGTACAAGATCCAGgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 2,HSV-2-pUL19,No,,#76,HSV-2-pUL19",Def,7aa,seq_33381,TCGAATGCCACGCGCATGCATACCCAC,496,503,PGADMQQ,1488,1509,21,aacctccagagaggcaacgctCCCGGCGCCGACATGCAGCAGgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,SA14-5-3,,#37,JEV-E-SA14-5-3",Def,7aa,seq_29608,TCGAATGCCGTATGCCCATAAATGATT,403,410,GKAFSTT,1209,1230,21,aacctccagagaggcaacgctGGCAAGGCCTTCAGCACCACCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_36182,TCGAATGCCTTATACACTCACACAAAG,641,648,PVVSGDT,1923,1944,21,aacctccagagaggcaacgctCCCGTGGTGAGCGGCGACACCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H1N1,,#87,H1N1-HA",Def,7aa,seq_19865,TCGAATGCTATAAACATAGACTTCCAT,227,234,PEIAERP,681,702,21,aacctccagagaggcaacgctCCCGAGATCGCCGAGCGGCCCgccagacaagcagctaccgca,2,2
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_22376,TCGAATGGAATAAATATACAAAGACGC,266,273,TFTWTLS,798,819,21,aacctccagagaggcaacgctACCTTCACCTGGACCCTGAGCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,ThCMAr4492,,#42,JEV-E-ThCMAr4492",Def,7aa,seq_33021,TCGAATGGCTCACAGCAATAATTACGG,485,492,ATGGVLA,1455,1476,21,aacctccagagaggcaacgctGCCACCGGCGGCGTGCTGGCCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_4054,TCGAATTAAGTGTACGCACACTCAATC,41,48,GRGLVLP,123,144,21,aacctccagagaggcaacgctGGCCGGGGCCTGGTGCTGCCCgccagacaagcagctaccgca,2,2
+"Measles virus,MV-H,Edmonston,,#77,MV-H-Edmonston",Def,7aa,seq_24603,TCGAATTACGGACATAAAGGCACGCTC,306,313,TIPYQGS,918,939,21,aacctccagagaggcaacgctACCATCCCCTACCAGGGCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL53,No,,#57,HSV-1-pUL53",Def,7aa,seq_13925,TCGAATTATGTATATCCATAAATCAAC,151,158,AHKMVAP,453,474,21,aacctccagagaggcaacgctGCCCACAAGATGGTGGCCCCCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_25327,TCGAATTATGTATTGCCGCGAAGCTTC,319,326,VNVTFMA,957,978,21,aacctccagagaggcaacgctGTGAACGTGACCTTCATGGCCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H3N2,,#89,H3N2-HA",Def,7aa,seq_20370,TCGAATTATTCATACATATACAGCATT,234,241,SRPWVRG,702,723,21,aacctccagagaggcaacgctAGCCGGCCCTGGGTGCGGGGCgccagacaagcagctaccgca,3,3
+"Lectin,SA,No,,#17,SA",Def,7aa,seq_14748,TCGAATTCAATGAGTAAACGCATAAAT,161,168,AKVLITY,483,504,21,aacctccagagaggcaacgctGCCAAGGTGCTGATCACCTACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_19298,TCGAATTCCACAAGTATACACTCACTC,219,226,VAELKRS,657,678,21,aacctccagagaggcaacgctGTGGCCGAGCTGAAGCGGAGCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/G Hc,No,,#24,BoNT/G Hc",Def,7aa,seq_10833,TCGAATTCCACACACCATGACACGCAT,115,122,LIDVNAK,345,366,21,aacctccagagaggcaacgctCTGATCGACGTGAACGCCAAGgccagacaagcagctaccgca,3,3
+"Rabies virus,RV-P,No,,#26,RV-P",Def,7aa,seq_21010,TCGAATTCCTTCTTGCCACAAACATAT,243,250,VPGVTRL,729,750,21,aacctccagagaggcaacgctGTGCCCGGCGTGACCCGGCTGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_27229,TCGAATTCTTCAAACGCACGATCGTAG,355,362,PLPQDPV,1065,1086,21,aacctccagagaggcaacgctCCCCTGCCCCAGGACCCCGTGgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,TJ,,#134,PRV-TJ-gE",Def,7aa,seq_9688,TCGAATTCTTGAAGTCAATCCACCATT,101,108,DGAVLAG,303,324,21,aacctccagagaggcaacgctGACGGCGCCGTGCTGGCCGGCgccagacaagcagctaccgca,2,2
+"Neurotrophin,NT3,No,,#2,NT3",Def,7aa,seq_13604,TCGAATTGAATCCACGATCCCATACGT,147,154,AIDIRGH,441,462,21,aacctccagagaggcaacgctGCCATCGACATCCGGGGCCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL27,No,,#68,HSV-2-pUL27",Def,7aa,seq_35443,TCGACACAAAGAAACACGCAAAGATAC,589,596,PGTCYSR,1767,1788,21,aacctccagagaggcaacgctCCCGGCACCTGCTACAGCCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_35654,TCGACACAAATACACCAATATTTGATG,602,609,RHAMAPA,1806,1827,21,aacctccagagaggcaacgctCGGCACGCCATGGCCCCCGCCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H5N1,,#86,H5N1-HA",Def,7aa,seq_26630,TCGACACAAATCTACACGTCAATAAAT,343,350,LFGAIAG,1029,1050,21,aacctccagagaggcaacgctCTGTTCGGCGCCATCGCCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_39713,TCGACACAATCCCATCCTCGTATGTAT,1152,1159,AGNRLGP,3456,3477,21,aacctccagagaggcaacgctGCCGGCAACCGGCTGGGCCCCgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP2,No,,#97,TMEV-VP2",Def,7aa,seq_16566,TCGACACACACAAGTCAACATACACTC,184,191,QWTVYPH,552,573,21,aacctccagagaggcaacgctCAGTGGACCGTGTACCCCCACgccagacaagcagctaccgca,2,2
+"Herpes B virus,Glycoprotein D,No,,#114,BV-G",Def,7aa,seq_7017,TCGACACACACCAGCCTGTCAATATAT,71,78,FQTPSVP,213,234,21,aacctccagagaggcaacgctTTCCAGACCCCCAGCGTGCCCgccagacaagcagctaccgca,3,3
+"Neurotrophin,NGF,No,,#1,NGF",Def,7aa,seq_12199,TCGACACATGTCAATAATTAAACCCAG,131,138,TDIKGKE,393,414,21,aacctccagagaggcaacgctACCGACATCAAGGGCAAGGAGgccagacaagcagctaccgca,2,2
+"Lectin,ConA,No,,#16,ConA",Def,7aa,seq_3873,TCGACACCAAGATTGCCTGACAGAATT,39,46,WNMQNGK,117,138,21,aacctccagagaggcaacgctTGGAACATGCAGAACGGCAAGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_34844,TCGACACCAAGGATCGCACATATACGC,554,561,YKPVDLS,1662,1683,21,aacctccagagaggcaacgctTACAAGCCCGTGGACCTGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39973,TCGACACCAGCACATATGCCAGGCAAC,1231,1238,QVRRAAN,3693,3714,21,aacctccagagaggcaacgctCAGGTGCGGCGGGCCGCCAACgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_21357,TCGACACCCACAAGTCCTCAAGCGATT,249,256,PTYNNHL,747,768,21,aacctccagagaggcaacgctCCCACCTACAACAACCACCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_24502,TCGACACCCATCTTTAAACCCATCCAT,304,311,SETSRGT,912,933,21,aacctccagagaggcaacgctAGCGAGACCAGCCGGGGCACCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/A Hc,No,,#18,BoNT/A Hc",Def,7aa,seq_28507,TCGACACCCGTAAGGAATTCAGCATAC,380,387,VGNLSQV,1140,1161,21,aacctccagagaggcaacgctGTGGGCAACCTGAGCCAGGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_30132,TCGACACCCTCACGTACATAAATACGG,414,421,HGALRLG,1242,1263,21,aacctccagagaggcaacgctCACGGCGCCCTGCGGCTGGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_36754,TCGACACCCTGCCTGACGTAATCGCTC,684,691,ARGGLGP,2052,2073,21,aacctccagagaggcaacgctGCCCGGGGCGGCCTGGGCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_38975,TCGACACCTACGTACCAGCATATACGG,963,970,FAGADHV,2889,2910,21,aacctccagagaggcaacgctTTCGCCGGCGCCGACCACGTGgccagacaagcagctaccgca,2,2
+"Herpes B virus,Glycoprotein D,No,,#114,BV-G",Def,7aa,seq_23697,TCGACACCTGCCCGCCCATCCTGATAG,289,296,RPELAPE,867,888,21,aacctccagagaggcaacgctCGGCCCGAGCTGGCCCCCGAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39387,TCGACACCTGCGTATAATGCCACCAAG,1062,1069,EAVRGAP,3186,3207,21,aacctccagagaggcaacgctGAGGCCGTGCGGGGCGCCCCCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_33314,TCGACACCTTCACTCGATGGCACCTAC,494,501,HMPPDTP,1482,1503,21,aacctccagagaggcaacgctCACATGCCCCCCGACACCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL53,No,,#70,HSV-2-pUL53",Def,7aa,seq_17833,TCGACACCTTCGCTGCCTGCCTGCAAC,200,207,EADPVTF,600,621,21,aacctccagagaggcaacgctGAGGCCGACCCCGTGACCTTCgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP4,No,,#93,EV71-VP4",Def,7aa,seq_4390,TCGACACGAAGATGCGAACATTCGAAT,45,52,LKQDPDK,135,156,21,aacctccagagaggcaacgctCTGAAGCAGGACCCCGACAAGgccagacaagcagctaccgca,2,2
+"Measles virus,MV-H,Edmonston,,#77,MV-H-Edmonston",Def,7aa,seq_14992,TCGACACGCATATGCCAGCATGCCATC,164,171,ALVNSTL,492,513,21,aacctccagagaggcaacgctGCCCTGGTGAACAGCACCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41072,TCGACAGAAAGAAACCTACATGGACTC,2151,2158,PHPDARI,6453,6474,21,aacctccagagaggcaacgctCCCCACCCCGACGCCCGGATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL1,No,,#65,HSV-2-pUL1",Def,7aa,seq_5460,TCGACAGACACCAACACAGCTAGATAG,55,62,YEAPSVI,165,186,21,aacctccagagaggcaacgctTACGAGGCCCCCAGCGTGATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39761,TCGACAGACAGCTAGAATCATACAAAT,1166,1173,AHRVLVD,3498,3519,21,aacctccagagaggcaacgctGCCCACCGGGTGCTGGTGGACgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,TH90129_1,,#102,HIV-gp120-TH90129_1",Def,7aa,seq_30725,TCGACAGACGTCTTTCTACATGTATGC,428,435,ILTFDRN,1284,1305,21,aacctccagagaggcaacgctATCCTGACCTTCGACCGGAACgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B19,,#29,RV-G-B19",Def,7aa,seq_3365,TCGACAGACTCGCGGCCTCACAGAATC,34,41,CTNLSGF,102,123,21,aacctccagagaggcaacgctTGCACCAACCTGAGCGGCTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL44,No,,#56,HSV-1-pUL44",Def,7aa,seq_30368,TCGACAGACTGACAGCAACCATTATAC,419,426,DHPGLAT,1257,1278,21,aacctccagagaggcaacgctGACCACCCCGGCCTGGCCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL19,No,,#76,HSV-2-pUL19",Def,7aa,seq_39274,TCGACAGATATCAACGCTTGATCAAGC,1034,1041,ALYHQLK,3102,3123,21,aacctccagagaggcaacgctGCCCTGTACCACCAGCTGAAGgccagacaagcagctaccgca,2,2
+"Neurotrophin,NRTN,No,,#5,NRTN",Def,7aa,seq_9399,TCGACAGATGCCCTCCTTTACTTATAG,98,105,TVLFRYC,294,315,21,aacctccagagaggcaacgctACCGTGCTGTTCCGGTACTGCgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP1,U33047.1,,#96,TMEV-VP1-U33047.1",Def,7aa,seq_19605,TCGACAGATTGCCAGGTTCATTCGAGC,223,230,GRIWIQG,669,690,21,aacctccagagaggcaacgctGGCCGGATCTGGATCCAGGGCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_31016,TCGACAGCAACACGCCTGCACACGCAG,435,442,SDIRDLY,1305,1326,21,aacctccagagaggcaacgctAGCGACATCCGGGACCTGTACgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP2,No,,#97,TMEV-VP2",Def,7aa,seq_2612,TCGACAGCAGCCATCATACATAGCAAC,27,34,STVGRLC,81,102,21,aacctccagagaggcaacgctAGCACCGTGGGCCGGCTGTGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS4,No,,#71,HSV-2-pUS4",Def,7aa,seq_2474,TCGACAGCATGAAGCCATCATGTACAG,25,32,VPGPINP,75,96,21,aacctccagagaggcaacgctGTGCCCGGCCCCATCAACCCCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_38578,TCGACAGCCACATATCATCATTTGCGC,889,896,FTGVYPF,2667,2688,21,aacctccagagaggcaacgctTTCACCGGCGTGTACCCCTTCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,SA14-5-3,,#37,JEV-E-SA14-5-3",Def,7aa,seq_14036,TCGACAGCCATAAACCAACCTTTAAAT,153,160,NYSAQVG,459,480,21,aacctccagagaggcaacgctAACTACAGCGCCCAGGTGGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_35144,TCGACAGGATGACGCACAGAAACATGT,572,579,TQAGVAG,1716,1737,21,aacctccagagaggcaacgctACCCAGGCCGGCGTGGCCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL44,No,,#69,HSV-2-pUL44",Def,7aa,seq_19947,TCGACAGGTGCAATCCATGAATGGAAT,228,235,RVRVFRP,684,705,21,aacctccagagaggcaacgctCGGGTGCGGGTGTTCCGGCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL27,No,,#68,HSV-2-pUL27",Def,7aa,seq_31923,TCGACATACAGATTCAAATATGCAAAT,456,463,ELYVREY,1368,1389,21,aacctccagagaggcaacgctGAGCTGTACGTGCGGGAGTACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41573,TCGACATACAGCCTCCATGATGCCCTT,2658,2665,RSLARAT,7974,7995,21,aacctccagagaggcaacgctCGGAGCCTGGCCCGGGCCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL16,No,,#50,HSV-1-pUL16",Def,7aa,seq_14957,TCGACATACGGGCACCCATCCTGACAC,164,171,QLAEEPV,492,513,21,aacctccagagaggcaacgctCAGCTGGCCGAGGAGCCCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL10,No,,#53,HSV-1-pUL10",Def,7aa,seq_29335,TCGACATACTGACATCCAGGAATAATT,397,404,YAEDPYA,1191,1212,21,aacctccagagaggcaacgctTACGCCGAGGACCCCTACGCCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/B Hc,No,,#19,BoNT/B Hc",Def,7aa,seq_30347,TCGACATATACGCATCCTCCATGCAAC,418,425,FYESGIV,1254,1275,21,aacctccagagaggcaacgctTTCTACGAGAGCGGCATCGTGgccagacaagcagctaccgca,2,2
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_31998,TCGACATATATCAACCTATCAGGCAGC,458,465,PTHRHIK,1374,1395,21,aacctccagagaggcaacgctCCCACCCACCGGCACATCAAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS6,No,,#72,HSV-2-pUS6",Def,7aa,seq_23357,TCGACATATGCACGTCTACAATTGATT,283,290,DTTNATQ,849,870,21,aacctccagagaggcaacgctGACACCACCAACGCCACCCAGgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 2,HSV-2-pUL27,No,,#68,HSV-2-pUL27",Def,7aa,seq_37151,TCGACATCAACCATGACGTCCTCAATC,720,727,RADANAA,2160,2181,21,aacctccagagaggcaacgctCGGGCCGACGCCAACGCCGCCgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_17754,TCGACATCAAGGTATAATCACTCCCAT,199,206,AVFFVAV,597,618,21,aacctccagagaggcaacgctGCCGTGTTCTTCGTGGCCGTGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_28199,TCGACATCAGCAATTAATTATACCATT,374,381,KDRTGND,1122,1143,21,aacctccagagaggcaacgctAAGGACCGGACCGGCAACGACgccagacaagcagctaccgca,2,2
+"Vesicular stomatitis Indiana virus,G protein,Orsay,,#130,VSV-Orsay-G",Def,7aa,seq_32116,TCGACATCATCAAGCCTGGAAAGCAGG,461,468,LFLVLRV,1383,1404,21,aacctccagagaggcaacgctCTGTTCCTGGTGCTGCGGGTGgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP1,U33047.1,,#96,TMEV-VP1-U33047.1",Def,7aa,seq_17348,TCGACATCATGACAGCATGACACACTC,194,201,LSVLPAA,582,603,21,aacctccagagaggcaacgctCTGAGCGTGCTGCCCGCCGCCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_36198,TCGACATCCAGATTTCATCCTACACAT,642,649,AVEAKRI,1926,1947,21,aacctccagagaggcaacgctGCCGTGGAGGCCAAGCGGATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41212,TCGACATCCTGACATAAACCAAGCCTC,2294,2301,VPAAATH,6882,6903,21,aacctccagagaggcaacgctGTGCCCGCCGCCGCCACCCACgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_36582,TCGACATCTATATTCAAACACTGCAAG,670,677,GTAHGHP,2010,2031,21,aacctccagagaggcaacgctGGCACCGCCCACGGCCACCCCgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP2,No,,#97,TMEV-VP2",Def,7aa,seq_11354,TCGACATGAACCATGCCACCTGTGCAT,121,128,HAGSLLV,363,384,21,aacctccagagaggcaacgctCACGCCGGCAGCCTGCTGGTGgccagacaagcagctaccgca,2,2
+"Lectin,SA,No,,#17,SA",Def,7aa,seq_15251,TCGACATGAAGAAATAAGCGAACCTAG,167,174,YDASTSL,501,522,21,aacctccagagaggcaacgctTACGACGCCAGCACCAGCCTGgccagacaagcagctaccgca,2,2
+"Neurotrophin,NRTN,No,,#5,NRTN",Def,7aa,seq_13275,TCGACATGAATGAAGACTGAAATATTG,143,150,AYEDEVS,429,450,21,aacctccagagaggcaacgctGCCTACGAGGACGAGGTGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL10,No,,#53,HSV-1-pUL10",Def,7aa,seq_21221,TCGACATGAGTCATCCCTTGTTTGTAC,247,254,SAPGMLI,741,762,21,aacctccagagaggcaacgctAGCGCCCCCGGCATGCTGATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_35245,TCGACATGATTACACATGCCTACCCGC,578,585,NGNLPLA,1734,1755,21,aacctccagagaggcaacgctAACGGCAACCTGCCCCTGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_12741,TCGACATGCACCTACAAACGCATAAAC,137,144,RVRAQDR,411,432,21,aacctccagagaggcaacgctCGGGTGCGGGCCCAGGACCGGgccagacaagcagctaccgca,2,2
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_18683,TCGACATGCGTAATGACTTAATTAATG,211,218,GSDGKTT,633,654,21,aacctccagagaggcaacgctGGCAGCGACGGCAAGACCACCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_38804,TCGACATGCGTCCAGGCGGCCGCCAAC,931,938,RAHTASA,2793,2814,21,aacctccagagaggcaacgctCGGGCCCACACCGCCAGCGCCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,Mocala,,#31,RV-G-Mocala",Def,7aa,seq_26376,TCGACGCACACATACATGTCTTTCCGT,338,345,LPSRGCL,1014,1035,21,aacctccagagaggcaacgctCTGCCCAGCCGGGGCTGCCTGgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV3,,#122,PV3-VP1",Def,7aa,seq_17359,TCGACGCACGCAAACACTCATTTAAAT,194,201,AIPEYCL,582,603,21,aacctccagagaggcaacgctGCCATCCCCGAGTACTGCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40638,TCGACGCACTTCTGCAATGCCTCCTAC,1709,1716,ARLQALF,5127,5148,21,aacctccagagaggcaacgctGCCCGGCTGCAGGCCCTGTTCgccagacaagcagctaccgca,2,2
+"Neurotrophin,NT4,No,,#3,NT4",Def,7aa,seq_4512,TCGACGCCAACAAACAATTCATTCCAT,46,53,EPAGAPA,138,159,21,aacctccagagaggcaacgctGAGCCCGCCGGCGCCCCCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_34625,TCGACGCCAACACACCAACCTTGATGT,543,550,FSSGQPS,1629,1650,21,aacctccagagaggcaacgctTTCAGCAGCGGCCAGCCCAGCgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP1,1095/Japan 97,,#90,EV71-VP1-1095/Japan 97",Def,7aa,seq_494,TCGACGCGCGCGCATCAACAATCGTAG,5,12,DVIESSI,15,36,21,aacctccagagaggcaacgctGACGTGATCGAGAGCAGCATCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H3N2,,#89,H3N2-HA",Def,7aa,seq_29450,TCGACGCGTACCTATCTAGAATGCAGC,400,407,IEKTNEK,1200,1221,21,aacctccagagaggcaacgctATCGAGAAGACCAACGAGAAGgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV8,,#127,AAV8-VP1",Def,7aa,seq_36339,TCGACGCGTAGCCTGGATGCAACCAAT,653,660,TPVPADP,1959,1980,21,aacctccagagaggcaacgctACCCCCGTGCCCGCCGACCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_36924,TCGACGGACACGCATGAAGGCTGACAC,702,709,TEVQRRN,2106,2127,21,aacctccagagaggcaacgctACCGAGGTGCAGCGGCGGAACgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_38071,TCGACGGACGTGATTCATGATATCTGT,819,826,CHQPANF,2457,2478,21,aacctccagagaggcaacgctTGCCACCAGCCCGCCAACTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL44,No,,#56,HSV-1-pUL44",Def,7aa,seq_27609,TCGACGGATGCGCGCCTACACACCCTT,362,369,ATGLALV,1086,1107,21,aacctccagagaggcaacgctGCCACCGGCCTGGCCCTGGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL53,No,,#70,HSV-2-pUL53",Def,7aa,seq_17181,TCGACGGCAAGCTGTGAGGATGCCAAC,192,199,RQTLVQL,576,597,21,aacctccagagaggcaacgctCGGCAGACCCTGGTGCAGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL53,No,,#57,HSV-1-pUL53",Def,7aa,seq_8875,TCGACGGCAATCTATAATGAAGCAAAT,92,99,PFQVPPD,276,297,21,aacctccagagaggcaacgctCCCTTCCAGGTGCCCCCCGACgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_34564,TCGACGTAAACCAATACACGAAGCCAC,541,548,PRSGFDV,1623,1644,21,aacctccagagaggcaacgctCCCCGGAGCGGCTTCGACGTGgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_30406,TCGACGTACTGCAGGGATGCCATATAC,420,427,PDVYKQI,1260,1281,21,aacctccagagaggcaacgctCCCGACGTGTACAAGCAGATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_31051,TCGACGTATATACGTCTTTCTGCACGT,436,443,KTPVGAA,1308,1329,21,aacctccagagaggcaacgctAAGACCCCCGTGGGCGCCGCCgccagacaagcagctaccgca,3,3
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_23887,TCGACGTCAACCAATGCTGAATTCCTT,292,299,FLRSWLN,876,897,21,aacctccagagaggcaacgctTTCCTGCGGAGCTGGCTGAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_35516,TCGACGTCAATATAGGAATACACCTAG,593,600,VHLAAAT,1779,1800,21,aacctccagagaggcaacgctGTGCACCTGGCCGCCGCCACCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/A Hc,No,,#18,BoNT/A Hc",Def,7aa,seq_22704,TCGACGTCATTGCGTAAGGGAGCATGG,271,278,LQYDKPY,813,834,21,aacctccagagaggcaacgctCTGCAGTACGACAAGCCCTACgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,00NE097,,#104,HIV-gp120-00NE097",Def,7aa,seq_15155,TCGACTCAAAGCTATAAACAAAGGAAC,166,173,ERIMIRS,498,519,21,aacctccagagaggcaacgctGAGCGGATCATGATCCGGAGCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,N2c,,#28,RV-G-N2c",Def,7aa,seq_18131,TCGACTCAAATGTTGCCTTCTGCCCGT,204,211,RTPCDIF,612,633,21,aacctccagagaggcaacgctCGGACCCCCTGCGACATCTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS6,No,,#59,HSV-1-pUS6",Def,7aa,seq_16205,TCGACTCAATCACTCCCTTGAGCATTG,179,186,APAFETA,537,558,21,aacctccagagaggcaacgctGCCCCCGCCTTCGAGACCGCCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H3N2,,#89,H3N2-HA",Def,7aa,seq_12501,TCGACTCAATTATGCACATGAACCCTC,134,141,EFITEGF,402,423,21,aacctccagagaggcaacgctGAGTTCATCACCGAGGGCTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL10,No,,#53,HSV-1-pUL10",Def,7aa,seq_30037,TCGACTCACGCCCTGCCTTAAGCACAC,412,419,RYGDSDG,1236,1257,21,aacctccagagaggcaacgctCGGTACGGCGACAGCGACGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL44,No,,#69,HSV-2-pUL44",Def,7aa,seq_22996,TCGACTCACTGGAGCACTTCTTCGCGT,276,283,VFDPAQI,828,849,21,aacctccagagaggcaacgctGTGTTCGACCCCGCCCAGATCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,CRNP5,,#84,BDV-CRNP5",Def,7aa,seq_20838,TCGACTCCAACGTAGGATTATTGCCTG,241,248,SKLRRRR,723,744,21,aacctccagagaggcaacgctAGCAAGCTGCGGCGGCGGCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL1,No,,#65,HSV-2-pUL1",Def,7aa,seq_7404,TCGACTCCAATGCTCCATCGCTCCTAC,76,83,PGLDTFL,228,249,21,aacctccagagaggcaacgctCCCGGCCTGGACACCTTCCTGgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-P,No,,#26,RV-P",Def,7aa,seq_17199,TCGACTCCAGCGCATGAATAATTCTAC,192,199,DDLSVEA,576,597,21,aacctccagagaggcaacgctGACGACCTGAGCGTGGAGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL16,No,,#50,HSV-1-pUL16",Def,7aa,seq_17140,TCGACTCCAGGCCAGCAAGCCTCGATC,191,198,CCALGPG,573,594,21,aacctccagagaggcaacgctTGCTGCGCCCTGGGCCCCGGCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,Mocala,,#31,RV-G-Mocala",Def,7aa,seq_28865,TCGACTCCATTGTTTATTTAAATCCAC,388,395,KAAMFPL,1164,1185,21,aacctccagagaggcaacgctAAGGCCGCCATGTTCCCCCTGgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_24513,TCGACTCCCACAAACAAACATAGATGC,304,311,RPGYYQL,912,933,21,aacctccagagaggcaacgctCGGCCCGGCTACTACCAGCTGgccagacaagcagctaccgca,2,2
+"Neurotrophin,CDNF,No,,#7,CDNF",Def,7aa,seq_7271,TCGACTCCCACCATTACTCGCTCAAAG,74,81,VTRPMSV,222,243,21,aacctccagagaggcaacgctGTGACCCGGCCCATGAGCGTGgccagacaagcagctaccgca,2,2
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_10278,TCGACTCCCGGACTCCTGCAAGTAAGT,108,115,ELTFTND,324,345,21,aacctccagagaggcaacgctGAGCTGACCTTCACCAACGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_30009,TCGACTCCCGTAAGGGTACCATGGAAG,411,418,CIGKDAR,1233,1254,21,aacctccagagaggcaacgctTGCATCGGCAAGGACGCCCGGgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_32922,TCGACTCCCTCAAAGATACGATCGAGC,482,489,AVGGVLL,1446,1467,21,aacctccagagaggcaacgctGCCGTGGGCGGCGTGCTGCTGgccagacaagcagctaccgca,2,2
+"Canine adenovirus 2,Fiber,SH01,,#108,CAV-2-F-SH01",Def,7aa,seq_25146,TCGACTCCCTCAAATCCACAAATCCAT,316,323,SHQNGTI,948,969,21,aacctccagagaggcaacgctAGCCACCAGAACGGCACCATCgccagacaagcagctaccgca,2,2
+"Canine adenovirus 2,Fiber,SH01,,#108,CAV-2-F-SH01",Def,7aa,seq_13563,TCGACTCCCTCACTTCCTTACACCATT,147,154,TGGTVSL,441,462,21,aacctccagagaggcaacgctACCGGCGGCACCGTGAGCCTGgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B19,,#29,RV-G-B19",Def,7aa,seq_3377,TCGACTCCCTCCAATAAACATGTGAAC,35,42,TNLSGFS,105,126,21,aacctccagagaggcaacgctACCAACCTGAGCGGCTTCAGCgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_29947,TCGACTCCCTTCAGCCTTCCTTCATTG,410,417,AQRLAAL,1230,1251,21,aacctccagagaggcaacgctGCCCAGCGGCTGGCCGCCCTGgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 2,HSV-2-pUS8,No,,#75,HSV-2-pUS8",Def,7aa,seq_21925,TCGACTCCTTGCTTTGCTGCAAGCCAC,258,265,RFDVPSS,774,795,21,aacctccagagaggcaacgctCGGTTCGACGTGCCCAGCAGCgccagacaagcagctaccgca,2,2
+"Neurotrophin,NT3,No,,#2,NT3",Def,7aa,seq_8145,TCGACTCGAACCCACCTGGACTTAATC,84,91,RVLLSDS,252,273,21,aacctccagagaggcaacgctCGGGTGCTGCTGAGCGACAGCgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP3,No,,#98,TMEV-VP3",Def,7aa,seq_8740,TCGACTCGAACCTGGGAACATACCAAC,91,98,NSMLAAV,273,294,21,aacctccagagaggcaacgctAACAGCATGCTGGCCGCCGTGgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_34905,TCGACTCGCATAAATGCAGGATGGATT,558,565,KWQYNSP,1674,1695,21,aacctccagagaggcaacgctAAGTGGCAGTACAACAGCCCCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/E Hc,No,,#22,BoNT/E Hc",Def,7aa,seq_22284,TCGACTGAAATCTAGATATCCACCAAG,264,271,RYFNIFD,792,813,21,aacctccagagaggcaacgctCGGTACTTCAACATCTTCGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL16,No,,#50,HSV-1-pUL16",Def,7aa,seq_8994,TCGACTGAAGCACACGTGCACACAATG,93,100,EIFLYLT,279,300,21,aacctccagagaggcaacgctGAGATCTTCCTGTACCTGACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_38258,TCGACTGACTGCCTGCCTCGCATCTAC,843,850,AQRAAIP,2529,2550,21,aacctccagagaggcaacgctGCCCAGCGGGCCGCCATCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS6,No,,#59,HSV-1-pUS6",Def,7aa,seq_25188,TCGACTGGAAGCAGCCCACCTAGCCAC,317,324,NWHIPSI,951,972,21,aacctccagagaggcaacgctAACTGGCACATCCCCAGCATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39981,TCGACTTAAACACATACTCCCACGTGC,1233,1240,RRAANQP,3699,3720,21,aacctccagagaggcaacgctCGGCGGGCCGCCAACCAGCCCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV3,,#122,PV3-VP1",Def,7aa,seq_35828,TCGACTTAAATGAGCATGGCCAGCCAC,614,621,KEVPALT,1842,1863,21,aacctccagagaggcaacgctAAGGAGGTGCCCGCCCTGACCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_37741,TCGACTTACATACACCATTACTCAAAC,782,789,CLRLLPC,2346,2367,21,aacctccagagaggcaacgctTGCCTGCGGCTGCTGCCCTGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_28510,TCGACTTACGGCCAGGCAGACTGCAAC,380,387,YRNAVVE,1140,1161,21,aacctccagagaggcaacgctTACCGGAACGCCGTGGTGGAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_32504,TCGACTTATAGGTATCTTCATGTCCAC,471,478,DGPMVPA,1413,1434,21,aacctccagagaggcaacgctGACGGCCCCATGGTGCCCGCCgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41553,TCGACTTCAATACAGCATCGATTCCAC,2638,2645,SSRASAA,7914,7935,21,aacctccagagaggcaacgctAGCAGCCGGGCCAGCGCCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_35379,TCGACTTCCACGATTCATGACTCCATT,585,592,FSPCAAS,1755,1776,21,aacctccagagaggcaacgctTTCAGCCCCTGCGCCGCCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS4,No,,#71,HSV-2-pUS4",Def,7aa,seq_35220,TCGACTTCCGTCTTGGAACACTTCAAC,576,583,DSATGLA,1728,1749,21,aacctccagagaggcaacgctGACAGCGCCACCGGCCTGGCCgccagacaagcagctaccgca,2,2
+"Measles virus,MV-F,Edmonston,,#78,MV-F-Edmonston",Def,7aa,seq_31214,TCGACTTCCTCATAGCAGGATATGCAG,439,446,YPDAVYL,1317,1338,21,aacctccagagaggcaacgctTACCCCGACGCCGTGTACCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_39260,TCGACTTCCTTCAACATGCCAATCATT,1031,1038,ELLRVTD,3093,3114,21,aacctccagagaggcaacgctGAGCTGCTGCGGGTGACCGACgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV2,,#118,PV2-VP1",Def,7aa,seq_9301,TCGACTTCTGCGTTCAAACATACCTAT,97,104,TKRASKL,291,312,21,aacctccagagaggcaacgctACCAAGCGGGCCAGCAAGCTGgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/F Hc,No,,#23,BoNT/F Hc",Def,7aa,seq_6823,TCGACTTGTACACGTAATTCCACCTAC,69,76,YQNFSIS,207,228,21,aacctccagagaggcaacgctTACCAGAACTTCAGCATCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS4,No,,#71,HSV-2-pUS4",Def,7aa,seq_6964,TCGACTTGTACCTACACATCTACGCTC,71,78,PRRVVRH,213,234,21,aacctccagagaggcaacgctCCCCGGCGGGTGGTGCGGCACgccagacaagcagctaccgca,2,2
+"Lectin,WGA,No,,#13,WGA",Def,7aa,seq_10613,TCGATACAAATACACCCAGACTGACAT,112,119,GSEFCGE,336,357,21,aacctccagagaggcaacgctGGCAGCGAGTTCTGCGGCGAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_21232,TCGATACAAGCCCACGTACCAGCCCAT,247,254,HTTDLKY,741,762,21,aacctccagagaggcaacgctCACACCACCGACCTGAAGTACgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_14019,TCGATACAATTCCTTGTATACAGAAAT,152,159,VFPGGKC,456,477,21,aacctccagagaggcaacgctGTGTTCCCCGGCGGCAAGTGCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_36293,TCGATACCAAGAAAGCATGATTTCCAT,649,656,LTTRPGS,1947,1968,21,aacctccagagaggcaacgctCTGACCACCCGGCCCGGCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41389,TCGATACCCACGAATCAACACATCCAT,2473,2480,PFDASLL,7419,7440,21,aacctccagagaggcaacgctCCCTTCGACGCCAGCCTGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL44,No,,#56,HSV-1-pUL44",Def,7aa,seq_5126,TCGATACCCATCCTCCCTGGAGCACGC,52,59,GSAASPE,156,177,21,aacctccagagaggcaacgctGGCAGCGCCGCCAGCCCCGAGgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H1N1,,#87,H1N1-HA",Def,7aa,seq_18848,TCGATACCCTGAAATCCACGAGTGCAT,213,220,YVSVVTS,639,660,21,aacctccagagaggcaacgctTACGTGAGCGTGGTGACCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_39778,TCGATACCTACACGCAAGGCCTCAAGG,1172,1179,RRAGMDH,3516,3537,21,aacctccagagaggcaacgctCGGCGGGCCGGCATGGACCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_40192,TCGATACCTGTACGCACGTATTTGCGT,1327,1334,FQEAYPL,3981,4002,21,aacctccagagaggcaacgctTTCCAGGAGGCCTACCCCCTGgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_34971,TCGATACCTTCCCTCACTGGTAGATTG,562,569,NSPLVPR,1686,1707,21,aacctccagagaggcaacgctAACAGCCCCCTGGTGCCCCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39622,TCGATACCTTCGAACACGTCTTCACTT,1122,1129,TPFLLQF,3366,3387,21,aacctccagagaggcaacgctACCCCCTTCCTGCTGCAGTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_16038,TCGATACGAACCATTCCGTATTTCCAT,177,184,EDDNDEG,531,552,21,aacctccagagaggcaacgctGAGGACGACAACGACGAGGGCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_33242,TCGATACGAACGCATAAAGAAGCGCGC,491,498,FARRRRL,1473,1494,21,aacctccagagaggcaacgctTTCGCCCGGCGGCGGCGGCTGgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,tat,GR17,,#106,HIV-tat-GR17",Def,7aa,seq_8618,TCGATACGAATGTGGATTCACACACAT,89,96,EVESKAE,267,288,21,aacctccagagaggcaacgctGAGGTGGAGAGCAAGGCCGAGgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV8,,#127,AAV8-VP1",Def,7aa,seq_26459,TCGATACGATCATGTCATTGCTTCTAT,340,347,STIQVFT,1020,1041,21,aacctccagagaggcaacgctAGCACCATCCAGGTGTTCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_38168,TCGATACGCATATACCCTCACACGATC,830,837,RFDRVYA,2490,2511,21,aacctccagagaggcaacgctCGGTTCGACCGGGTGTACGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40364,TCGATACGCATCAGTATACCATTGAGC,1435,1442,TEPLARL,4305,4326,21,aacctccagagaggcaacgctACCGAGCCCCTGGCCCGGCTGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,PrPc,No,,#11,PrPc",Def,7aa,seq_14883,TCGATAGACACCAGCAAATCCACATAC,163,170,RPVDQYS,489,510,21,aacctccagagaggcaacgctCGGCCCGTGGACCAGTACAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_39094,TCGATAGACAGACACCAACCCATCATT,992,999,ALGANYF,2976,2997,21,aacctccagagaggcaacgctGCCCTGGGCGCCAACTACTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_28665,TCGATAGACGCACATCATCAATCAAAC,383,390,FRFSSDA,1149,1170,21,aacctccagagaggcaacgctTTCCGGTTCAGCAGCGACGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_37815,TCGATAGATATGAAGCCTCCATGGAAC,791,798,AFDTLPI,2373,2394,21,aacctccagagaggcaacgctGCCTTCGACACCCTGCCCATCgccagacaagcagctaccgca,2,2
+"Neurotrophin,CDNF,No,,#7,CDNF",Def,7aa,seq_9947,TCGATAGATTGGATGAAATCTTTAATT,104,111,EKKLDLE,312,333,21,aacctccagagaggcaacgctGAGAAGAAGCTGGACCTGGAGgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,00NE097,,#104,HIV-gp120-00NE097",Def,7aa,seq_27425,TCGATAGCAACCATGGCACCAATCCGT,359,366,SNNETFR,1077,1098,21,aacctccagagaggcaacgctAGCAACAACGAGACCTTCCGGgccagacaagcagctaccgca,2,2
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_23097,TCGATAGCATTATACACAGAAAGACAT,278,285,ENPGGYC,834,855,21,aacctccagagaggcaacgctGAGAACCCCGGCGGCTACTGCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H3N2,,#89,H3N2-HA",Def,7aa,seq_1817,TCGATAGCCAGCTGCCTAGACGGGCAC,18,25,FPGNDNS,54,75,21,aacctccagagaggcaacgctTTCCCCGGCAACGACAACAGCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV9,,#127,AAV9-VP1",Def,7aa,seq_26401,TCGATAGGAGTGAATCAGCCCGGACGT,339,346,STVQVFT,1017,1038,21,aacctccagagaggcaacgctAGCACCGTGCAGGTGTTCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_34880,TCGATAGGCGCGTTCACAGCTGCCAAT,556,563,ELPGGDV,1668,1689,21,aacctccagagaggcaacgctGAGCTGCCCGGCGGCGACGTGgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-P,No,,#26,RV-P",Def,7aa,seq_23639,TCGATATAATCGAACACATACTCGCTG,288,295,DDLNRYT,864,885,21,aacctccagagaggcaacgctGACGACCTGAACCGGTACACCgccagacaagcagctaccgca,4,4
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_31276,TCGATATACTGCCATGTGTACATACTG,441,448,DSRKISH,1323,1344,21,aacctccagagaggcaacgctGACAGCCGGAAGATCAGCCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL44,No,,#56,HSV-1-pUL44",Def,7aa,seq_5437,TCGATATATTTACAGCCATAAACCCAC,55,62,ASPEVTP,165,186,21,aacctccagagaggcaacgctGCCAGCCCCGAGGTGACCCCCgccagacaagcagctaccgca,2,2
+"Horseradish peroxidase,Horseradish peroxidase,,,#135,HRP",Def,7aa,seq_17125,TCGATATCTAGCAACCAGTACATAAAT,191,198,GLPDPTL,573,594,21,aacctccagagaggcaacgctGGCCTGCCCGACCCCACCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_32848,TCGATATGAACAAACCATGACGCCTTT,480,487,GERDQVP,1440,1461,21,aacctccagagaggcaacgctGGCGAGCGGGACCAGGTGCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_13278,TCGATATGAACGTTCCTATACTCAAAT,143,150,GLSHNPG,429,450,21,aacctccagagaggcaacgctGGCCTGAGCCACAACCCCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_34615,TCGATGCAAACACGGCAACGAGCCAGG,543,550,RRGLLIT,1629,1650,21,aacctccagagaggcaacgctCGGCGGGGCCTGCTGATCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_37316,TCGATGCACACATGTCAGTCTACACTG,737,744,TPAGEVM,2211,2232,21,aacctccagagaggcaacgctACCCCCGCCGGCGAGGTGATGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40408,TCGATGCACGCACGTAAGTATTCACAC,1479,1486,RQYVPFF,4437,4458,21,aacctccagagaggcaacgctCGGCAGTACGTGCCCTTCTTCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/A Hc,No,,#18,BoNT/A Hc",Def,7aa,seq_27160,TCGATGCACGTCCTTACATAATGCAAT,354,361,NKEYRLA,1062,1083,21,aacctccagagaggcaacgctAACAAGGAGTACCGGCTGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40308,TCGATGCATACCATCCTAGCCTTGCAC,1377,1384,TNAKAVT,4131,4152,21,aacctccagagaggcaacgctACCAACGCCAAGGCCGTGACCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_29191,TCGATGCATTGAATCATTCGAATCCTG,394,401,CLEYFPS,1182,1203,21,aacctccagagaggcaacgctTGCCTGGAGTACTTCCCCAGCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_39783,TCGATGCCAGGAATGATATCCTGAAAG,1173,1180,FRVQVCS,3519,3540,21,aacctccagagaggcaacgctTTCCGGGTGCAGGTGTGCAGCgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,TJ,,#134,PRV-TJ-gE",Def,7aa,seq_35047,TCGATGCCATCGCACCTGCGTTTAAAC,566,573,GVTANRL,1698,1719,21,aacctccagagaggcaacgctGGCGTGACCGCCAACCGGCTGgccagacaagcagctaccgca,3,3
+"Canine adenovirus 2,Fiber,SH01,,#108,CAV-2-F-SH01",Def,7aa,seq_19376,TCGATGCCCACCATCGATTCCATCCTT,220,227,VSLQVGA,660,681,21,aacctccagagaggcaacgctGTGAGCCTGCAGGTGGGCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_30348,TCGATGGACAGCATTAAACCTGTCATC,419,426,KRSAPPA,1257,1278,21,aacctccagagaggcaacgctAAGCGGAGCGCCCCCCCCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL53,No,,#57,HSV-1-pUL53",Def,7aa,seq_24982,TCGATGGATAGCCATGAACGCTTGCAC,312,319,YIAVVAG,936,957,21,aacctccagagaggcaacgctTACATCGCCGTGGTGGCCGGCgccagacaagcagctaccgca,2,2
+"Tick-borne encephalitis virus,TBEV-E,80,,#43,TBEV-E-80",Def,7aa,seq_31038,TCGATGGCTACCTTCGCTCAAAGGTGC,435,442,AVHTVLG,1305,1326,21,aacctccagagaggcaacgctGCCGTGCACACCGTGCTGGGCgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP2,No,,#91,EV71-VP2",Def,7aa,seq_4907,TCGATGTACACAAATCCGTCCTCATAT,50,57,DKPTRPD,150,171,21,aacctccagagaggcaacgctGACAAGCCCACCCGGCCCGACgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_13691,TCGATGTACGCACAGAAAGCCTCGAAG,148,155,VPSMSGA,444,465,21,aacctccagagaggcaacgctGTGCCCAGCATGAGCGGCGCCgccagacaagcagctaccgca,2,2
+"Horseradish peroxidase,Horseradish peroxidase,,,#135,HRP",Def,7aa,seq_12399,TCGATGTACGCGAATACAGAATCGAGG,133,140,LANANLP,399,420,21,aacctccagagaggcaacgctCTGGCCAACGCCAACCTGCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL27,No,,#68,HSV-2-pUL27",Def,7aa,seq_32412,TCGATGTACGTATTTACATACGGAATT,469,476,KPRNATP,1407,1428,21,aacctccagagaggcaacgctAAGCCCCGGAACGCCACCCCCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_2172,TCGATGTACTCCATTACATGTTCATTT,22,29,DGNAGLL,66,87,21,aacctccagagaggcaacgctGACGGCAACGCCGGCCTGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_12473,TCGATGTATTCGAAGGCTTGAGGGTTT,134,141,HTFFAGP,402,423,21,aacctccagagaggcaacgctCACACCTTCTTCGCCGGCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS7,No,,#61,HSV-1-pUS7",Def,7aa,seq_9425,TCGATGTCAACCTGCGCTTCATCAAGT,98,105,RRPAVAF,294,315,21,aacctccagagaggcaacgctCGGCGGCCCGCCGTGGCCTTCgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP3,No,,#92,EV71-VP3",Def,7aa,seq_6924,TCGATGTCCGTCTTCGCAGCATTCCAG,70,77,FPVSAQA,210,231,21,aacctccagagaggcaacgctTTCCCCGTGAGCGCCCAGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL34,No,,#64,HSV-2-pUL34",Def,7aa,seq_1136,TCGATGTCCTGCCATCTACGAGGCTAG,12,19,TADNVRA,36,57,21,aacctccagagaggcaacgctACCGCCGACAACGTGCGGGCCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV2,,#118,PV2-VP1",Def,7aa,seq_9178,TCGATTCAAATGTACCATGGTACAAAT,95,102,APTKRAS,285,306,21,aacctccagagaggcaacgctGCCCCCACCAAGCGGGCCAGCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/E Hc,No,,#22,BoNT/E Hc",Def,7aa,seq_4495,TCGATTCAAGTACACCTTGCCACATGT,46,53,LSSYTDD,138,159,21,aacctccagagaggcaacgctCTGAGCAGCTACACCGACGACgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_26905,TCGATTCAATGAAACCCTCCCTCCCGG,348,355,GRCHPHV,1044,1065,21,aacctccagagaggcaacgctGGCCGGTGCCACCCCCACGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_37832,TCGATTCACTGCAGGATACACTCCAAT,793,800,DTLPIAT,2379,2400,21,aacctccagagaggcaacgctGACACCCTGCCCATCGCCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41872,TCGATTCACTTCCATACACAATGGTGG,3021,3028,DEDSDTT,9063,9084,21,aacctccagagaggcaacgctGACGAGGACAGCGACACCACCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H5N1,,#86,H5N1-HA",Def,7aa,seq_19059,TCGATTCATAGCATCCTTGCAATAAAT,216,223,GTSTLNQ,648,669,21,aacctccagagaggcaacgctGGCACCAGCACCCTGAACCAGgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,Mocala,,#31,RV-G-Mocala",Def,7aa,seq_14745,TCGATTCATTTCAATCCTTCAACCATG,161,168,LYPSVPS,483,504,21,aacctccagagaggcaacgctCTGTACCCCAGCGTGCCCAGCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,KE-093,,#40,JEV-E-KE-093",Def,7aa,seq_7706,TCGATTCCAACATGTCATCGCGCAATT,79,86,AHNKKRA,237,258,21,aacctccagagaggcaacgctGCCCACAACAAGAAGCGGGCCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,SA14-5-3,,#37,JEV-E-SA14-5-3",Def,7aa,seq_7292,TCGATTCCCGTCAACCTAGGTATCAAC,75,82,TTGEAHN,225,246,21,aacctccagagaggcaacgctACCACCGGCGAGGCCCACAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_23088,TCGATTCCTAGGTATACACAATTCTTT,278,285,RSVYPYD,834,855,21,aacctccagagaggcaacgctCGGAGCGTGTACCCCTACGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS4,No,,#58,HSV-1-pUS4",Def,7aa,seq_3513,TCGATTCCTTCCCTGAATCCCGCGAAT,36,43,LQTTGRP,108,129,21,aacctccagagaggcaacgctCTGCAGACCACCGGCCGGCCCgccagacaagcagctaccgca,2,2
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_8558,TCGATTCGCACATTCCCTCACATGCAC,89,96,NACSANN,267,288,21,aacctccagagaggcaacgctAACGCCTGCAGCGCCAACAACgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,TJ,,#134,PRV-TJ-gE",Def,7aa,seq_13505,TCGATTGAATCCTACGCGCATATGTGC,146,153,PEMGIGD,438,459,21,aacctccagagaggcaacgctCCCGAGATGGGCATCGGCGACgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,N2c,,#28,RV-G-N2c",Def,7aa,seq_1201,TCGATTGACTCCAACAAAGCAACCCAT,12,19,GFSLCFG,36,57,21,aacctccagagaggcaacgctGGCTTCAGCCTGTGCTTCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_24178,TCGATTGATGGGTACACTTACATAAAC,298,305,RRDDRAS,894,915,21,aacctccagagaggcaacgctCGGCGGGACGACCGGGCCAGCgccagacaagcagctaccgca,2,2
+"Neurotoxin,TeNT Hc,No,,#25,TeNT Hc",Def,7aa,seq_29121,TCGATTGCAAGACTGACTCACAGAATG,393,400,LYDDKNA,1179,1200,21,aacctccagagaggcaacgctCTGTACGACGACAAGAACGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL10,No,,#66,HSV-2-pUL10",Def,7aa,seq_4808,TCGATTGCCACCCTGACGTAATTCATC,49,56,ASVFRDR,147,168,21,aacctccagagaggcaacgctGCCAGCGTGTTCCGGGACCGGgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_36567,TCGATTGCCTTCCACCCAGAAAGCAGC,669,676,PVCLLVH,2007,2028,21,aacctccagagaggcaacgctCCCGTGTGCCTGCTGGTGCACgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP3,No,,#98,TMEV-VP3",Def,7aa,seq_6716,TCGATTGGCACACGGCCATACAGGAGC,68,75,ATNSVPT,204,225,21,aacctccagagaggcaacgctGCCACCAACAGCGTGCCCACCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,SA14-5-3,,#37,JEV-E-SA14-5-3",Def,7aa,seq_31466,TCGATTTACACATACATATCTACGCGC,445,452,GGAFRTL,1335,1356,21,aacctccagagaggcaacgctGGCGGCGCCTTCCGGACCCTGgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/C Hc,No,,#20,BoNT/C Hc",Def,7aa,seq_10000,TCGATTTACGGACGCCCGTCTACGCTT,105,112,SGWSIGI,315,336,21,aacctccagagaggcaacgctAGCGGCTGGAGCATCGGCATCgccagacaagcagctaccgca,2,2
+"Herpes B virus,Glycoprotein D,No,,#114,BV-G",Def,7aa,seq_15229,TCGATTTATACACGGATACACTTACAT,167,174,ATGDDDL,501,522,21,aacctccagagaggcaacgctGCCACCGGCGACGACGACCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS4,No,,#71,HSV-2-pUS4",Def,7aa,seq_12013,TCGATTTCAACGATCCTTCACGTGCAT,128,135,YGGCRGG,384,405,21,aacctccagagaggcaacgctTACGGCGGCTGCCGGGGCGGCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,a-Syn,No,,#9,a-Syn",Def,7aa,seq_6176,TCGATTTCAATAAACCTTGAAGCATAC,63,70,TNVGGAV,189,210,21,aacctccagagaggcaacgctACCAACGTGGGCGGCGCCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_38604,TCGATTTCCGCCCATCAACGTTCCTTC,893,900,VPGFCFM,2679,2700,21,aacctccagagaggcaacgctGTGCCCGGCTTCTGCTTCATGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_39100,TCGATTTCCTTAAACCCACAAGTGTAC,993,1000,WGDYSLG,2979,3000,21,aacctccagagaggcaacgctTGGGGCGACTACAGCCTGGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS6,No,,#59,HSV-1-pUS6",Def,7aa,seq_15906,TCGATTTCTATAAGCGATGCTTTAAGG,175,182,FLMHAPA,525,546,21,aacctccagagaggcaacgctTTCCTGATGCACGCCCCCGCCgccagacaagcagctaccgca,2,2
+"Tick-borne encephalitis virus,TBEV-E,80,,#43,TBEV-E-80",Def,7aa,seq_23483,TCGATTTGAATAAACAAGTCTTCACAC,285,292,GHVTCEV,855,876,21,aacctccagagaggcaacgctGGCCACGTGACCTGCGAGGTGgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_33526,TCGATTTGATTATTCACGCAAACCATT,501,508,RRPSSPG,1503,1524,21,aacctccagagaggcaacgctCGGCGGCCCAGCAGCCCCGGCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H1N1,,#87,H1N1-HA",Def,7aa,seq_23231,TCGATTTGTATAAGCCCACCCGTCCAT,281,288,ITSNASM,843,864,21,aacctccagagaggcaacgctATCACCAGCAACGCCAGCATGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL44,No,,#56,HSV-1-pUL44",Def,7aa,seq_33484,TCGCAACAAATCAATACATCATTACAT,499,506,VRTSQSR,1497,1518,21,aacctccagagaggcaacgctGTGCGGACCAGCCAGAGCCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS7,No,,#61,HSV-1-pUS7",Def,7aa,seq_9013,TCGCAACAATGGATCGCTTGAGCCAAC,93,100,VTACPRR,279,300,21,aacctccagagaggcaacgctGTGACCGCCTGCCCCCGGCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS6,No,,#72,HSV-2-pUS6",Def,7aa,seq_21462,TCGCAACACACACATAAACGATTGATG,251,258,NQRTVAL,753,774,21,aacctccagagaggcaacgctAACCAGCGGACCGTGGCCCTGgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-M,No,,#33,WNV-M",Def,7aa,seq_8508,TCGCAACACATAAACAAGTGCTGAAAT,88,95,RSRRSLT,264,285,21,aacctccagagaggcaacgctCGGAGCCGGCGGAGCCTGACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS4,No,,#71,HSV-2-pUS4",Def,7aa,seq_25937,TCGCAACACATGAATAAATGAACCATG,330,337,DPDVRAP,990,1011,21,aacctccagagaggcaacgctGACCCCGACGTGCGGGCCCCCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,00NE097,,#104,HIV-gp120-00NE097",Def,7aa,seq_3095,TCGCAACACGGAAATGTTTACACATAC,32,39,SANISSE,96,117,21,aacctccagagaggcaacgctAGCGCCAACATCAGCAGCGAGgccagacaagcagctaccgca,2,2
+"Poliovirus,VP3,PV2,,#120,PV2-VP3",Def,7aa,seq_8788,TCGCAACACTGACTCCATCGTATCTAT,91,98,DPRLAHT,273,294,21,aacctccagagaggcaacgctGACCCCCGGCTGGCCCACACCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/B Hc,No,,#19,BoNT/B Hc",Def,7aa,seq_24030,TCGCAACACTGGCTCATAGGCACAAGC,295,302,EILTRSK,885,906,21,aacctccagagaggcaacgctGAGATCCTGACCCGGAGCAAGgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_32670,TCGCAACACTTCTGTCCATATTGCCTG,476,483,NWLPGPC,1428,1449,21,aacctccagagaggcaacgctAACTGGCTGCCCGGCCCCTGCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/E Hc,No,,#22,BoNT/E Hc",Def,7aa,seq_22431,TCGCAACACTTCTTCGCACCTTCAAAG,267,274,NIFDKEL,801,822,21,aacctccagagaggcaacgctAACATCTTCGACAAGGAGCTGgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_19774,TCGCAACATACACTTAAGCGTTGATTT,226,233,SSINVTC,678,699,21,aacctccagagaggcaacgctAGCAGCATCAACGTGACCTGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40528,TCGCAACATAGGCTCCCACCAAGCCAC,1599,1606,AEATERV,4797,4818,21,aacctccagagaggcaacgctGCCGAGGCCACCGAGCGGGTGgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,ThCMAr4492,,#42,JEV-E-ThCMAr4492",Def,7aa,seq_27556,TCGCAACATTCCCACATACGTTCCCTC,361,368,ATSSSNS,1083,1104,21,aacctccagagaggcaacgctGCCACCAGCAGCAGCAACAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39175,TCGCAACATTCGCAGAAACCCTCACAT,1011,1018,RAKVARD,3033,3054,21,aacctccagagaggcaacgctCGGGCCAAGGTGGCCCGGGACgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/D Hc,No,,#21,BoNT/D Hc",Def,7aa,seq_15585,TCGCAACATTTCATCAATCGATCAAGC,172,179,KLDKTIV,516,537,21,aacctccagagaggcaacgctAAGCTGGACAAGACCATCGTGgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_21509,TCGCAACATTTCCAGGCACACATACAC,251,258,YNNHLYK,753,774,21,aacctccagagaggcaacgctTACAACAACCACCTGTACAAGgccagacaagcagctaccgca,2,2
+"Neurotoxin,TeNT Hc,No,,#25,TeNT Hc",Def,7aa,seq_19761,TCGCAACCAATCAGGGATCATACGATC,225,232,FRIFCKA,675,696,21,aacctccagagaggcaacgctTTCCGGATCTTCTGCAAGGCCgccagacaagcagctaccgca,2,2
+"Canine adenovirus 2,Fiber,SH01,,#108,CAV-2-F-SH01",Def,7aa,seq_33704,TCGCAACCAGGAAATGAACATTCATAG,507,514,ATYTLTF,1521,1542,21,aacctccagagaggcaacgctGCCACCTACACCCTGACCTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_2658,TCGCAACCATCATGTCAGTCATCCTAC,27,34,ASAAPSS,81,102,21,aacctccagagaggcaacgctGCCAGCGCCGCCCCCAGCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_35755,TCGCAACCATTAAGTCCATGTTCACAG,608,615,GIHPNVL,1824,1845,21,aacctccagagaggcaacgctGGCATCCACCCCAACGTGCTGgccagacaagcagctaccgca,3,3
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_20460,TCGCAACCATTGAGCACTTAAGCGATG,235,242,ENHCTYA,705,726,21,aacctccagagaggcaacgctGAGAACCACTGCACCTACGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_7153,TCGCAACCCACGCACAAAGCTGGACTT,73,80,LTTASVP,219,240,21,aacctccagagaggcaacgctCTGACCACCGCCAGCGTGCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS4,No,,#58,HSV-1-pUS4",Def,7aa,seq_19444,TCGCAACCCAGCAAGCCTGCCACCTGG,221,228,GRRTHPS,663,684,21,aacctccagagaggcaacgctGGCCGGCGGACCCACCCCAGCgccagacaagcagctaccgca,3,3
+"West Nile virus,WNV-E,AZ10-918,,#36,WNV-E-AZ10-918",Def,7aa,seq_14212,TCGCAACCCGCAAACCAACGTGCACTC,155,162,STQAGAT,465,486,21,aacctccagagaggcaacgctAGCACCCAGGCCGGCGCCACCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV6,,#126,AAV6-VP1",Def,7aa,seq_35288,TCGCAACCCTCATTCATTTCCGTACGT,580,587,AVNLQSS,1740,1761,21,aacctccagagaggcaacgctGCCGTGAACCTGCAGAGCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41577,TCGCAACCCTCGCATGATGGCGGAAGC,2662,2669,RATQASA,7986,8007,21,aacctccagagaggcaacgctCGGGCCACCCAGGCCAGCGCCgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,AZ10-918,,#36,WNV-E-AZ10-918",Def,7aa,seq_31129,TCGCAACCTATATGCCCTCCAACACAC,437,444,VGKAVHQ,1311,1332,21,aacctccagagaggcaacgctGTGGGCAAGGCCGTGCACCAGgccagacaagcagctaccgca,2,2
+"Lectin,SA,No,,#17,SA",Def,7aa,seq_20652,TCGCAACCTATCAACCAACGCACAAGC,238,245,IDPLDLT,714,735,21,aacctccagagaggcaacgctATCGACCCCCTGGACCTGACCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV8,,#127,AAV8-VP1",Def,7aa,seq_17362,TCGCAACCTATGCGCGCGCCCAGAAAT,194,201,APSGVGP,582,603,21,aacctccagagaggcaacgctGCCCCCAGCGGCGTGGGCCCCgccagacaagcagctaccgca,3,3
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_23326,TCGCAACCTGCAAACGATTATACCAAC,282,289,FGTGIAS,846,867,21,aacctccagagaggcaacgctTTCGGCACCGGCATCGCCAGCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_18303,TCGCAACCTGGCAGCCAGTCCGCCCAC,206,213,AGKPGDS,618,639,21,aacctccagagaggcaacgctGCCGGCAAGCCCGGCGACAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL16,No,,#50,HSV-1-pUL16",Def,7aa,seq_25554,TCGCAACCTTCCCATCCATCCTGAAAC,323,330,VGGRCGA,969,990,21,aacctccagagaggcaacgctGTGGGCGGCCGGTGCGGCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_11800,TCGCAACCTTGCAACCCACGCTTCCGC,126,133,LLETQCP,378,399,21,aacctccagagaggcaacgctCTGCTGGAGACCCAGTGCCCCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,N2c,,#28,RV-G-N2c",Def,7aa,seq_28787,TCGCAACGAACCCGTCATGCCATCAAG,386,393,DDHVLIP,1158,1179,21,aacctccagagaggcaacgctGACGACCACGTGCTGATCCCCgccagacaagcagctaccgca,2,2
+"Lectin,ConA,No,,#16,ConA",Def,7aa,seq_778,TCGCAACGAATGCATAAACCTAGAAAG,8,15,LDTYPNT,24,45,21,aacctccagagaggcaacgctCTGGACACCTACCCCAACACCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H5N1,,#86,H5N1-HA",Def,7aa,seq_33230,TCGCAACGCGGGAACGATGACATAAAC,491,498,ESVRNGT,1473,1494,21,aacctccagagaggcaacgctGAGAGCGTGCGGAACGGCACCgccagacaagcagctaccgca,2,2
+"Canine adenovirus 2,Fiber,SH01,,#108,CAV-2-F-SH01",Def,7aa,seq_31549,TCGCAAGAAACGTTTACGCAAGCACTT,447,454,GNNTVQP,1341,1362,21,aacctccagagaggcaacgctGGCAACAACACCGTGCAGCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_28107,TCGCAAGAAATATAGGATTCAAGCCAT,372,379,KLIFLEA,1116,1137,21,aacctccagagaggcaacgctAAGCTGATCTTCCTGGAGGCCgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-M,No,,#33,WNV-M",Def,7aa,seq_8573,TCGCAAGAAGCCAACTAAGAATGACGC,89,96,SRRSLTV,267,288,21,aacctccagagaggcaacgctAGCCGGCGGAGCCTGACCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS6,No,,#72,HSV-2-pUS6",Def,7aa,seq_23130,TCGCAAGACACCTACCTACACTTCATC,279,286,PELSDTT,837,858,21,aacctccagagaggcaacgctCCCGAGCTGAGCGACACCACCgccagacaagcagctaccgca,2,2
+"Measles virus,MV-F,Edmonston,,#78,MV-F-Edmonston",Def,7aa,seq_25659,TCGCAAGACATAATTACTTATACACGT,325,332,GYLISNF,975,996,21,aacctccagagaggcaacgctGGCTACCTGATCAGCAACTTCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_36287,TCGCAAGACTTCCACGTTCCCACCTTC,649,656,KNTPVPA,1947,1968,21,aacctccagagaggcaacgctAAGAACACCCCCGTGCCCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS6,No,,#59,HSV-1-pUS6",Def,7aa,seq_15952,TCGCAAGATACCTGGGCACCAATACAG,176,183,LMHAPAF,528,549,21,aacctccagagaggcaacgctCTGATGCACGCCCCCGCCTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL16,No,,#50,HSV-1-pUL16",Def,7aa,seq_3788,TCGCAAGATTCACGCCCGCAAAGCCAT,39,46,TDVDSIA,117,138,21,aacctccagagaggcaacgctACCGACGTGGACAGCATCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_16803,TCGCAAGCAACAATGACTTATGCACGT,187,194,DRAPVPF,561,582,21,aacctccagagaggcaacgctGACCGGGCCCCCGTGCCCTTCgccagacaagcagctaccgca,2,2
+"Herpes B virus,Glycoprotein D,No,,#114,BV-G",Def,7aa,seq_3975,TCGCAAGCAACGCACGCACAATTATGC,40,47,FRGAHLP,120,141,21,aacctccagagaggcaacgctTTCCGGGGCGCCCACCTGCCCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_17071,TCGCAAGCAAGAAACGCTTCCACGAAG,191,198,NKTLNGT,573,594,21,aacctccagagaggcaacgctAACAAGACCCTGAACGGCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS6,No,,#59,HSV-1-pUS6",Def,7aa,seq_28600,TCGCAAGCAATAAGCCCATGCACGATT,382,389,DDQPSSH,1146,1167,21,aacctccagagaggcaacgctGACGACCAGCCCAGCAGCCACgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H3N2,,#89,H3N2-HA",Def,7aa,seq_21931,TCGCAAGCATGCCTGCCGTCCATATAG,258,265,LVINSNG,774,795,21,aacctccagagaggcaacgctCTGGTGATCAACAGCAACGGCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B19,,#29,RV-G-B19",Def,7aa,seq_14670,TCGCAAGCCTGCCGCCAACATAGAATG,160,167,GVAVSST,480,501,21,aacctccagagaggcaacgctGGCGTGGCCGTGAGCAGCACCgccagacaagcagctaccgca,2,2
+"Measles virus,MV-H,Edmonston,,#77,MV-H-Edmonston",Def,7aa,seq_17634,TCGCAAGCTAGACACACGCCAAGAAAC,198,205,SNMSLSL,594,615,21,aacctccagagaggcaacgctAGCAACATGAGCCTGAGCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS7,No,,#61,HSV-1-pUS7",Def,7aa,seq_363,TCGCAAGCTGTCTATGCTGGAAGGCAC,4,11,PLQGLVL,12,33,21,aacctccagagaggcaacgctCCCCTGCAGGGCCTGGTGCTGgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV9,,#127,AAV9-VP1",Def,7aa,seq_31652,TCGCAAGGAACACACCCTGAAGTACTG,450,457,INGSGQN,1350,1371,21,aacctccagagaggcaacgctATCAACGGCAGCGGCCAGAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41657,TCGCAATAAACGAGTCCTCCTACCATT,2742,2749,GGENRRP,8226,8247,21,aacctccagagaggcaacgctGGCGGCGAGAACCGGCGGCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39266,TCGCAATAAAGGAACCATCGCGCCATT,1033,1040,LPDFVGL,3099,3120,21,aacctccagagaggcaacgctCTGCCCGACTTCGTGGGCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_30953,TCGCAATACACCAATACGCATATACTT,433,440,GFLAAGV,1299,1320,21,aacctccagagaggcaacgctGGCTTCCTGGCCGCCGGCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_34315,TCGCAATACATCTGCGTATCCTTGATT,530,537,LAGAPSA,1590,1611,21,aacctccagagaggcaacgctCTGGCCGGCGCCCCCAGCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_9492,TCGCAATACTGACGTAAATGATCACAT,99,106,PGARGGL,297,318,21,aacctccagagaggcaacgctCCCGGCGCCCGGGGCGGCCTGgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_31748,TCGCAATATACACTCCAACCAATCCTT,452,459,PFHHDPP,1356,1377,21,aacctccagagaggcaacgctCCCTTCCACCACGACCCCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS7,No,,#61,HSV-1-pUS7",Def,7aa,seq_9875,TCGCAATATATGTAGCTTGAAGCCCAC,103,110,AFALCRA,309,330,21,aacctccagagaggcaacgctGCCTTCGCCCTGTGCCGGGCCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_4152,TCGCAATATTCGATGCCAGCTTTACTT,42,49,ALTAVET,126,147,21,aacctccagagaggcaacgctGCCCTGACCGCCGTGGAGACCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_36412,TCGCAATATTGCAATACAGCTACAATT,658,665,TNIKTEE,1974,1995,21,aacctccagagaggcaacgctACCAACATCAAGACCGAGGAGgccagacaagcagctaccgca,2,2
+"Canine adenovirus 2,Fiber,SH01,,#108,CAV-2-F-SH01",Def,7aa,seq_16972,TCGCAATCAACGAATGCGTCCTTGAAC,189,196,GSGLTVI,567,588,21,aacctccagagaggcaacgctGGCAGCGGCCTGACCGTGATCgccagacaagcagctaccgca,2,2
+"Neurotrophin,CDNF,No,,#7,CDNF",Def,7aa,seq_613,TCGCAATCAATCAGCAATGATACCAGT,6,13,VRSRADC,18,39,21,aacctccagagaggcaacgctGTGCGGAGCCGGGCCGACTGCgccagacaagcagctaccgca,2,2
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_32351,TCGCAATCAGCCCTTCCAGCCTCCTAC,467,474,LCPRPHR,1401,1422,21,aacctccagagaggcaacgctCTGTGCCCCCGGCCCCACCGGgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_12719,TCGCAATCAGTCAGGAAATCCGTAAAC,137,144,TAPGKKR,411,432,21,aacctccagagaggcaacgctACCGCCCCCGGCAAGAAGCGGgccagacaagcagctaccgca,2,2
+"Canine adenovirus 2,Fiber,SH01,,#108,CAV-2-F-SH01",Def,7aa,seq_680,TCGCAATCATCCTACATGCCCTTCATT,7,14,LPANYDP,21,42,21,aacctccagagaggcaacgctCTGCCCGCCAACTACGACCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS8,No,,#75,HSV-2-pUS8",Def,7aa,seq_1986,TCGCAATCCACCAGGGAACCCTTAAAT,20,27,AAPRTSW,60,81,21,aacctccagagaggcaacgctGCCGCCCCCCGGACCAGCTGGgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-P,No,,#26,RV-P",Def,7aa,seq_5009,TCGCAATCCGGATACCAGCCAACGAGC,51,58,DMKRLHL,153,174,21,aacctccagagaggcaacgctGACATGAAGCGGCTGCACCTGgccagacaagcagctaccgca,2,2
+"Neurotrophin,NGF,No,,#1,NGF",Def,7aa,seq_13030,TCGCAATCCTCCAATCCACAATCAAGT,140,147,VLGEVNI,420,441,21,aacctccagagaggcaacgctGTGCTGGGCGAGGTGAACATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40189,TCGCAATCCTGAAACAAATATACACTC,1326,1333,ERWAADV,3978,3999,21,aacctccagagaggcaacgctGAGCGGTGGGCCGCCGACGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS4,No,,#71,HSV-2-pUS4",Def,7aa,seq_29534,TCGCAATCCTGACTCCAGGATTGATAC,402,409,TPEETAV,1206,1227,21,aacctccagagaggcaacgctACCCCCGAGGAGACCGCCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_18878,TCGCAATCTACATAGACATAAAGCATC,214,221,HNASVTW,642,663,21,aacctccagagaggcaacgctCACAACGCCAGCGTGACCTGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_30664,TCGCAATCTACCCACCCTCGCACCAGT,426,433,AGCAADS,1278,1299,21,aacctccagagaggcaacgctGCCGGCTGCGCCGCCGACAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL1,No,,#65,HSV-2-pUL1",Def,7aa,seq_13429,TCGCAATCTGCCAAGCCGTCTTGATGG,145,152,RAGCVNF,435,456,21,aacctccagagaggcaacgctCGGGCCGGCTGCGTGAACTTCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,a-Syn,No,,#9,a-Syn",Def,7aa,seq_4418,TCGCAATCTGCCCTCACAGATATCCAC,45,52,EGVVHGV,135,156,21,aacctccagagaggcaacgctGAGGGCGTGGTGCACGGCGTGgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-M,No,,#33,WNV-M",Def,7aa,seq_12689,TCGCAATCTTGGCAGACAGCATTCCAC,136,143,VAAVIGW,408,429,21,aacctccagagaggcaacgctGTGGCCGCCGTGATCGGCTGGgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_26171,TCGCAATGAATACTTGCGCGATCATTC,334,341,AFGEEVH,1002,1023,21,aacctccagagaggcaacgctGCCTTCGGCGAGGAGGTGCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS6,No,,#72,HSV-2-pUS6",Def,7aa,seq_3921,TCGCAATGATGCTGTCATGACTCCTAT,40,47,RFRGKNL,120,141,21,aacctccagagaggcaacgctCGGTTCCGGGGCAAGAACCTGgccagacaagcagctaccgca,2,2
+"Tick-borne encephalitis virus,TBEV-E,80,,#43,TBEV-E-80",Def,7aa,seq_11389,TCGCAATGCAGCAATAATCCCATAAAC,121,128,EAKKKAT,363,384,21,aacctccagagaggcaacgctGAGGCCAAGAAGAAGGCCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_39470,TCGCAATGCATACGCCTTGGCGTAAAC,1083,1090,ETGGGVN,3249,3270,21,aacctccagagaggcaacgctGAGACCGGCGGCGGCGTGAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_32085,TCGCAATGCTCAAGGGAATCATCACGC,460,467,AGPPVAE,1380,1401,21,aacctccagagaggcaacgctGCCGGCCCCCCCGTGGCCGAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_39120,TCGCAGCAAATACGTCTATCTGCAAGG,999,1006,SSIRQPV,2997,3018,21,aacctccagagaggcaacgctAGCAGCATCCGGCAGCCCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_39613,TCGCAGCAATCCATTCCTGCAATAAAC,1118,1125,VTDMGNL,3354,3375,21,aacctccagagaggcaacgctGTGACCGACATGGGCAACCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_35989,TCGCAGCAATTCAATCAATACACATTT,626,633,SLIGRLA,1878,1899,21,aacctccagagaggcaacgctAGCCTGATCGGCCGGCTGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_20362,TCGCAGCACACAAATACACGAACAATG,234,241,KRATVSE,702,723,21,aacctccagagaggcaacgctAAGCGGGCCACCGTGAGCGAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL1,No,,#52,HSV-1-pUL1",Def,7aa,seq_14679,TCGCAGCACAGCAATAAACGATCCCAT,160,167,VGRQDLG,480,501,21,aacctccagagaggcaacgctGTGGGCCGGCAGGACCTGGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40916,TCGCAGCACGCGCTCGCTGACAGCCAC,1991,1998,PLPTDTL,5973,5994,21,aacctccagagaggcaacgctCCCCTGCCCACCGACACCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_30139,TCGCAGCACGGCTATCAATACACCCTC,414,421,RFAAHAG,1242,1263,21,aacctccagagaggcaacgctCGGTTCGCCGCCCACGCCGGCgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_12465,TCGCAGCACGTACTTCCAGAATCCCTC,134,141,IKYEVAI,402,423,21,aacctccagagaggcaacgctATCAAGTACGAGGTGGCCATCgccagacaagcagctaccgca,2,2
+"Measles virus,MV-H,Edmonston,,#77,MV-H-Edmonston",Def,7aa,seq_22922,TCGCAGCACTTAAAGCCAGCCACCTAC,275,282,LEQPVSN,825,846,21,aacctccagagaggcaacgctCTGGAGCAGCCCGTGAGCAACgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_29400,TCGCAGCATTCAAACCTACCAATACAG,399,406,IGKAFTT,1197,1218,21,aacctccagagaggcaacgctATCGGCAAGGCCTTCACCACCgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_19653,TCGCAGCCCACCTATCATGACATACAC,224,231,RFHALGF,672,693,21,aacctccagagaggcaacgctCGGTTCCACGCCCTGGGCTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL35,No,,#46,HSV-1-pUL35",Def,7aa,seq_3294,TCGCAGCCCTCCAGCCTTCGAGCCCAG,34,41,IMDNNHP,102,123,21,aacctccagagaggcaacgctATCATGGACAACAACCACCCCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_37528,TCGCAGCCCTGCCTGCAACGCGGGAAC,759,766,NEQQPLF,2277,2298,21,aacctccagagaggcaacgctAACGAGCAGCAGCCCCTGTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41219,TCGCAGCGAGTCCTTGCATGCTGCATT,2301,2308,RTPAARV,6903,6924,21,aacctccagagaggcaacgctCGGACCCCCGCCGCCCGGGTGgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-P,No,,#26,RV-P",Def,7aa,seq_8557,TCGCAGCGTATCTAGCATGGCACAAGG,89,96,NLLFQSY,267,288,21,aacctccagagaggcaacgctAACCTGCTGTTCCAGAGCTACgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B19,,#29,RV-G-B19",Def,7aa,seq_29538,TCGCAGGAAGCCATTCAACCAAGCAAT,402,409,STVFKDG,1206,1227,21,aacctccagagaggcaacgctAGCACCGTGTTCAAGGACGGCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV3,,#122,PV3-VP1",Def,7aa,seq_35573,TCGCAGGATACCCTCCTACAATCATTG,597,604,KQQDSLP,1791,1812,21,aacctccagagaggcaacgctAAGCAGCAGGACAGCCTGCCCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,TH90129_1,,#102,HIV-gp120-TH90129_1",Def,7aa,seq_15936,TCGCAGGATATCAACCAAGAAAGAATC,176,183,QACPKVS,528,549,21,aacctccagagaggcaacgctCAGGCCTGCCCCAAGGTGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39522,TCGCAGGCCTCGTATCCGTCCAGCTAT,1096,1103,DTATALS,3288,3309,21,aacctccagagaggcaacgctGACACCGCCACCGCCCTGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_38745,TCGCAGGCTTTGTGCAATCACACAAAT,920,927,ASTTNMR,2760,2781,21,aacctccagagaggcaacgctGCCAGCACCACCAACATGCGGgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H5N1,,#86,H5N1-HA",Def,7aa,seq_5525,TCGCAGGGCAGCCATAATGCAATATGT,56,63,LCDLDGV,168,189,21,aacctccagagaggcaacgctCTGTGCGACCTGGACGGCGTGgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV8,,#127,AAV8-VP1",Def,7aa,seq_33516,TCGCAGGGTGTCCATGATCATGGCAAG,501,508,NFAWTAG,1503,1524,21,aacctccagagaggcaacgctAACTTCGCCTGGACCGCCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL44,No,,#69,HSV-2-pUL44",Def,7aa,seq_29647,TCGCAGTATGCCAACACGCGCACATAG,404,411,EQTEYIC,1212,1233,21,aacctccagagaggcaacgctGAGCAGACCGAGTACATCTGCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H3N2,,#89,H3N2-HA",Def,7aa,seq_9890,TCGCAGTATGTCCTCATTCCTTCCCGG,103,110,VERSNAS,309,330,21,aacctccagagaggcaacgctGTGGAGCGGAGCAACGCCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL53,No,,#57,HSV-1-pUL53",Def,7aa,seq_12760,TCGCAGTCAATAAGCAAGCACACAATC,137,144,ALHQRRC,411,432,21,aacctccagagaggcaacgctGCCCTGCACCAGCGGCGGTGCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_36952,TCGCAGTCCATGAGCAAAGCAACACAC,704,711,SMVGMAA,2112,2133,21,aacctccagagaggcaacgctAGCATGGTGGGCATGGCCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_37619,TCGCAGTGAAGCAGGCTACACTCGCAT,768,775,VFSSDVP,2304,2325,21,aacctccagagaggcaacgctGTGTTCAGCAGCGACGTGCCCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_26789,TCGCAGTGCGGCTACCCGTACTCATTC,346,353,DEGRLQT,1038,1059,21,aacctccagagaggcaacgctGACGAGGGCCGGCTGCAGACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41243,TCGCAGTGCTCCAATGCACATATACTC,2326,2333,ALRNTTA,6978,6999,21,aacctccagagaggcaacgctGCCCTGCGGAACACCACCGCCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_36351,TCGCAGTGTTCATGGGCATATATCCTC,653,660,VPANPPA,1959,1980,21,aacctccagagaggcaacgctGTGCCCGCCAACCCCCCCGCCgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP1,1095/Japan 97,,#90,EV71-VP1-1095/Japan 97",Def,7aa,seq_4425,TCGCATCAAATGAACATTTCAACCTAT,45,52,ALQAAEI,135,156,21,aacctccagagaggcaacgctGCCCTGCAGGCCGCCGAGATCgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 2,HSV-2-pUL44,No,,#69,HSV-2-pUL44",Def,7aa,seq_26990,TCGCATCAAGCCTATCTGCACTGCCGG,350,357,DHAVCTA,1050,1071,21,aacctccagagaggcaacgctGACCACGCCGTGTGCACCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39864,TCGCATCAATCCAACATTCATATACTG,1198,1205,AAGYVKA,3594,3615,21,aacctccagagaggcaacgctGCCGCCGGCTACGTGAAGGCCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_38510,TCGCATCAATGCAAGCAGTATAGCCTC,880,887,NLPDYSC,2640,2661,21,aacctccagagaggcaacgctAACCTGCCCGACTACAGCTGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL19,No,,#76,HSV-2-pUL19",Def,7aa,seq_32660,TCGCATCACTCCCTGAAGGATTCACTC,475,482,VNHDPVE,1425,1446,21,aacctccagagaggcaacgctGTGAACCACGACCCCGTGGAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL1,No,,#52,HSV-1-pUL1",Def,7aa,seq_13143,TCGCATCCATCCCATCATTCTACCTAG,142,149,TPVKAGC,426,447,21,aacctccagagaggcaacgctACCCCCGTGAAGGCCGGCTGCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,SA14-5-3,,#37,JEV-E-SA14-5-3",Def,7aa,seq_11430,TCGCATCCATCGCATACTCCTATCCTT,122,129,SKAIGRT,366,387,21,aacctccagagaggcaacgctAGCAAGGCCATCGGCCGGACCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H5N1,,#86,H5N1-HA",Def,7aa,seq_26794,TCGCATCCCACCCAGCTAGCAGGAATT,346,353,AIAGFIE,1038,1059,21,aacctccagagaggcaacgctGCCATCGCCGGCTTCATCGAGgccagacaagcagctaccgca,2,2
+"Measles virus,MV-H,Edmonston,,#77,MV-H-Edmonston",Def,7aa,seq_35079,TCGCATCCCACGAATGAGCCATTAAAC,568,575,ECFTWDQ,1704,1725,21,aacctccagagaggcaacgctGAGTGCTTCACCTGGGACCAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_16563,TCGCATCCCGCCTACCCGGACGGCCGT,184,191,HPDGRRN,552,573,21,aacctccagagaggcaacgctCACCCCGACGGCCGGCGGAACgccagacaagcagctaccgca,2,2
+"Neurotrophin,BDNF,No,,#6,BDNF",Def,7aa,seq_17685,TCGCATCCTAGATTGAATGGATCACAC,198,205,VRALTMD,594,615,21,aacctccagagaggcaacgctGTGCGGGCCCTGACCATGGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40772,TCGCATCGAGCGCAGGAAGCCATATGG,1844,1851,EFDAVAG,5532,5553,21,aacctccagagaggcaacgctGAGTTCGACGCCGTGGCCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_39151,TCGCATCGAGGGCTCAATCACGCCATC,1006,1013,AVPDSVD,3018,3039,21,aacctccagagaggcaacgctGCCGTGCCCGACAGCGTGGACgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_3159,TCGCATCGATCGAGGCTTCATATCCAC,32,39,GEDVSLL,96,117,21,aacctccagagaggcaacgctGGCGAGGACGTGAGCCTGCTGgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP1,1095/Japan 97,,#90,EV71-VP1-1095/Japan 97",Def,7aa,seq_23007,TCGCATCGCACCAGGGAGCCCGTCAAC,277,284,NYAGNSI,831,852,21,aacctccagagaggcaacgctAACTACGCCGGCAACAGCATCgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP3,No,,#98,TMEV-VP3",Def,7aa,seq_18285,TCGCATCGCACCTTTGCGCGCTTCTTC,206,213,DILTLVS,618,639,21,aacctccagagaggcaacgctGACATCCTGACCCTGGTGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL27,No,,#68,HSV-2-pUL27",Def,7aa,seq_35356,TCGCATGAAACCAGTCCGCAAGTCCAG,584,591,RVSSRPG,1752,1773,21,aacctccagagaggcaacgctCGGGTGAGCAGCCGGCCCGGCgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 1,HSV-1-pUS7,No,,#61,HSV-1-pUS7",Def,7aa,seq_27269,TCGCATGAATCCATTACTTGTACAATT,356,363,SEPAGAA,1068,1089,21,aacctccagagaggcaacgctAGCGAGCCCGCCGGCGCCGCCgccagacaagcagctaccgca,2,2
+"Neurotrophin,NT3,No,,#2,NT3",Def,7aa,seq_18238,TCGCATGACAGCATTCAAGCATCCCAC,205,212,YVRALTS,615,636,21,aacctccagagaggcaacgctTACGTGCGGGCCCTGACCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_36959,TCGCATGACTCGCTCAAACCCATGCAG,704,711,VQALAKF,2112,2133,21,aacctccagagaggcaacgctGTGCAGGCCCTGGCCAAGTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_28460,TCGCATGATAGATATACACCCTGAATT,379,386,YGGSFRF,1137,1158,21,aacctccagagaggcaacgctTACGGCGGCAGCTTCCGGTTCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H3N2,,#89,H3N2-HA",Def,7aa,seq_34224,TCGCATGATGGACACGCGCACACCAAT,526,533,YKDWILW,1578,1599,21,aacctccagagaggcaacgctTACAAGGACTGGATCCTGTGGgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_12752,TCGCATGATTCACACATGTCCACGCAC,137,144,EVAIFVH,411,432,21,aacctccagagaggcaacgctGAGGTGGCCATCTTCGTGCACgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_30431,TCGCATGCAATAAACCCATGCGCAAGG,421,428,NLPKADK,1263,1284,21,aacctccagagaggcaacgctAACCTGCCCAAGGCCGACAAGgccagacaagcagctaccgca,3,3
+"Neuron related prorein,a-Syn,No,,#9,a-Syn",Def,7aa,seq_11664,TCGCATGCAGCCCTCAAATCCACACTC,124,131,YEMPSEE,372,393,21,aacctccagagaggcaacgctTACGAGATGCCCAGCGAGGAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_37450,TCGCATGGCATGTACATAGCAGCGAAT,751,758,LAERADP,2253,2274,21,aacctccagagaggcaacgctCTGGCCGAGCGGGCCGACCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_33390,TCGCATTAAAGGAATCCTCCTGCGTAG,496,503,ADLAQLF,1488,1509,21,aacctccagagaggcaacgctGCCGACCTGGCCCAGCTGTTCgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 2,HSV-2-pUS6,No,,#72,HSV-2-pUS6",Def,7aa,seq_19490,TCGCATTACTGAATCCCACCTTCCATC,222,229,PPAACLT,666,687,21,aacctccagagaggcaacgctCCCCCCGCCGCCTGCCTGACCgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_7307,TCGCATTATACAATCCCATACTTCATG,75,82,SLREAPP,225,246,21,aacctccagagaggcaacgctAGCCTGCGGGAGGCCCCCCCCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV8,,#127,AAV8-VP1",Def,7aa,seq_1861,TCGCATTCAAGAATTGAGGATACACAG,19,26,REWWALK,57,78,21,aacctccagagaggcaacgctCGGGAGTGGTGGGCCCTGAAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_32888,TCGCATTCCACAAACATACCATTCCAC,481,488,EAANPYG,1443,1464,21,aacctccagagaggcaacgctGAGGCCGCCAACCCCTACGGCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_30590,TCGCATTCCTCATTGCTGCGCACATGC,424,431,FILARCP,1272,1293,21,aacctccagagaggcaacgctTTCATCCTGGCCCGGTGCCCCgccagacaagcagctaccgca,2,2
+"Measles virus,MV-H,Edmonston,,#77,MV-H-Edmonston",Def,7aa,seq_16691,TCGCATTCCTGAATTACGTAAATCCTC,186,193,NCSGPTT,558,579,21,aacctccagagaggcaacgctAACTGCAGCGGCCCCACCACCgccagacaagcagctaccgca,3,3
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_213,TCGCATTCTGCCTGTGTATCCATGTAC,2,9,EPRQEFD,6,27,21,aacctccagagaggcaacgctGAGCCCCGGCAGGAGTTCGACgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP3,No,,#98,TMEV-VP3",Def,7aa,seq_17185,TCGCATTGTATAATGGTACGCTCGCGT,192,199,LTPLTYP,576,597,21,aacctccagagaggcaacgctCTGACCCCCCTGACCTACCCCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,TH90129_1,,#102,HIV-gp120-TH90129_1",Def,7aa,seq_17204,TCGCATTGTGCCCTCAAATACTCCAAT,192,199,APAGFAI,576,597,21,aacctccagagaggcaacgctGCCCCCGCCGGCTTCGCCATCgccagacaagcagctaccgca,2,2
+"Tick-borne encephalitis virus,TBEV-E,80,,#43,TBEV-E-80",Def,7aa,seq_14700,TCGCCACAAATACGCCAAGCAACAAGC,161,168,TASFTVS,483,504,21,aacctccagagaggcaacgctACCGCCAGCTTCACCGTGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_38868,TCGCCACAAATGCACGAACCTGCCCTC,943,950,HLDHTIQ,2829,2850,21,aacctccagagaggcaacgctCACCTGGACCACACCATCCAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_37719,TCGCCACAATCATACCCATATTGCTAC,780,787,GQLLHNT,2340,2361,21,aacctccagagaggcaacgctGGCCAGCTGCTGCACAACACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS6,No,,#72,HSV-2-pUS6",Def,7aa,seq_28652,TCGCCACAATCCTTGCATTATATCAAC,383,390,APPSHQP,1149,1170,21,aacctccagagaggcaacgctGCCCCCCCCAGCCACCAGCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40910,TCGCCACAATGAAGTCTACACTCAAGC,1985,1992,AACIRPP,5955,5976,21,aacctccagagaggcaacgctGCCGCCTGCATCCGGCCCCCCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV8,,#127,AAV8-VP1",Def,7aa,seq_33516,TCGCCACACAGAAATACGTGCTCCCGC,501,508,NFAWTAG,1503,1524,21,aacctccagagaggcaacgctAACTTCGCCTGGACCGCCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS8,No,,#75,HSV-2-pUS8",Def,7aa,seq_18891,TCGCCACACAGCCTGGATTGTTCCAAT,214,221,RGVTVHM,642,663,21,aacctccagagaggcaacgctCGGGGCGTGACCGTGCACATGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_25739,TCGCCACACATCATCGCAGCCTCCTAT,327,334,KARGPSV,981,1002,21,aacctccagagaggcaacgctAAGGCCCGGGGCCCCAGCGTGgccagacaagcagctaccgca,3,3
+"Lectin,ConA,No,,#16,ConA",Def,7aa,seq_10561,TCGCCACACGCATACGCGGAAATGTGG,112,119,SKLKSNS,336,357,21,aacctccagagaggcaacgctAGCAAGCTGAAGAGCAACAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_36644,TCGCCACACGGAAACAATCGCACGCAC,675,682,THSPLPR,2025,2046,21,aacctccagagaggcaacgctACCCACAGCCCCCTGCCCCGGgccagacaagcagctaccgca,2,2
+"Neurotrophin,NRTN,No,,#5,NRTN",Def,7aa,seq_7619,TCGCCACACGGATAGACAGGCGCATAC,78,85,GLRELEV,234,255,21,aacctccagagaggcaacgctGGCCTGCGGGAGCTGGAGGTGgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV9,,#127,AAV9-VP1",Def,7aa,seq_34619,TCGCCACACGTGTTGCTACCTTTCAAC,543,550,GKQGTGR,1629,1650,21,aacctccagagaggcaacgctGGCAAGCAGGGCACCGGCCGGgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV8,,#127,AAV8-VP1",Def,7aa,seq_31732,TCGCCACACTCCCAGACTTAAACGTTT,452,459,TTGGTAN,1356,1377,21,aacctccagagaggcaacgctACCACCGGCGGCACCGCCAACgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_35894,TCGCCACACTGAAACAATCGCGTCTGG,619,626,KLTFREN,1857,1878,21,aacctccagagaggcaacgctAAGCTGACCTTCCGGGAGAACgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H5N1,,#86,H5N1-HA",Def,7aa,seq_34284,TCGCCACATGTCAGGACTCCCAGACTT,529,536,SIYSTVA,1587,1608,21,aacctccagagaggcaacgctAGCATCTACAGCACCGTGGCCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_18553,TCGCCACATTCCCTGCCTCAATTGCAC,209,216,WGGADTD,627,648,21,aacctccagagaggcaacgctTGGGGCGGCGCCGACACCGACgccagacaagcagctaccgca,2,2
+"Vesicular stomatitis Indiana virus,G protein,Orsay,,#130,VSV-Orsay-G",Def,7aa,seq_25078,TCGCCACCAAGGCTCCAGGAATCATTG,314,321,VFTIING,942,963,21,aacctccagagaggcaacgctGTGTTCACCATCATCAACGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_38604,TCGCCACCAATATACCCTGAATTGCAC,893,900,VPGFCFM,2679,2700,21,aacctccagagaggcaacgctGTGCCCGGCTTCTGCTTCATGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_32954,TCGCCACCAATCAGCATACATATATTC,483,490,DQVPWLA,1449,1470,21,aacctccagagaggcaacgctGACCAGGTGCCCTGGCTGGCCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_33801,TCGCCACCAGCCATCACGCAAACATAT,511,518,NVKITVN,1533,1554,21,aacctccagagaggcaacgctAACGTGAAGATCACCGTGAACgccagacaagcagctaccgca,3,3
+"Poliovirus,VP3,PV1,,#117,PV1-VP3",Def,7aa,seq_18871,TCGCCACCAGCGATGACGTATACCATC,214,221,SACNDFS,642,663,21,aacctccagagaggcaacgctAGCGCCTGCAACGACTTCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL14,No,,#49,HSV-1-pUL14",Def,7aa,seq_13516,TCGCCACCAGTCCACGCATACAGGATC,146,153,LLVMWQL,438,459,21,aacctccagagaggcaacgctCTGCTGGTGATGTGGCAGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_26678,TCGCCACCCTCAATCCATGACTGACGT,344,351,LQKLAVY,1032,1053,21,aacctccagagaggcaacgctCTGCAGAAGCTGGCCGTGTACgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H1N1,,#87,H1N1-HA",Def,7aa,seq_30430,TCGCCACCTACCTGCCTTCAAACACGC,421,428,NLNKKVD,1263,1284,21,aacctccagagaggcaacgctAACCTGAACAAGAAGGTGGACgccagacaagcagctaccgca,2,2
+"Herpes B virus,Glycoprotein D,No,,#114,BV-G",Def,7aa,seq_3004,TCGCCACCTGCATACACTCCCGTCTAT,31,38,SLTRVNP,93,114,21,aacctccagagaggcaacgctAGCCTGACCCGGGTGAACCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_6230,TCGCCACCTGCCAGTGTACATTCCTTT,63,70,AIEGCLV,189,210,21,aacctccagagaggcaacgctGCCATCGAGGGCTGCCTGGTGgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV8,,#127,AAV8-VP1",Def,7aa,seq_33277,TCGCCACCTGTCAATCCAGACAGCTGT,493,500,TTGQNNN,1479,1500,21,aacctccagagaggcaacgctACCACCGGCCAGAACAACAACgccagacaagcagctaccgca,2,2
+"Neurotrophin,NGF,No,,#1,NGF",Def,7aa,seq_10683,TCGCCACCTTCGATTGATCCTTTACAC,113,120,EFSVCDS,339,360,21,aacctccagagaggcaacgctGAGTTCAGCGTGTGCGACAGCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_7686,TCGCCACGAGCACGCAAGCACGGGCGC,79,86,LQITNVV,237,258,21,aacctccagagaggcaacgctCTGCAGATCACCAACGTGGTGgccagacaagcagctaccgca,2,2
+"Herpes B virus,Glycoprotein D,No,,#114,BV-G",Def,7aa,seq_18114,TCGCCACGATCAATGGATCAAAGAATT,204,211,IFEHRGK,612,633,21,aacctccagagaggcaacgctATCTTCGAGCACCGGGGCAAGgccagacaagcagctaccgca,3,3
+"Neurotoxin,BoNT/F Hc,No,,#23,BoNT/F Hc",Def,7aa,seq_4525,TCGCCACGCGTAAACATGCCATGCTGT,46,53,GIYSSKP,138,159,21,aacctccagagaggcaacgctGGCATCTACAGCAGCAAGCCCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,TH91125_7,,#103,HIV-gp120-TH91125_7",Def,7aa,seq_12025,TCGCCACGCGTCAACACAGACACATGC,129,136,KQQKVHA,387,408,21,aacctccagagaggcaacgctAAGCAGCAGAAGGTGCACGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS7,No,,#74,HSV-2-pUS7",Def,7aa,seq_7674,TCGCCACGCTCAATGACACCAACCAAC,79,86,PLGNHCP,237,258,21,aacctccagagaggcaacgctCCCCTGGGCAACCACTGCCCCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV9,,#127,AAV9-VP1",Def,7aa,seq_27499,TCGCCACGCTTGCTCGAGCAAACCAAG,360,367,EGCLPPF,1080,1101,21,aacctccagagaggcaacgctGAGGGCTGCCTGCCCCCCTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_23550,TCGCCACGTGCCCAGATATACATGCTT,286,293,FVLATGD,858,879,21,aacctccagagaggcaacgctTTCGTGCTGGCCACCGGCGACgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_10280,TCGCCAGAAACATAGATACCTATGTGC,108,115,EESLQNP,324,345,21,aacctccagagaggcaacgctGAGGAGAGCCTGCAGAACCCCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV9,,#127,AAV9-VP1",Def,7aa,seq_32757,TCGCCAGAAGTACATGCAGCTAGCCAG,478,485,IPGPSYR,1434,1455,21,aacctccagagaggcaacgctATCCCCGGCCCCAGCTACCGGgccagacaagcagctaccgca,2,2
+"Neurotoxin,TeNT Hc,No,,#25,TeNT Hc",Def,7aa,seq_28127,TCGCCAGAATCATGTATAGAAAGCTAC,372,379,LYKKMEA,1116,1137,21,aacctccagagaggcaacgctCTGTACAAGAAGATGGAGGCCgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP3,No,,#98,TMEV-VP3",Def,7aa,seq_444,TCGCCAGAATTACATCCACCTTCAATC,5,12,TVREHKG,15,36,21,aacctccagagaggcaacgctACCGTGCGGGAGCACAAGGGCgccagacaagcagctaccgca,3,3
+"Neurotoxin,BoNT/C Hc,No,,#20,BoNT/C Hc",Def,7aa,seq_20549,TCGCCAGACAGGCGGATGCACTGACAC,236,243,VVKDYWG,708,729,21,aacctccagagaggcaacgctGTGGTGAAGGACTACTGGGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS6,No,,#59,HSV-1-pUS6",Def,7aa,seq_21463,TCGCCAGACATCATGCCGCCTACGCAC,251,258,NQRTVAV,753,774,21,aacctccagagaggcaacgctAACCAGCGGACCGTGGCCGTGgccagacaagcagctaccgca,2,2
+"Poliovirus,VP3,PV2,,#120,PV2-VP3",Def,7aa,seq_7162,TCGCCAGACTCACTTATTTCATCCAAC,73,80,DAAHSDT,219,240,21,aacctccagagaggcaacgctGACGCCGCCCACAGCGACACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL27,No,,#68,HSV-2-pUL27",Def,7aa,seq_20093,TCGCCAGACTCATGCCCGCACTTAATC,230,237,PAKVATR,690,711,21,aacctccagagaggcaacgctCCCGCCAAGGTGGCCACCCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_33805,TCGCCAGCAACCCTTCAACATGCCCTC,511,518,TPVVHRA,1533,1554,21,aacctccagagaggcaacgctACCCCCGTGGTGCACCGGGCCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_36212,TCGCCAGCCACCAGTGAATAATCAAGC,643,650,VSGDTSP,1929,1950,21,aacctccagagaggcaacgctGTGAGCGGCGACACCAGCCCCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_39012,TCGCCAGCCGCGCGCCTACCCATCAAT,973,980,PMSSAWT,2919,2940,21,aacctccagagaggcaacgctCCCATGAGCAGCGCCTGGACCgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_27456,TCGCCAGCCTTGTAGACTGCAACCAAG,359,366,GHVATWD,1077,1098,21,aacctccagagaggcaacgctGGCCACGTGGCCACCTGGGACgccagacaagcagctaccgca,2,2
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_17591,TCGCCAGCTACCAGTCAATCCGTCAAG,197,204,AFGGKYM,591,612,21,aacctccagagaggcaacgctGCCTTCGGCGGCAAGTACATGgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_32691,TCGCCAGCTAGGAGCCTGTGAATCCTC,476,483,PCSTYVQ,1428,1449,21,aacctccagagaggcaacgctCCCTGCAGCACCTACGTGCAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_30185,TCGCCATAAATACATGTACGTAGATAT,415,422,RVLAGLA,1245,1266,21,aacctccagagaggcaacgctCGGGTGCTGGCCGGCCTGGCCgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP3,No,,#92,EV71-VP3",Def,7aa,seq_13428,TCGCCATAAATACTTACACACGCATTC,145,152,RATAMLG,435,456,21,aacctccagagaggcaacgctCGGGCCACCGCCATGCTGGGCgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP3,No,,#98,TMEV-VP3",Def,7aa,seq_11480,TCGCCATAATTCAACACAGGTACCAAT,122,129,GKFLIAY,366,387,21,aacctccagagaggcaacgctGGCAAGTTCCTGATCGCCTACgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP1,U33047.1,,#96,TMEV-VP1-U33047.1",Def,7aa,seq_4845,TCGCCATACACCCACGATCCAACCCAT,50,57,NMETTFS,150,171,21,aacctccagagaggcaacgctAACATGGAGACCACCTTCAGCgccagacaagcagctaccgca,2,2
+"Neurotrophin,NGF,No,,#1,NGF",Def,7aa,seq_16545,TCGCCATACGGAAAGAAATCTGGAAGC,184,191,TTHTFVK,552,573,21,aacctccagagaggcaacgctACCACCCACACCTTCGTGAAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_1953,TCGCCATACTTCTGTGTACAAACGCTC,20,27,PSDGPMQ,60,81,21,aacctccagagaggcaacgctCCCAGCGACGGCCCCATGCAGgccagacaagcagctaccgca,2,2
+"Vesicular stomatitis Indiana virus,G protein,Orsay,,#130,VSV-Orsay-G",Def,7aa,seq_19135,TCGCCATCATCCATTACGCACACCTGT,217,224,ACKMQYC,651,672,21,aacctccagagaggcaacgctGCCTGCAAGATGCAGTACTGCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/A Hc,No,,#18,BoNT/A Hc",Def,7aa,seq_24528,TCGCCATCATCCCACCTACACACGCTC,304,311,GPRGSVM,912,933,21,aacctccagagaggcaacgctGGCCCCCGGGGCAGCGTGATGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL19,No,,#76,HSV-2-pUL19",Def,7aa,seq_39153,TCGCCATCCACAAAGACATGCACCCTG,1006,1013,VQHARES,3018,3039,21,aacctccagagaggcaacgctGTGCAGCACGCCCGGGAGAGCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/E Hc,No,,#22,BoNT/E Hc",Def,7aa,seq_14768,TCGCCATCCGCCCTGCTACCATTCATC,161,168,CMRDNNS,483,504,21,aacctccagagaggcaacgctTGCATGCGGGACAACAACAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_26276,TCGCCATCCGCGAATCCACCATTCAGC,336,343,GAALGLS,1008,1029,21,aacctccagagaggcaacgctGGCGCCGCCCTGGGCCTGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS7,No,,#74,HSV-2-pUS7",Def,7aa,seq_14079,TCGCCATCCTCAAATCATTGTACGTGG,153,160,ATNASRF,459,480,21,aacctccagagaggcaacgctGCCACCAACGCCAGCCGGTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL14,No,,#49,HSV-1-pUL14",Def,7aa,seq_11981,TCGCCATCCTTAAGTCTTGGAGCCCTG,128,135,LWEDGDL,384,405,21,aacctccagagaggcaacgctCTGTGGGAGGACGGCGACCTGgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV9,,#127,AAV9-VP1",Def,7aa,seq_34627,TCGCCATGATCGCTGGAACAATGGTGG,544,551,KQGTGRD,1632,1653,21,aacctccagagaggcaacgctAAGCAGGGCACCGGCCGGGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_24356,TCGCCATGCGCCTGTCAACCCTTGCAC,301,308,DRASETS,903,924,21,aacctccagagaggcaacgctGACCGGGCCAGCGAGACCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_39389,TCGCCATGTTGCTACCTACCCGCACGC,1062,1069,VLFSERA,3186,3207,21,aacctccagagaggcaacgctGTGCTGTTCAGCGAGCGGGCCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-C,No,,#39,JEV-C",Def,7aa,seq_10282,TCGCCGCATATGCTCAATCCTTCGAAC,108,115,EGSIMWL,324,345,21,aacctccagagaggcaacgctGAGGGCAGCATCATGTGGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_36437,TCGCCGCATGCCCTTAAACCCTTCCAC,659,666,EPRILVP,1977,1998,21,aacctccagagaggcaacgctGAGCCCCGGATCCTGGTGCCCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,00NE097,,#104,HIV-gp120-00NE097",Def,7aa,seq_2654,TCGCCGCCCACCCGTGCTGAAACCATT,27,34,ANISTSA,81,102,21,aacctccagagaggcaacgctGCCAACATCAGCACCAGCGCCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B19,,#29,RV-G-B19",Def,7aa,seq_12861,TCGCCGCCCAGACAGATATAATGACTT,138,145,VADLDPY,414,435,21,aacctccagagaggcaacgctGTGGCCGACCTGGACCCCTACgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_9734,TCGCCGCCTAGATTTCCGTCTACCATC,102,109,NGCGLFG,306,327,21,aacctccagagaggcaacgctAACGGCTGCGGCCTGTTCGGCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,00NE097,,#104,HIV-gp120-00NE097",Def,7aa,seq_21027,TCGCCGCCTATATTCACACCATCGTTT,244,251,TQLRKYF,732,753,21,aacctccagagaggcaacgctACCCAGCTGCGGAAGTACTTCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,Mocala,,#31,RV-G-Mocala",Def,7aa,seq_7925,TCGCCGCCTATCCTTCCATCTACGTAC,82,89,KRKHFKP,246,267,21,aacctccagagaggcaacgctAAGCGGAAGCACTTCAAGCCCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_22220,TCGCCGCGATCCCGCCCACGCTTGCAT,263,270,RSDEIEH,789,810,21,aacctccagagaggcaacgctCGGAGCGACGAGATCGAGCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41789,TCGCCGGATATATACCAACCTTCCAAC,2874,2881,VNRLSAP,8622,8643,21,aacctccagagaggcaacgctGTGAACCGGCTGAGCGCCCCCgccagacaagcagctaccgca,3,3
+"Canine adenovirus 2,Fiber,SH01,,#108,CAV-2-F-SH01",Def,7aa,seq_3410,TCGCCGGCAGCACAGCTATAAACACGC,35,42,LTESPPG,105,126,21,aacctccagagaggcaacgctCTGACCGAGAGCCCCCCCGGCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_37770,TCGCCGGCCAGCTATCTTGAATGCTAG,786,793,ARRFAFD,2358,2379,21,aacctccagagaggcaacgctGCCCGGCGGTTCGCCTTCGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_3292,TCGCCGGCTTTCTATGTTGCAAGGCAC,34,41,SVGRPCA,102,123,21,aacctccagagaggcaacgctAGCGTGGGCCGGCCCTGCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_9160,TCGCCGGGTATACTTCCATATATCAAT,95,102,LNPNVSS,285,306,21,aacctccagagaggcaacgctCTGAACCCCAACGTGAGCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_9963,TCGCCGTACACACATATACCCTTCCAG,104,111,GLRCVFS,312,333,21,aacctccagagaggcaacgctGGCCTGCGGTGCGTGTTCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_32588,TCGCCGTATACAATTCAAGGATTGAGC,473,480,YGYYANY,1419,1440,21,aacctccagagaggcaacgctTACGGCTACTACGCCAACTACgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_39564,TCGCCGTCCACAAATATACACTGCATG,1106,1113,PEDTVAP,3318,3339,21,aacctccagagaggcaacgctCCCGAGGACACCGTGGCCCCCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_28784,TCGCCGTCCTTGTACATACCCATCTTG,386,393,LLESSVI,1158,1179,21,aacctccagagaggcaacgctCTGCTGGAGAGCAGCGTGATCgccagacaagcagctaccgca,2,2
+"Lectin,WGA,No,,#13,WGA",Def,7aa,seq_5058,TCGCCTCAAATGAATAATTACTCATTT,52,59,KTCPNNH,156,177,21,aacctccagagaggcaacgctAAGACCTGCCCCAACAACCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL10,No,,#53,HSV-1-pUL10",Def,7aa,seq_9870,TCGCCTCAAGCAAACATAGGCTGCCTT,103,110,AAAVYAV,309,330,21,aacctccagagaggcaacgctGCCGCCGCCGTGTACGCCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_3866,TCGCCTCACACGAACCAACCCAGAAAT,39,46,VAAATQA,117,138,21,aacctccagagaggcaacgctGTGGCCGCCGCCACCCAGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_37813,TCGCCTCACACGAATCTTTAATCACTG,791,798,ADAADDR,2373,2394,21,aacctccagagaggcaacgctGCCGACGCCGCCGACGACCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL10,No,,#66,HSV-2-pUL10",Def,7aa,seq_30891,TCGCCTCATAGCCAGACGCCCATCCAC,432,439,QRPGPVP,1296,1317,21,aacctccagagaggcaacgctCAGCGGCCCGGCCCCGTGCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL44,No,,#69,HSV-2-pUL44",Def,7aa,seq_23810,TCGCCTCATAGGCTCATATCCGTCCAT,291,298,DGFSTVS,873,894,21,aacctccagagaggcaacgctGACGGCTTCAGCACCGTGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40144,TCGCCTCATATATATAAGGCCATCAAC,1303,1310,DELEAAI,3909,3930,21,aacctccagagaggcaacgctGACGAGCTGGAGGCCGCCATCgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_15123,TCGCCTCATTCCCACACATGCTCGTAC,166,173,PSAPSYT,498,519,21,aacctccagagaggcaacgctCCCAGCGCCCCCAGCTACACCgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_2459,TCGCCTCATTCGCACGAATGAACCCTC,25,32,EGDSCVT,75,96,21,aacctccagagaggcaacgctGAGGGCGACAGCTGCGTGACCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/E Hc,No,,#22,BoNT/E Hc",Def,7aa,seq_2512,TCGCCTCATTGCCATCTACCAACCCTG,26,33,SQQELNS,78,99,21,aacctccagagaggcaacgctAGCCAGCAGGAGCTGAACAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL19,No,,#76,HSV-2-pUL19",Def,7aa,seq_31594,TCGCCTCATTTGAATCAGCCTTCCAAC,448,455,VLRLSME,1344,1365,21,aacctccagagaggcaacgctGTGCTGCGGCTGAGCATGGAGgccagacaagcagctaccgca,4,4
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_31823,TCGCCTCCAGCGTACACTGACTTCAAC,454,461,SAPPDPA,1362,1383,21,aacctccagagaggcaacgctAGCGCCCCCCCCGACCCCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_6230,TCGCCTCCAGTGAACACACCAACCAAT,63,70,AIEGCLV,189,210,21,aacctccagagaggcaacgctGCCATCGAGGGCTGCCTGGTGgccagacaagcagctaccgca,3,3
+"Japanese encephalitis virus,JEV-M,No,,#38,JEV-M",Def,7aa,seq_5195,TCGCCTCCCACACTTACGTCCACCAGT,53,60,PKLTMGN,159,180,21,aacctccagagaggcaacgctCCCAAGCTGACCATGGGCAACgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,TH90129_1,,#102,HIV-gp120-TH90129_1",Def,7aa,seq_12202,TCGCCTCCCATACAGGAACCTACCAAT,131,138,TAIRDKN,393,414,21,aacctccagagaggcaacgctACCGCCATCCGGGACAAGAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41924,TCGCCTCCCGCATGCACGTGATGACGT,3073,3080,PPPVSAN,9219,9240,21,aacctccagagaggcaacgctCCCCCCCCCGTGAGCGCCAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41407,TCGCCTCCCGGATACCAACCAAGATGC,2491,2498,QRAPDDQ,7473,7494,21,aacctccagagaggcaacgctCAGCGGGCCCCCGACGACCAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_25233,TCGCCTCCCGGCAAGGAGCCTTGGCAG,317,324,FREQAWK,951,972,21,aacctccagagaggcaacgctTTCCGGGAGCAGGCCTGGAAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40428,TCGCCTCCCTGCATCCCTCATAGGCAG,1499,1506,LDALRAD,4497,4518,21,aacctccagagaggcaacgctCTGGACGCCCTGCGGGCCGACgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_30297,TCGCCTCCCTGCCTTCAACCCTTGTGT,417,424,VHLPDVY,1251,1272,21,aacctccagagaggcaacgctGTGCACCTGCCCGACGTGTACgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_30814,TCGCCTCCTAGCATCAAATAAACACAC,430,437,LDRLMNP,1290,1311,21,aacctccagagaggcaacgctCTGGACCGGCTGATGAACCCCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_18031,TCGCCTCCTATCAATGTTCACACCAGT,203,210,SEEEVDE,609,630,21,aacctccagagaggcaacgctAGCGAGGAGGAGGTGGACGAGgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP4,No,,#99,TMEV-VP4",Def,7aa,seq_4395,TCGCCTCCTGTAAAGCATCAAGCCAAT,45,52,LPRTMDN,135,156,21,aacctccagagaggcaacgctCTGCCCCGGACCATGGACAACgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_32603,TCGCCTCCTTCCTGTCCACCCACGCGC,474,481,RTPPKSP,1422,1443,21,aacctccagagaggcaacgctCGGACCCCCCCCAAGAGCCCCgccagacaagcagctaccgca,2,2
+"Lectin,WGA,No,,#13,WGA",Def,7aa,seq_15800,TCGCCTCCTTTGTGGCCACGCGTCATT,174,181,EAIATNS,522,543,21,aacctccagagaggcaacgctGAGGCCATCGCCACCAACAGCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H2N2,,#88,H2N2-HA",Def,7aa,seq_7976,TCGCCTCGTACCAACCCATCATCATTC,82,89,DRLLSVP,246,267,21,aacctccagagaggcaacgctGACCGGCTGCTGAGCGTGCCCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,TH90129_1,,#102,HIV-gp120-TH90129_1",Def,7aa,seq_26819,TCGCCTGAAGCACTGGATTTTACCCGC,347,354,SFNCGGE,1041,1062,21,aacctccagagaggcaacgctAGCTTCAACTGCGGCGGCGAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_10206,TCGCCTGATGTCAGCACGGCAACACAT,107,114,GPHPIEQ,321,342,21,aacctccagagaggcaacgctGGCCCCCACCCCATCGAGCAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41872,TCGCCTGATTGCTTTGATCAAATCCAT,3021,3028,DEDSDTT,9063,9084,21,aacctccagagaggcaacgctGACGAGGACAGCGACACCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_30896,TCGCCTGCAACATGCAAACCTACCCAG,432,439,RAFPPRQ,1296,1317,21,aacctccagagaggcaacgctCGGGCCTTCCCCCCCCGGCAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41648,TCGCCTGCAGCAAACGCTTCCGCCAAT,2733,2740,PVATGTV,8199,8220,21,aacctccagagaggcaacgctCCCGTGGCCACCGGCACCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS6,No,,#59,HSV-1-pUS6",Def,7aa,seq_15473,TCGCCTGCAGCATGCAATCGCTCCCAC,170,177,EDNLGFL,510,531,21,aacctccagagaggcaacgctGAGGACAACCTGGGCTTCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_36444,TCGCCTGCAGCCAACCTTCGAGCCAAC,660,667,QLRAAPP,1980,2001,21,aacctccagagaggcaacgctCAGCTGCGGGCCGCCCCCCCCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_19437,TCGCCTGCTACATACACAGCTATCCAC,221,228,ACRLKLC,663,684,21,aacctccagagaggcaacgctGCCTGCCGGCTGAAGCTGTGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_30588,TCGCCTGCTATAAGTGATCAATCACAC,424,431,CTHYLSA,1272,1293,21,aacctccagagaggcaacgctTGCACCCACTACCTGAGCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_31488,TCGCCTGCTATCTATATGCCAACAAGC,446,453,PGGVISP,1338,1359,21,aacctccagagaggcaacgctCCCGGCGGCGTGATCAGCCCCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_3304,TCGCCTGCTATGAAGACTGCAGCCATC,34,41,QRQAGQL,102,123,21,aacctccagagaggcaacgctCAGCGGCAGGCCGGCCAGCTGgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H5N1,,#86,H5N1-HA",Def,7aa,seq_6953,TCGCCTGGAACCAGTACGCCTACCTGC,71,78,SVAGWLL,213,234,21,aacctccagagaggcaacgctAGCGTGGCCGGCTGGCTGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS8,No,,#75,HSV-2-pUS8",Def,7aa,seq_23713,TCGCCTGGAATCAGTCATCCTGTCCAC,289,296,APCAVSS,867,888,21,aacctccagagaggcaacgctGCCCCCTGCGCCGTGAGCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS8,No,,#75,HSV-2-pUS8",Def,7aa,seq_16217,TCGCCTGGATTCATCGCAGCCGGACAT,179,186,VSERTPV,537,558,21,aacctccagagaggcaacgctGTGAGCGAGCGGACCCCCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_12268,TCGCCTGGCAGGAATGCGCATTCACTT,131,138,CPAHTFF,393,414,21,aacctccagagaggcaacgctTGCCCCGCCCACACCTTCTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_37968,TCGCCTGGCAGGATTAATTCAAGCCAT,808,815,HKIYYYV,2424,2445,21,aacctccagagaggcaacgctCACAAGATCTACTACTACGTGgccagacaagcagctaccgca,2,2
+"Measles virus,MV-H,Edmonston,,#77,MV-H-Edmonston",Def,7aa,seq_26534,TCGCCTGGTTTCATCCATCAAATGATG,341,348,DDPVIDR,1023,1044,21,aacctccagagaggcaacgctGACGACCCCGTGATCGACCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL1,No,,#52,HSV-1-pUL1",Def,7aa,seq_18601,TCGCCTTAATTCTGCGTATCCACGCGT,210,217,ATKSRRR,630,651,21,aacctccagagaggcaacgctGCCACCAAGAGCCGGCGGCGGgccagacaagcagctaccgca,2,2
+"Neurotrophin,CDNF,No,,#7,CDNF",Def,7aa,seq_4199,TCGCCTTACAGCAGTATGGAAAGCCGG,43,50,ISFCADT,129,150,21,aacctccagagaggcaacgctATCAGCTTCTGCGCCGACACCgccagacaagcagctaccgca,3,3
+"Canine adenovirus 2,Fiber,SH01,,#108,CAV-2-F-SH01",Def,7aa,seq_13063,TCGCCTTACTGATGTAAGCGATTACAT,141,148,SPPLTKT,423,444,21,aacctccagagaggcaacgctAGCCCCCCCCTGACCAAGACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_9061,TCGCCTTATGCCCTCCTACCAGCATTC,94,101,HRAHGLP,282,303,21,aacctccagagaggcaacgctCACCGGGCCCACGGCCTGCCCgccagacaagcagctaccgca,3,3
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_21163,TCGCCTTATTGACGCACATCCACCCAC,246,253,SVVALGS,738,759,21,aacctccagagaggcaacgctAGCGTGGTGGCCCTGGGCAGCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,tat,CM240,,#105,HIV-tat-CM240",Def,7aa,seq_1837,TCGCCTTCCACCCAGCTGTGTACCAAT,19,26,TACSKCY,57,78,21,aacctccagagaggcaacgctACCGCCTGCAGCAAGTGCTACgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_36458,TCGCCTTCTACATACCCTTACATAAAT,661,668,IDMVDSP,1983,2004,21,aacctccagagaggcaacgctATCGACATGGTGGACAGCCCCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,Mocala,,#31,RV-G-Mocala",Def,7aa,seq_29606,TCGCCTTCTACCCGGGAATGCGCCAGG,403,410,AVFKKDG,1209,1230,21,aacctccagagaggcaacgctGCCGTGTTCAAGAAGGACGGCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_28491,TCGCCTTCTAGCTAGCATCACGTCAAG,380,387,LNNGSQA,1140,1161,21,aacctccagagaggcaacgctCTGAACAACGGCAGCCAGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL10,No,,#53,HSV-1-pUL10",Def,7aa,seq_30285,TCGCCTTCTATAAATCAGCCCGCCATT,417,424,DGEPIYD,1251,1272,21,aacctccagagaggcaacgctGACGGCGAGCCCATCTACGACgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV8,,#127,AAV8-VP1",Def,7aa,seq_33490,TCGCCTTCTGTGCAGCTTTACAGCCTG,500,507,SNFAWTA,1500,1521,21,aacctccagagaggcaacgctAGCAACTTCGCCTGGACCGCCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_33904,TCGCCTTGAGGCATCGTTCGAATACAG,515,522,TVNGQTV,1545,1566,21,aacctccagagaggcaacgctACCGTGAACGGCCAGACCGTGgccagacaagcagctaccgca,2,2
+"Neurotrophin,NGF,No,,#1,NGF",Def,7aa,seq_5760,TCGCCTTGAGTCAGCAATCATACGAGC,58,65,FKKRRLR,174,195,21,aacctccagagaggcaacgctTTCAAGAAGCGGCGGCTGCGGgccagacaagcagctaccgca,2,2
+"Lymphocytic choriomeningitis virus,G protein,WE,,#132,LCMV-G",Def,7aa,seq_30410,TCGCTACAAGTCAATACACCCGCCAGC,420,427,LRKDYIK,1260,1281,21,aacctccagagaggcaacgctCTGCGGAAGGACTACATCAAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL44,No,,#56,HSV-1-pUL44",Def,7aa,seq_18221,TCGCTACACACCCACATGCAAAGCAAC,205,212,AEGAGPG,615,636,21,aacctccagagaggcaacgctGCCGAGGGCGCCGGCCCCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41924,TCGCTACACTCCCAGGTTCCCGTAAGT,3073,3080,PPPVSAN,9219,9240,21,aacctccagagaggcaacgctCCCCCCCCCGTGAGCGCCAACgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP2,No,,#97,TMEV-VP2",Def,7aa,seq_13574,TCGCTACACTGAAATACACAAGGCCAT,147,154,SDPFTMD,441,462,21,aacctccagagaggcaacgctAGCGACCCCTTCACCATGGACgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/E Hc,No,,#22,BoNT/E Hc",Def,7aa,seq_1638,TCGCTACATACCCACAAATATACCCGT,17,24,IQHGSIL,51,72,21,aacctccagagaggcaacgctATCCAGCACGGCAGCATCCTGgccagacaagcagctaccgca,2,2
+"Tick-borne encephalitis virus,TBEV-E,80,,#43,TBEV-E-80",Def,7aa,seq_23046,TCGCTACATAGCAACCAGTGAGCCTAT,277,284,GTKYHLK,831,852,21,aacctccagagaggcaacgctGGCACCAAGTACCACCTGAAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_38172,TCGCTACATAGCCACACAGCTACCTAG,830,837,ASLASLR,2490,2511,21,aacctccagagaggcaacgctGCCAGCCTGGCCAGCCTGCGGgccagacaagcagctaccgca,3,3
+"Tick-borne encephalitis virus,TBEV-E,80,,#43,TBEV-E-80",Def,7aa,seq_26545,TCGCTACATTTCCTCCCATCTATACGC,341,348,VRAVAHG,1023,1044,21,aacctccagagaggcaacgctGTGCGGGCCGTGGCCCACGGCgccagacaagcagctaccgca,2,2
+"Vesicular stomatitis Indiana virus,G protein,Orsay,,#130,VSV-Orsay-G",Def,7aa,seq_2616,TCGCTACCAACCAACCAAGGTAGCTTC,27,34,SDLNWHN,81,102,21,aacctccagagaggcaacgctAGCGACCTGAACTGGCACAACgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_16149,TCGCTACCAGGGTTTCCATCCGTACGT,178,185,FRGVEFV,534,555,21,aacctccagagaggcaacgctTTCCGGGGCGTGGAGTTCGTGgccagacaagcagctaccgca,2,2
+"Poliovirus,VP2,PV1,,#116,PV1-VP2",Def,7aa,seq_5406,TCGCTACCATGACTTATGCCCGGGCTT,55,62,PDVAACR,165,186,21,aacctccagagaggcaacgctCCCGACGTGGCCGCCTGCCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL22,No,,#67,HSV-2-pUL22",Def,7aa,seq_16119,TCGCTACCATGGTATCAGCCCGCCCAT,178,185,DGATERH,534,555,21,aacctccagagaggcaacgctGACGGCGCCACCGAGCGGCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS4,No,,#71,HSV-2-pUS4",Def,7aa,seq_36701,TCGCTACCCACGTACCTGCCCATACAT,679,686,GRRRYAH,2037,2058,21,aacctccagagaggcaacgctGGCCGGCGGCGGTACGCCCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_24912,TCGCTACCCTCCATCACGTACACACAG,311,318,AGCSRTN,933,954,21,aacctccagagaggcaacgctGCCGGCTGCAGCCGGACCAACgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP1,1095/Japan 97,,#90,EV71-VP1-1095/Japan 97",Def,7aa,seq_8990,TCGCTACCCTGGTACGATGCCTGAAAG,93,100,DLPLEGT,279,300,21,aacctccagagaggcaacgctGACCTGCCCCTGGAGGGCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_22029,TCGCTACCTATGCACCAGCCTTTCCTC,260,267,TPLTRAL,780,801,21,aacctccagagaggcaacgctACCCCCCTGACCCGGGCCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS7,No,,#61,HSV-1-pUS7",Def,7aa,seq_21851,TCGCTACGCGGATACACTTACATCTGC,257,264,SRYALTV,771,792,21,aacctccagagaggcaacgctAGCCGGTACGCCCTGACCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40150,TCGCTACGCTCACTCCAGCAAACGTAC,1306,1313,EAAIADL,3918,3939,21,aacctccagagaggcaacgctGAGGCCGCCATCGCCGACCTGgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_35639,TCGCTACGCTTACTTAAACGATCGAAT,601,608,IRFPALE,1803,1824,21,aacctccagagaggcaacgctATCCGGTTCCCCGCCCTGGAGgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/C Hc,No,,#20,BoNT/C Hc",Def,7aa,seq_30924,TCGCTACGTACCTTCGAACCCGGCATC,433,440,SAWSHPQ,1299,1320,21,aacctccagagaggcaacgctAGCGCCTGGAGCCACCCCCAGgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP2,No,,#97,TMEV-VP2",Def,7aa,seq_17619,TCGCTAGAAGCCATGCCTCACTCAATG,198,205,NTTVDLE,594,615,21,aacctccagagaggcaacgctAACACCACCGTGGACCTGGAGgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_25050,TCGCTAGACAGAATGAAACAAATGAAC,314,321,SLTCSPH,942,963,21,aacctccagagaggcaacgctAGCCTGACCTGCAGCCCCCACgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV6,,#126,AAV6-VP1",Def,7aa,seq_35288,TCGCTAGACATATTGGCTTACAGCATT,580,587,AVNLQSS,1740,1761,21,aacctccagagaggcaacgctGCCGTGAACCTGCAGAGCAGCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_35939,TCGCTAGCAAGACAGCTTTAAATGCTT,622,629,RNMGEEP,1866,1887,21,aacctccagagaggcaacgctCGGAACATGGGCGAGGAGCCCgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_39,TCGCTAGCATCAATCCATGATTCCCGT,0,7,FNCLGMS,0,21,21,aacctccagagaggcaacgctTTCAACTGCCTGGGCATGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40517,TCGCTAGCATTATACAAACCTACCAAT,1588,1595,KDAVVRA,4764,4785,21,aacctccagagaggcaacgctAAGGACGCCGTGGTGCGGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL1,No,,#65,HSV-2-pUL1",Def,7aa,seq_13069,TCGCTAGCCACCATCACATCAACAAAC,141,148,HAPVRAG,423,444,21,aacctccagagaggcaacgctCACGCCCCCGTGCGGGCCGGCgccagacaagcagctaccgca,2,2
+"Lectin,PSA Chain-C,No,,#15,PSA Chain-C",Def,7aa,seq_2792,TCGCTAGCCGCCCGCATACGCAGACTC,29,36,KLTLTKA,87,108,21,aacctccagagaggcaacgctAAGCTGACCCTGACCAAGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41185,TCGCTAGCCTTCAAGACACATACATTC,2267,2274,LSPSGGR,6801,6822,21,aacctccagagaggcaacgctCTGAGCCCCAGCGGCGGCCGGgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_16417,TCGCTAGCTATCCGCCCTCGCATCCGG,182,189,PRPGTPC,546,567,21,aacctccagagaggcaacgctCCCCGGCCCGGCACCCCCTGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS6,No,,#59,HSV-1-pUS6",Def,7aa,seq_9921,TCGCTAGGATTCTTCCTACACGCAATT,104,111,IVRGASE,312,333,21,aacctccagagaggcaacgctATCGTGCGGGGCGCCAGCGAGgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_6523,TCGCTAGGCACACATAAGTACTGCAAC,66,73,AADAAAL,198,219,21,aacctccagagaggcaacgctGCCGCCGACGCCGCCGCCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_36742,TCGCTATAAGCCTTCCAAGGAGCCATG,683,690,AHPDTLF,2049,2070,21,aacctccagagaggcaacgctGCCCACCCCGACACCCTGTTCgccagacaagcagctaccgca,2,2
+"Lectin,SA,No,,#17,SA",Def,7aa,seq_12731,TCGCTATACTGAAATCATCACTCAAGT,137,144,HIGINVN,411,432,21,aacctccagagaggcaacgctCACATCGGCATCAACGTGAACgccagacaagcagctaccgca,3,3
+"Influenza A virus,HA,H1N1,,#87,H1N1-HA",Def,7aa,seq_23003,TCGCTATATGCAAGCGCACAATCCAAC,276,283,FGSGIIT,828,849,21,aacctccagagaggcaacgctTTCGGCAGCGGCATCATCACCgccagacaagcagctaccgca,2,2
+"Lectin,SA,No,,#17,SA",Def,7aa,seq_3738,TCGCTATCAGCCTTTCCGGGTTCGCTT,38,45,ENGTPKP,114,135,21,aacctccagagaggcaacgctGAGAACGGCACCCCCAAGCCCgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_16589,TCGCTATCATTACAGCCAGCCACCAGT,184,191,DCEPRSG,552,573,21,aacctccagagaggcaacgctGACTGCGAGCCCCGGAGCGGCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,PV,,#30,RV-G-PV",Def,7aa,seq_32055,TCGCTATCATTCCACACTGAATTCATG,459,466,CWRRVNR,1377,1398,21,aacctccagagaggcaacgctTGCTGGCGGCGGGTGAACCGGgccagacaagcagctaccgca,2,2
+"Vesicular stomatitis Indiana virus,G protein,Orsay,,#130,VSV-Orsay-G",Def,7aa,seq_27311,TCGCTATCCTCCCAGCAATAAACACGT,356,363,WDDWAPY,1068,1089,21,aacctccagagaggcaacgctTGGGACGACTGGGCCCCCTACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41268,TCGCTATCCTGGAGTCTACCCTCCCAC,2351,2358,RGPDAAL,7053,7074,21,aacctccagagaggcaacgctCGGGGCCCCGACGCCGCCCTGgccagacaagcagctaccgca,2,2
+"Herpes B virus,Glycoprotein D,No,,#114,BV-G",Def,7aa,seq_22185,TCGCTATCTAGCCACGCAGCCGTGAAC,262,269,AAGWHGP,786,807,21,aacctccagagaggcaacgctGCCGCCGGCTGGCACGGCCCCgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_21266,TCGCTATCTGCAAACATTGCTGTCCAG,247,254,VVSDMGD,741,762,21,aacctccagagaggcaacgctGTGGTGAGCGACATGGGCGACgccagacaagcagctaccgca,4,4
+"Neurotoxin,TeNT Hc,No,,#25,TeNT Hc",Def,7aa,seq_8097,TCGCTATCTTGACGTGTGTCCAGCTAT,83,90,FNNFTVS,249,270,21,aacctccagagaggcaacgctTTCAACAACTTCACCGTGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL10,No,,#53,HSV-1-pUL10",Def,7aa,seq_8684,TCGCTATGAACAAACACTGGCTCAATT,90,97,LVGTYVI,270,291,21,aacctccagagaggcaacgctCTGGTGGGCACCTACGTGATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_2321,TCGCTATGCGTACTCCCGTAAACGAAT,24,31,STIEVAS,72,93,21,aacctccagagaggcaacgctAGCACCATCGAGGTGGCCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40758,TCGCTGCAAAGAAGTATACCTTCACAT,1829,1836,VAWEMNF,5487,5508,21,aacctccagagaggcaacgctGTGGCCTGGGAGATGAACTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_5003,TCGCTGCACTCCCACAATTACGCCAAT,51,58,LVVRGTG,153,174,21,aacctccagagaggcaacgctCTGGTGGTGCGGGGCACCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_29033,TCGCTGCATTCCATGCTAGCCATCCTG,391,398,AFVNAAH,1173,1194,21,aacctccagagaggcaacgctGCCTTCGTGAACGCCGCCCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41389,TCGCTGCCAACATTCAATCATGTCCGC,2473,2480,PFDASLL,7419,7440,21,aacctccagagaggcaacgctCCCTTCGACGCCAGCCTGCTGgccagacaagcagctaccgca,2,2
+"Vesicular stomatitis Indiana virus,G protein,Orsay,,#130,VSV-Orsay-G",Def,7aa,seq_18197,TCGCTGCGTGCATACCCTCCCAGCAAC,205,212,RSNYFAY,615,636,21,aacctccagagaggcaacgctCGGAGCAACTACTTCGCCTACgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H5N1,,#86,H5N1-HA",Def,7aa,seq_6602,TCGCTGGCAATCCGCCTGGCTATGTAC,67,74,LRDCSVA,201,222,21,aacctccagagaggcaacgctCTGCGGGACTGCAGCGTGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_827,TCGCTGGCAGTAATTCCGCGAGCACAT,8,15,FLLGVCV,24,45,21,aacctccagagaggcaacgctTTCCTGCTGGGCGTGTGCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_40116,TCGCTGGCCGGACTCCTACGAGTAATT,1289,1296,ERLIVET,3867,3888,21,aacctccagagaggcaacgctGAGCGGCTGATCGTGGAGACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_23700,TCGCTGTAATCAATTGCTCGCACGCTC,289,296,LLAQFQH,867,888,21,aacctccagagaggcaacgctCTGCTGGCCCAGTTCCAGCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39010,TCGCTGTACATACGTCCACCCATGCTC,973,980,QARAMDA,2919,2940,21,aacctccagagaggcaacgctCAGGCCCGGGCCATGGACGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_39879,TCGCTGTACATGAGTCTTGAATTAAGG,1203,1210,NPRGRAA,3609,3630,21,aacctccagagaggcaacgctAACCCCCGGGGCCGGGCCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS4,No,,#71,HSV-2-pUS4",Def,7aa,seq_1124,TCGCTGTACTTACTTCAATCCACACAC,11,18,FVLSGLP,33,54,21,aacctccagagaggcaacgctTTCGTGCTGAGCGGCCTGCCCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_32072,TCGCTGTCAAGAATGCCTCAAGCGTAT,460,467,PLGWLRD,1380,1401,21,aacctccagagaggcaacgctCCCCTGGGCTGGCTGCGGGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL1,No,,#52,HSV-1-pUL1",Def,7aa,seq_3549,TCGCTGTCAGCCCACCAAGACACGCAG,36,43,GDILKVP,108,129,21,aacctccagagaggcaacgctGGCGACATCCTGAAGGTGCCCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/G Hc,No,,#24,BoNT/G Hc",Def,7aa,seq_27623,TCGCTGTCAGGACACAATTGCGTACAC,362,369,CQILCEK,1086,1107,21,aacctccagagaggcaacgctTGCCAGATCCTGTGCGAGAAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_28593,TCGCTGTCCATCAATCAATGCATACTT,382,389,PRPDDPV,1146,1167,21,aacctccagagaggcaacgctCCCCGGCCCGACGACCCCGTGgccagacaagcagctaccgca,2,2
+"Neurotrophin,BDNF,No,,#6,BDNF",Def,7aa,seq_2853,TCGCTGTCCTGGCACCATCCAACATAC,29,36,GPRAGSR,87,108,21,aacctccagagaggcaacgctGGCCCCCGGGCCGGCAGCCGGgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_35329,TCGCTGTGAAGATTCCAACAAACCCAC,583,590,IIPQARD,1749,1770,21,aacctccagagaggcaacgctATCATCCCCCAGGCCCGGGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_37791,TCGCTGTGTGCAATGCTTCCCATGTTG,789,796,RAADAAD,2367,2388,21,aacctccagagaggcaacgctCGGGCCGCCGACGCCGCCGACgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP3,No,,#92,EV71-VP3",Def,7aa,seq_10346,TCGCTTCAAATACGTCATGAAACGTAT,109,116,QWSGSLE,327,348,21,aacctccagagaggcaacgctCAGTGGAGCGGCAGCCTGGAGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,PrPc,No,,#11,PrPc",Def,7aa,seq_13043,TCGCTTCAAGCAAGTCTACACACGAAT,140,147,FGNDWED,420,441,21,aacctccagagaggcaacgctTTCGGCAACGACTGGGAGGACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL27,No,,#68,HSV-2-pUL27",Def,7aa,seq_38440,TCGCTTCAATTCAGCCAACCAACGCAC,869,876,ALLSSKV,2607,2628,21,aacctccagagaggcaacgctGCCCTGCTGAGCAGCAAGGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_24781,TCGCTTCACACCAATCCGTACGCACGC,309,316,SYAGCSR,927,948,21,aacctccagagaggcaacgctAGCTACGCCGGCTGCAGCCGGgccagacaagcagctaccgca,2,2
+"Measles virus,MV-F,Edmonston,,#78,MV-F-Edmonston",Def,7aa,seq_30340,TCGCTTCACTCGCACAATGCTTTAATC,418,425,AADHCPV,1254,1275,21,aacctccagagaggcaacgctGCCGCCGACCACTGCCCCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS6,No,,#59,HSV-1-pUS6",Def,7aa,seq_22371,TCGCTTCATACGCAGAAGCGCATCCAT,265,272,WHGPKAP,795,816,21,aacctccagagaggcaacgctTGGCACGGCCCCAAGGCCCCCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_34977,TCGCTTCCAACATACGTTGGCTCACAC,562,569,DELLQKE,1686,1707,21,aacctccagagaggcaacgctGACGAGCTGCTGCAGAAGGAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_38782,TCGCTTCCAGCCCAGGTGGCAGGGTAC,927,934,IFDGALH,2781,2802,21,aacctccagagaggcaacgctATCTTCGACGGCGCCCTGCACgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_30806,TCGCTTCCATTCAACCAACGTACACTC,430,437,SALGLSV,1290,1311,21,aacctccagagaggcaacgctAGCGCCCTGGGCCTGAGCGTGgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H1N1,,#87,H1N1-HA",Def,7aa,seq_2493,TCGCTTCCATTCTTCCCATAAACCAAC,26,33,NNSTDTV,78,99,21,aacctccagagaggcaacgctAACAACAGCACCGACACCGTGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_22560,TCGCTTCCCACCTTCCTACACTCGTAC,269,276,KVSAETQ,807,828,21,aacctccagagaggcaacgctAAGGTGAGCGCCGAGACCCAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_30247,TCGCTTCCCATACAGCTGGAAATGCAC,416,423,ALRLGAV,1248,1269,21,aacctccagagaggcaacgctGCCCTGCGGCTGGGCGCCGTGgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/A Hc,No,,#18,BoNT/A Hc",Def,7aa,seq_22429,TCGCTTCCCATCCACCCTGCTAGACAC,266,273,FWGDYLQ,798,819,21,aacctccagagaggcaacgctTTCTGGGGCGACTACCTGCAGgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,TH91125_7,,#103,HIV-gp120-TH91125_7",Def,7aa,seq_15529,TCGCTTCCCGCCCACCTTGCAGCAAGT,171,178,SFDPIPI,513,534,21,aacctccagagaggcaacgctAGCTTCGACCCCATCCCCATCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,No/98,,#85,BDV-No/98",Def,7aa,seq_19480,TCGCTTCCCGGCCGTGCTCCAACCCTC,222,229,SYQSPSI,666,687,21,aacctccagagaggcaacgctAGCTACCAGAGCCCCAGCATCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-P,No,,#26,RV-P",Def,7aa,seq_19019,TCGCTTCCCGTGAATCCATCATGACTT,216,223,SRSSGIF,648,669,21,aacctccagagaggcaacgctAGCCGGAGCAGCGGCATCTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_32232,TCGCTTCCCTGAAGGCTGGGCACAATT,464,471,RVADSEL,1392,1413,21,aacctccagagaggcaacgctCGGGTGGCCGACAGCGAGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41175,TCGCTTCCTACCTTCGAACCTGTCCTT,2257,2264,LTARLES,6771,6792,21,aacctccagagaggcaacgctCTGACCGCCCGGCTGGAGAGCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/C Hc,No,,#20,BoNT/C Hc",Def,7aa,seq_28100,TCGCTTCGATCCAACCCAGCAATGTTG,371,378,FKSNFNG,1113,1134,21,aacctccagagaggcaacgctTTCAAGAGCAACTTCAACGGCgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 2,HSV-2-pUL27,No,,#68,HSV-2-pUL27",Def,7aa,seq_1508,TCGCTTCGATTACATCTTTACTCCAAG,15,22,VAAVASA,45,66,21,aacctccagagaggcaacgctGTGGCCGCCGTGGCCAGCGCCgccagacaagcagctaccgca,2,2
+"Neurotrophin,NRTN,No,,#5,NRTN",Def,7aa,seq_4412,TCGCTTGAAACGAGCCAATGTATGCTG,45,52,ELRELSP,135,156,21,aacctccagagaggcaacgctGAGCTGCGGGAGCTGAGCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL35,No,,#46,HSV-1-pUL35",Def,7aa,seq_6740,TCGCTTGAAATGCGCATACCTGCCTGC,69,76,NNTFTPQ,207,228,21,aacctccagagaggcaacgctAACAACACCTTCACCCCCCAGgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H3N2,,#89,H3N2-HA",Def,7aa,seq_16135,TCGCTTGACATGAAGCTACATACCAAC,178,185,VLNVTMP,534,555,21,aacctccagagaggcaacgctGTGCTGAACGTGACCATGCCCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_27655,TCGCTTGACGCCTACCCACCCTGCCTG,363,370,RVMWFGR,1089,1110,21,aacctccagagaggcaacgctCGGGTGATGTGGTTCGGCCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_37344,TCGCTTGATGGCTGCATTTAATCACTT,739,746,VSQHAGP,2217,2238,21,aacctccagagaggcaacgctGTGAGCCAGCACGCCGGCCCCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_28839,TCGCTTGCCAGCTGCGCATCTACACGG,387,394,DWTKLRY,1161,1182,21,aacctccagagaggcaacgctGACTGGACCAAGCTGCGGTACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41146,TCGCTTGCTTGACACAAACAATCAAAG,2226,2233,GRMCLPS,6678,6699,21,aacctccagagaggcaacgctGGCCGGATGTGCCTGCCCAGCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,SA14-5-3,,#37,JEV-E-SA14-5-3",Def,7aa,seq_19777,TCGCTTGGCATCCTCCTACCTAGGAGT,226,233,SPSSTAW,678,699,21,aacctccagagaggcaacgctAGCCCCAGCAGCACCGCCTGGgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_30972,TCGCTTTAAAGAATCAAGCCATTAAAC,434,441,TLTVGFT,1302,1323,21,aacctccagagaggcaacgctACCCTGACCGTGGGCTTCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS6,No,,#59,HSV-1-pUS6",Def,7aa,seq_15234,TCGCTTTACAGCAATATTGCAGCCTTG,167,174,AVSEDNL,501,522,21,aacctccagagaggcaacgctGCCGTGAGCGAGGACAACCTGgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H2N2,,#88,H2N2-HA",Def,7aa,seq_29750,TCGCTTTACGTATTCGCATCCATATAT,406,413,GKEFNNL,1218,1239,21,aacctccagagaggcaacgctGGCAAGGAGTTCAACAACCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUS8,No,,#62,HSV-1-pUS8",Def,7aa,seq_27860,TCGCTTTATACAATTCCACATTCCCTT,367,374,HAWGHIT,1101,1122,21,aacctccagagaggcaacgctCACGCCTGGGGCCACATCACCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,Mocala,,#31,RV-G-Mocala",Def,7aa,seq_31802,TCGCTTTATATCTGCCAATCATCGAGG,453,460,ACLLRVC,1359,1380,21,aacctccagagaggcaacgctGCCTGCCTGCTGCGGGTGTGCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_26685,TCGCTTTCAACCAACCTAGACTCCAAT,344,351,EPTDKQP,1032,1053,21,aacctccagagaggcaacgctGAGCCCACCGACAAGCAGCCCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV2,,#118,PV2-VP1",Def,7aa,seq_7896,TCGCTTTCATCATAGAATCATTGATTG,81,88,ARGACVA,243,264,21,aacctccagagaggcaacgctGCCCGGGGCGCCTGCGTGGCCgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_29668,TCGCTTTCATCCTTCGAAGCAACAATT,405,412,TTLRGAQ,1215,1236,21,aacctccagagaggcaacgctACCACCCTGCGGGGCGCCCAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS6,No,,#72,HSV-2-pUS6",Def,7aa,seq_22304,TCGCTTTCCACGTAGAATCACATCAAC,264,271,GWHGPKP,792,813,21,aacctccagagaggcaacgctGGCTGGCACGGCCCCAAGCCCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV9,,#127,AAV9-VP1",Def,7aa,seq_34732,TCGCTTTCCGGCCATACACACAGGCAT,548,555,GRDNVDA,1644,1665,21,aacctccagagaggcaacgctGGCCGGGACAACGTGGACGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL1,No,,#65,HSV-2-pUL1",Def,7aa,seq_7404,TCGCTTTCTGGACGGACATCATTCAAC,76,83,PGLDTFL,228,249,21,aacctccagagaggcaacgctCCCGGCCTGGACACCTTCCTGgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_33412,TCGCTTTGAGTGAATCAATAATGATTC,497,504,PDTPDRT,1491,1512,21,aacctccagagaggcaacgctCCCGACACCCCCGACCGGACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41105,TCGCTTTGTTGGCTGAAGTATTTACAG,2185,2192,GKLSETD,6555,6576,21,aacctccagagaggcaacgctGGCAAGCTGAGCGAGACCGACgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_27631,TCGGAACAATCATGTACACAAGGATGG,363,370,NEATDGT,1089,1110,21,aacctccagagaggcaacgctAACGAGGCCACCGACGGCACCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_15469,TCGGAACACGCCTGGCTACACAGAAGC,170,177,DDYTWQT,510,531,21,aacctccagagaggcaacgctGACGACTACACCTGGCAGACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_37753,TCGGAACCAACATTCCCGCACGGCCTG,784,791,LAGLAAA,2352,2373,21,aacctccagagaggcaacgctCTGGCCGGCCTGGCCGCCGCCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_20651,TCGGAACCAATCAGCATACAAGCATAT,238,245,ILAVRVV,714,735,21,aacctccagagaggcaacgctATCCTGGCCGTGCGGGTGGTGgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP1,1095/Japan 97,,#90,EV71-VP1-1095/Japan 97",Def,7aa,seq_6948,TCGGAACCAGCCTTCCAATCCACATTT,71,78,SHSTAET,213,234,21,aacctccagagaggcaacgctAGCCACAGCACCGCCGAGACCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_32113,TCGGAACCCATAAGCAATTCAACACTT,461,468,LGWLRDL,1383,1404,21,aacctccagagaggcaacgctCTGGGCTGGCTGCGGGACCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39278,TCGGAACCCATCAACATGTACTTCCGT,1035,1042,DFVGLKA,3105,3126,21,aacctccagagaggcaacgctGACTTCGTGGGCCTGAAGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL19,No,,#76,HSV-2-pUL19",Def,7aa,seq_31845,TCGGAACCCTTACACCATTCCATGAAT,454,461,ENAVGTV,1362,1383,21,aacctccagagaggcaacgctGAGAACGCCGTGGGCACCGTGgccagacaagcagctaccgca,2,2
+"Neurotrophin,NT4,No,,#3,NT4",Def,7aa,seq_15758,TCGGAACCTACAATGCTACATTTATGC,174,181,TACVCTL,522,543,21,aacctccagagaggcaacgctACCGCCTGCGTGTGCACCCTGgccagacaagcagctaccgca,3,3
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_36954,TCGGAACGAACACTTACATAAGCATTC,704,711,LPPDPSH,2112,2133,21,aacctccagagaggcaacgctCTGCCCCCCGACCCCAGCCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS6,No,,#72,HSV-2-pUS6",Def,7aa,seq_13105,TCGGAACGCACCTGTAAACGCATCCTC,141,148,ECPYNKS,423,444,21,aacctccagagaggcaacgctGAGTGCCCCTACAACAAGAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_37702,TCGGAAGACACATGGCAGCCCACCTAT,778,785,LLLFPNG,2334,2355,21,aacctccagagaggcaacgctCTGCTGCTGTTCCCCAACGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_6232,TCGGAAGACGGAAGCCCTCAAACGAAC,63,70,AMAAFLL,189,210,21,aacctccagagaggcaacgctGCCATGGCCGCCTTCCTGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_40148,TCGGAAGCCATAAGCACGGACAGAATT,1305,1312,ASDVQFK,3915,3936,21,aacctccagagaggcaacgctGCCAGCGACGTGCAGTTCAAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_22327,TCGGAAGCCGCAATCAAAGACTCATTT,265,272,HADTRGR,795,816,21,aacctccagagaggcaacgctCACGCCGACACCCGGGGCCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_15802,TCGGAAGCTACGAACCTACATTTACAC,174,181,AHLPRLP,522,543,21,aacctccagagaggcaacgctGCCCACCTGCCCCGGCTGCCCgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_38777,TCGGAAGCTTTGTGCCTTGAAATCCGT,926,933,RIFDGAL,2778,2799,21,aacctccagagaggcaacgctCGGATCTTCGACGGCGCCCTGgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_18724,TCGGAAGGTTGCATTACATAAGTCATG,212,219,SGRPIFD,636,657,21,aacctccagagaggcaacgctAGCGGCCGGCCCATCTTCGACgccagacaagcagctaccgca,2,2
+"Vesicular stomatitis Indiana virus,G protein,Orsay,,#130,VSV-Orsay-G",Def,7aa,seq_4379,TCGGAATAAAGCCACCTAGAAAGCAGC,45,52,PKSHKAI,135,156,21,aacctccagagaggcaacgctCCCAAGAGCCACAAGGCCATCgccagacaagcagctaccgca,2,2
+"Measles virus,MV-H,Edmonston,,#77,MV-H-Edmonston",Def,7aa,seq_18517,TCGGAATACGTAAACCAATGAATGAAC,209,216,LSRGYNV,627,648,21,aacctccagagaggcaacgctCTGAGCCGGGGCTACAACGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40712,TCGGAATACTTCTGCAAGGCCGGCAAC,1783,1790,ERLPAKY,5349,5370,21,aacctccagagaggcaacgctGAGCGGCTGCCCGCCAAGTACgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/G Hc,No,,#24,BoNT/G Hc",Def,7aa,seq_23448,TCGGAATATACCTATCAATCCACCCGT,285,292,IIKKASN,855,876,21,aacctccagagaggcaacgctATCATCAAGAAGGCCAGCAACgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/A Hc,No,,#18,BoNT/A Hc",Def,7aa,seq_24562,TCGGAATATGCATATACACAAATGATG,305,312,PRGSVMT,915,936,21,aacctccagagaggcaacgctCCCCGGGGCAGCGTGATGACCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_37484,TCGGAATCAGCGTATCTTGAATCAATC,754,761,AIYLWNE,2262,2283,21,aacctccagagaggcaacgctGCCATCTACCTGTGGAACGAGgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,tat,GR17,,#106,HIV-tat-GR17",Def,7aa,seq_6169,TCGGAATCAGGACACACACCAATCTGC,63,70,NHQDPIP,189,210,21,aacctccagagaggcaacgctAACCACCAGGACCCCATCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL35,No,,#46,HSV-1-pUL35",Def,7aa,seq_3520,TCGGAATCAGTCAGGCATTAAGTCCGG,36,43,DNNHPHP,108,129,21,aacctccagagaggcaacgctGACAACAACCACCCCCACCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL19,No,,#76,HSV-2-pUL19",Def,7aa,seq_39936,TCGGAATCATCAAAGAAGTCATTCTAC,1220,1227,DVIALMY,3660,3681,21,aacctccagagaggcaacgctGACGTGATCGCCCTGATGTACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL27,No,,#55,HSV-1-pUL27",Def,7aa,seq_2711,TCGGAATCATCCTGCCTACCATCCAAT,28,35,SAAPSSP,84,105,21,aacctccagagaggcaacgctAGCGCCGCCCCCAGCAGCCCCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H5N1,,#86,H5N1-HA",Def,7aa,seq_29809,TCGGAATCATGAAGCAAGTCATTCATC,407,414,VGREFNN,1221,1242,21,aacctccagagaggcaacgctGTGGGCCGGGAGTTCAACAACgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39869,TCGGAATCTGGGCTTACAGCTACCCGT,1199,1206,AGYVKAT,3597,3618,21,aacctccagagaggcaacgctGCCGGCTACGTGAAGGCCACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS4,No,,#71,HSV-2-pUS4",Def,7aa,seq_36478,TCGGAATGAGCCTACCAAGCCAGAAAT,662,669,AFVCLVA,1986,2007,21,aacctccagagaggcaacgctGCCTTCGTGTGCCTGGTGGCCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/B Hc,No,,#19,BoNT/B Hc",Def,7aa,seq_12685,TCGGAGCCAGGACGCCCATATACCCAT,136,143,GWKISIR,408,429,21,aacctccagagaggcaacgctGGCTGGAAGATCAGCATCCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_35377,TCGGAGCCAGGCCTTGAGTAATGCTTT,585,592,GQPSHAP,1755,1776,21,aacctccagagaggcaacgctGGCCAGCCCAGCCACGCCCCCgccagacaagcagctaccgca,2,2
+"Horseradish peroxidase,Horseradish peroxidase,,,#135,HRP",Def,7aa,seq_18443,TCGGAGCCCCCATAGACTCACTGCTAC,208,215,LCPLNGN,624,645,21,aacctccagagaggcaacgctCTGTGCCCCCTGAACGGCAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL21,No,,#51,HSV-1-pUL21",Def,7aa,seq_10604,TCGGAGGAAGCCATCATATCCAGACAT,112,119,EVLDECL,336,357,21,aacctccagagaggcaacgctGAGGTGCTGGACGAGTGCCTGgccagacaagcagctaccgca,2,2
+"Measles virus,MV-H,CAM-70,,#81,MV-H-CAM-70",Def,7aa,seq_14023,TCGGAGGAATCCAACCCAGCTAGAAAC,152,159,YCADAAA,456,477,21,aacctccagagaggcaacgctTACTGCGCCGACGCCGCCGCCgccagacaagcagctaccgca,3,3
+"Measles virus,MV-H,Halle,,#79,MV-H-Halle",Def,7aa,seq_3212,TCGGAGGACACCCGGCCGCCCACCCTC,33,40,RPYVMLA,99,120,21,aacctccagagaggcaacgctCGGCCCTACGTGATGCTGGCCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/A Hc,No,,#18,BoNT/A Hc",Def,7aa,seq_24205,TCGGAGGACGGCATTACAGACGGACAC,298,305,GYMYLKG,894,915,21,aacctccagagaggcaacgctGGCTACATGTACCTGAAGGGCgccagacaagcagctaccgca,3,3
+"Herpes simplex virus type 2,HSV-2-pUL27,No,,#68,HSV-2-pUL27",Def,7aa,seq_38459,TCGGAGGACTTCAGTAAGTAATCCAGT,872,879,SSKVTNM,2616,2637,21,aacctccagagaggcaacgctAGCAGCAAGGTGACCAACATGgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,Mocala,,#31,RV-G-Mocala",Def,7aa,seq_31918,TCGGAGGCAGTCTGGCCAGCCACCTGC,456,463,LRVCCRR,1368,1389,21,aacctccagagaggcaacgctCTGCGGGTGTGCTGCCGGCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_19423,TCGGAGTATTCCTTTAAATATAGGAGG,221,228,LATRGLL,663,684,21,aacctccagagaggcaacgctCTGGCCACCCGGGGCCTGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41590,TCGGAGTCCACCTTCACGGCAACACTG,2675,2682,PPALPDT,8025,8046,21,aacctccagagaggcaacgctCCCCCCGCCCTGCCCGACACCgccagacaagcagctaccgca,2,2
+"Measles virus,hemagglutinin,MVi/Illinois.USA/50.99,,#111,MV-H-MVi/Illinois.USA/50.99",Def,7aa,seq_24048,TCGGAGTCCATGCACATAGCCTTAAGG,295,302,FAALCHR,885,906,21,aacctccagagaggcaacgctTTCGCCGCCCTGTGCCACCGGgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP2,No,,#91,EV71-VP2",Def,7aa,seq_17750,TCGGAGTCTATGCTTACGCCCGCCCTC,199,206,ALPFDSA,597,618,21,aacctccagagaggcaacgctGCCCTGCCCTTCGACAGCGCCgccagacaagcagctaccgca,3,3
+"Vesicular stomatitis Indiana virus,G protein,Orsay,,#130,VSV-Orsay-G",Def,7aa,seq_8192,TCGGAGTGTGTCTGCCATCCCGCATAT,84,91,FTPSVEQ,252,273,21,aacctccagagaggcaacgctTTCACCCCCAGCGTGGAGCAGgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP4,No,,#93,EV71-VP4",Def,7aa,seq_3639,TCGGATCAAACATTCACATATGTAATT,37,44,AATAGKQ,111,132,21,aacctccagagaggcaacgctGCCGCCACCGCCGGCAAGCAGgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-M,No,,#38,JEV-M",Def,7aa,seq_3443,TCGGATCAAAGCAACAATCCAATACGG,35,42,VRAIDVG,105,126,21,aacctccagagaggcaacgctGTGCGGGCCATCGACGTGGGCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_13120,TCGGATCAATCGTGCCCAGGAATGAAC,141,148,VAVQTFP,423,444,21,aacctccagagaggcaacgctGTGGCCGTGCAGACCTTCCCCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/C Hc,No,,#20,BoNT/C Hc",Def,7aa,seq_26624,TCGGATCATTCATGCACACCATCACGT,343,350,REQTKDI,1029,1050,21,aacctccagagaggcaacgctCGGGAGCAGACCAAGGACATCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_12645,TCGGATCCCACAAACGCTTAATCCATC,136,143,PSVTDLD,408,429,21,aacctccagagaggcaacgctCCCAGCGTGACCGACCTGGACgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,SA14-5-3,,#37,JEV-E-SA14-5-3",Def,7aa,seq_11633,TCGGATCCCTTAATTATGCGTGGCCAC,124,131,AIGRTIQ,372,393,21,aacctccagagaggcaacgctGCCATCGGCCGGACCATCCAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_38021,TCGGATGAAGTACGTAAAGATTCCCTG,814,821,RFHVASA,2442,2463,21,aacctccagagaggcaacgctCGGTTCCACGTGGCCAGCGCCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H1N1,,#87,H1N1-HA",Def,7aa,seq_9145,TCGGATGAATCACGTATTGCTTCCCAG,95,102,IVETPNS,285,306,21,aacctccagagaggcaacgctATCGTGGAGACCCCCAACAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41148,TCGGATGAATTATTCCATCATACCAGC,2229,2236,CLPSTAL,6687,6708,21,aacctccagagaggcaacgctTGCCTGCCCAGCACCGCCCTGgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP1,DQ401688.1,,#100,TMEV-VP-DQ401688.1",Def,7aa,seq_18924,TCGGATGACATATTCGCTCCAATCATC,214,221,FGVAPNA,642,663,21,aacctccagagaggcaacgctTTCGGCGTGGCCCCCAACGCCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-C,No,,#39,JEV-C",Def,7aa,seq_4707,TCGGATGATGCCCACGCTCCCTGCTAT,48,55,ALITFFK,144,165,21,aacctccagagaggcaacgctGCCCTGATCACCTTCTTCAAGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,APP,No,,#10,APP",Def,7aa,seq_17732,TCGGATGATTTATGTGTTTCCGCACGC,199,206,DAEEDDS,597,618,21,aacctccagagaggcaacgctGACGCCGAGGAGGACGACAGCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H3N2,,#89,H3N2-HA",Def,7aa,seq_21105,TCGGATGCATCAAATCAATATACCTTT,245,252,ISIYWTI,735,756,21,aacctccagagaggcaacgctATCAGCATCTACTGGACCATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL10,No,,#53,HSV-1-pUL10",Def,7aa,seq_28177,TCGGATGCTAGACACCAACACGTACAT,373,380,RSSMRGS,1119,1140,21,aacctccagagaggcaacgctCGGAGCAGCATGCGGGGCAGCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,ThCMAr4492,,#42,JEV-E-ThCMAr4492",Def,7aa,seq_27468,TCGGATGGCTCATACACTGATTTCCAG,359,366,FVATSSS,1077,1098,21,aacctccagagaggcaacgctTTCGTGGCCACCAGCAGCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL10,No,,#53,HSV-1-pUL10",Def,7aa,seq_31037,TCGGATGGCTCGTATACTGCCGCGCGG,435,442,AKIQHPR,1305,1326,21,aacctccagagaggcaacgctGCCAAGATCCAGCACCCCCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40924,TCGGATTAAAGAAGCACTTAATTCCAC,1999,2006,SASTVTA,5997,6018,21,aacctccagagaggcaacgctAGCGCCAGCACCGTGACCGCCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/G Hc,No,,#24,BoNT/G Hc",Def,7aa,seq_5660,TCGGATTAAAGCCACGCGGCAAGACAT,57,64,VVYDSMF,171,192,21,aacctccagagaggcaacgctGTGGTGTACGACAGCATGTTCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,Mocala,,#31,RV-G-Mocala",Def,7aa,seq_30821,TCGGATTATACAATGCCTCGAGGGTGG,430,437,DLGLPHW,1290,1311,21,aacctccagagaggcaacgctGACCTGGGCCTGCCCCACTGGgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/D Hc,No,,#21,BoNT/D Hc",Def,7aa,seq_15475,TCGGATTCAATCAGTGAACCATTAAAT,170,177,EVKLDKT,510,531,21,aacctccagagaggcaacgctGAGGTGAAGCTGGACAAGACCgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_35620,TCGGATTGTTCACACGCTTACAGCCAC,600,607,SLDNITH,1800,1821,21,aacctccagagaggcaacgctAGCCTGGACAACATCACCCACgccagacaagcagctaccgca,2,2
+"Neurotrophin,NT4,No,,#3,NT4",Def,7aa,seq_14798,TCGGCACAAACAAGCCATTGTGGACGC,162,169,QGRVGWR,486,507,21,aacctccagagaggcaacgctCAGGGCCGGGTGGGCTGGCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL44,No,,#56,HSV-1-pUL44",Def,7aa,seq_16880,TCGGCACAAATACTTGCACGCTCCCAT,188,195,LLVYDSA,564,585,21,aacctccagagaggcaacgctCTGCTGGTGTACGACAGCGCCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/F Hc,No,,#23,BoNT/F Hc",Def,7aa,seq_18713,TCGGCACAAGTAATCGAACAAACCTGT,212,219,KTEIETL,636,657,21,aacctccagagaggcaacgctAAGACCGAGATCGAGACCCTGgccagacaagcagctaccgca,2,2
+"Measles virus,MV-H,Edmonston,,#77,MV-H-Edmonston",Def,7aa,seq_21983,TCGGCACATACCAACACTCAATTGCAC,259,266,IRNPGLG,777,798,21,aacctccagagaggcaacgctATCCGGAACCCCGGCCTGGGCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV1,,#125,AAV1-VP1",Def,7aa,seq_34472,TCGGCACATACCAGGCAACGTAGATGT,537,544,SGVMIFG,1611,1632,21,aacctccagagaggcaacgctAGCGGCGTGATGATCTTCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39901,TCGGCACCATGAAACGCACAAACGCGG,1210,1217,DARGAIA,3630,3651,21,aacctccagagaggcaacgctGACGCCCGGGGCGCCATCGCCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H1N1,,#87,H1N1-HA",Def,7aa,seq_33878,TCGGCACCCAGCCGCATGCCATCGAAC,514,521,KVDGVKL,1542,1563,21,aacctccagagaggcaacgctAAGGTGGACGGCGTGAAGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_39503,TCGGCACCCGTGATTAAGCCTACCCTC,1092,1099,HPTPDTA,3276,3297,21,aacctccagagaggcaacgctCACCCCACCCCCGACACCGCCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV8,,#127,AAV8-VP1",Def,7aa,seq_36391,TCGGCACCCTCCTACACACACACACAC,656,663,PADPPTT,1968,1989,21,aacctccagagaggcaacgctCCCGCCGACCCCCCCACCACCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP3,PV1,,#117,PV1-VP3",Def,7aa,seq_8090,TCGGCACCTATGCTCAAATCCACATAC,83,90,CLSLSPA,249,270,21,aacctccagagaggcaacgctTGCCTGAGCCTGAGCCCCGCCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/B Hc,No,,#19,BoNT/B Hc",Def,7aa,seq_24753,TCGGCACGAGCGATCAAGTAATCGCTG,308,315,YINYRDL,924,945,21,aacctccagagaggcaacgctTACATCAACTACCGGGACCTGgccagacaagcagctaccgca,2,2
+"Vesicular stomatitis Indiana virus,G protein,Orsay,,#130,VSV-Orsay-G",Def,7aa,seq_19833,TCGGCACGCATAATGAAGTCATGGAAC,226,233,WGVRLPS,678,699,21,aacctccagagaggcaacgctTGGGGCGTGCGGCTGCCCAGCgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,AZ10-918,,#36,WNV-E-AZ10-918",Def,7aa,seq_27826,TCGGCACGCTCATAGATTCCTGGATTT,366,373,ANAKVLV,1098,1119,21,aacctccagagaggcaacgctGCCAACGCCAAGGTGCTGGTGgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_19910,TCGGCAGAAACGCAGACTCCATCACTC,227,234,CGVLGLR,681,702,21,aacctccagagaggcaacgctTGCGGCGTGCTGGGCCTGCGGgccagacaagcagctaccgca,2,2
+"Lectin,PSA Chain-D,No,,#14,PSA Chain-D",Def,7aa,seq_2326,TCGGCAGAAGTAAGCCAACAAGGCAAT,24,31,SATTGAE,72,93,21,aacctccagagaggcaacgctAGCGCCACCACCGGCGCCGAGgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_32572,TCGGCAGAATCACTCCATGCAAGCAAC,473,480,DRSIAMT,1419,1440,21,aacctccagagaggcaacgctGACCGGAGCATCGCCATGACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL44,No,,#69,HSV-2-pUL44",Def,7aa,seq_10345,TCGGCAGACGGCTGGCAACCAACACGC,109,116,QIRCRFP,327,348,21,aacctccagagaggcaacgctCAGATCCGGTGCCGGTTCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41979,TCGGCAGATATCTTTCATGCAAGACTC,3128,3135,HHVRMLL,9384,9405,21,aacctccagagaggcaacgctCACCACGTGCGGATGCTGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41656,TCGGCAGCATCACACATACCTAGAAGT,2741,2748,PGGENRR,8223,8244,21,aacctccagagaggcaacgctCCCGGCGGCGAGAACCGGCGGgccagacaagcagctaccgca,2,2
+"West Nile virus,WNV-E,ArD76104,,#32,WNV-E-ArD76104",Def,7aa,seq_24385,TCGGCAGCCAGACGTCCTCACGTCATG,302,309,KAFKFAR,906,927,21,aacctccagagaggcaacgctAAGGCCTTCAAGTTCGCCCGGgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/E Hc,No,,#22,BoNT/E Hc",Def,7aa,seq_8061,TCGGCAGGAACACTTCTTTGCGCCAAC,83,90,DTSGYDS,249,270,21,aacctccagagaggcaacgctGACACCAGCGGCTACGACAGCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,TH90129_1,,#102,HIV-gp120-TH90129_1",Def,7aa,seq_28465,TCGGCAGGCTTCTTGCTATGCATATAC,380,387,NSTEDIT,1140,1161,21,aacctccagagaggcaacgctAACAGCACCGAGGACATCACCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,SA14-5-3,,#37,JEV-E-SA14-5-3",Def,7aa,seq_28912,TCGGCAGGTATCAACGTTCATTCAAAC,389,396,KQINHHW,1167,1188,21,aacctccagagaggcaacgctAAGCAGATCAACCACCACTGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41709,TCGGCATAAATCCACATGCAAACAAAC,2794,2801,PTAPVLG,8382,8403,21,aacctccagagaggcaacgctCCCACCGCCCCCGTGCTGGGCgccagacaagcagctaccgca,2,2
+"Measles virus,MV-F,Edmonston,,#78,MV-F-Edmonston",Def,7aa,seq_22591,TCGGCATAATGACAGATACGAGGAATC,269,276,ARITHVD,807,828,21,aacctccagagaggcaacgctGCCCGGATCACCCACGTGGACgccagacaagcagctaccgca,2,2
+"Poliovirus,VP2,PV1,,#116,PV1-VP2",Def,7aa,seq_12335,TCGGCATACACCTTTGAAGACACGAAG,132,139,AGDSNTT,396,417,21,aacctccagagaggcaacgctGCCGGCGACAGCAACACCACCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/A Hc,No,,#18,BoNT/A Hc",Def,7aa,seq_30466,TCGGCATATTCGCTTAAACAAATCCAG,421,428,FNNIAKL,1263,1284,21,aacctccagagaggcaacgctTTCAACAACATCGCCAAGCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS4,No,,#71,HSV-2-pUS4",Def,7aa,seq_8193,TCGGCATCAAGCCATACGTCCACCATC,84,91,FLTGGLV,252,273,21,aacctccagagaggcaacgctTTCCTGACCGGCGGCCTGGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL16,No,,#50,HSV-1-pUL16",Def,7aa,seq_22251,TCGGCATGTACCAGTCATCCCGTCCGC,263,270,VVTESCP,789,810,21,aacctccagagaggcaacgctGTGGTGACCGAGAGCTGCCCCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_10227,TCGGCGCAAGGCCATCCATCTACACAT,107,114,WKITYKD,321,342,21,aacctccagagaggcaacgctTGGAAGATCACCTACAAGGACgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H5N1,,#86,H5N1-HA",Def,7aa,seq_22769,TCGGCGTACTTCAACACTCATATCATC,272,279,VKKGDST,816,837,21,aacctccagagaggcaacgctGTGAAGAAGGGCGACAGCACCgccagacaagcagctaccgca,2,2
+"Human immunodeficiency virus type 1,gp120,TH90129_1,,#102,HIV-gp120-TH90129_1",Def,7aa,seq_1533,TCGGCGTATGGATTTCCTCACTTCCAT,16,23,TTLFCAS,48,69,21,aacctccagagaggcaacgctACCACCCTGTTCTGCGCCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41520,TCGGCGTGTACATACAATTCCACCTTG,2605,2612,RPAPVGP,7815,7836,21,aacctccagagaggcaacgctCGGCCCGCCCCCGTGGGCCCCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,Mocala,,#31,RV-G-Mocala",Def,7aa,seq_10908,TCGGCTCAAACCAACCTGGGCATAATC,116,123,PDSSWLR,348,369,21,aacctccagagaggcaacgctCCCGACAGCAGCTGGCTGCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_39918,TCGGCTCAAGCCATTGAGCACTCGAAT,1216,1223,DKEGDVT,3648,3669,21,aacctccagagaggcaacgctGACAAGGAGGGCGACGTGACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_19640,TCGGCTCACACACATATTCAAGGCTTC,224,231,PADLTAA,672,693,21,aacctccagagaggcaacgctCCCGCCGACCTGACCGCCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_40058,TCGGCTCACACATATCCTTATATAAAG,1266,1273,SPVLSPC,3798,3819,21,aacctccagagaggcaacgctAGCCCCGTGCTGAGCCCCTGCgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_32234,TCGGCTCACACCAACCCGTGAAGCCTC,464,471,LRDLLAW,1392,1413,21,aacctccagagaggcaacgctCTGCGGGACCTGCTGGCCTGGgccagacaagcagctaccgca,2,2
+"Neurotrophin,NT3,No,,#2,NT3",Def,7aa,seq_19049,TCGGCTCATACAATGACTTGAATCATC,216,223,LVGWRWI,648,669,21,aacctccagagaggcaacgctCTGGTGGGCTGGCGGTGGATCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/F Hc,No,,#23,BoNT/F Hc",Def,7aa,seq_24166,TCGGCTCCAGGCATCCCTCATACCCAT,298,305,SNTDNFV,894,915,21,aacctccagagaggcaacgctAGCAACACCGACAACTTCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41645,TCGGCTCCCACCAACCAAGGTTCGCAG,2730,2737,VPPPVAT,8190,8211,21,aacctccagagaggcaacgctGTGCCCCCCCCCGTGGCCACCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_37083,TCGGCTCCCGGACATCCACAATCCCAG,715,722,KQQGVVI,2145,2166,21,aacctccagagaggcaacgctAAGCAGCAGGGCGTGGTGATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS6,No,,#72,HSV-2-pUS6",Def,7aa,seq_28181,TCGGCTCCTATGATCCTACGAACCCTG,373,380,LRLPHIR,1119,1140,21,aacctccagagaggcaacgctCTGCGGCTGCCCCACATCCGGgccagacaagcagctaccgca,2,2
+"Neuron related prorein,Tau,No,,#12,Tau",Def,7aa,seq_18975,TCGGCTCCTTTAAATAATCCCTCACTC,215,222,ESSQESP,645,666,21,aacctccagagaggcaacgctGAGAGCAGCCAGGAGAGCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_40085,TCGGCTCGCAGCCTCAAATACTCAAAC,1277,1284,TSADIAA,3831,3852,21,aacctccagagaggcaacgctACCAGCGCCGACATCGCCGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_23460,TCGGCTGCCTTCCTCACTGCTATAAAT,285,292,QRLLQSF,855,876,21,aacctccagagaggcaacgctCAGCGGCTGCTGCAGAGCTTCgccagacaagcagctaccgca,2,2
+"Tick-borne encephalitis virus,TBEV-E,80,,#43,TBEV-E-80",Def,7aa,seq_26342,TCGGCTTACAGACTCACGCCAGCCCTC,337,344,CRIPVRA,1011,1032,21,aacctccagagaggcaacgctTGCCGGATCCCCGTGCGGGCCgccagacaagcagctaccgca,2,2
+"Neurotrophin,NGF,No,,#1,NGF",Def,7aa,seq_18110,TCGGCTTACGCACACGTGGATTTGAAC,204,211,IRIDTAC,612,633,21,aacctccagagaggcaacgctATCCGGATCGACACCGCCTGCgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP1,U33047.1,,#96,TMEV-VP1-U33047.1",Def,7aa,seq_13026,TCGGCTTACTCACTCATATATTCCCTG,140,147,VSSVLRW,420,441,21,aacctccagagaggcaacgctGTGAGCAGCGTGCTGCGGTGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS7,No,,#74,HSV-2-pUS7",Def,7aa,seq_16728,TCGGCTTACTGCCACACATACATGAGC,186,193,LPFSAPR,558,579,21,aacctccagagaggcaacgctCTGCCCTTCAGCGCCCCCCGGgccagacaagcagctaccgca,3,3
+"Lectin,ConA,No,,#16,ConA",Def,7aa,seq_2233,TCGGCTTATATCCTTCAGTATACGAAC,23,30,HIGIDIK,69,90,21,aacctccagagaggcaacgctCACATCGGCATCGACATCAAGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_3465,TCGGTACAAACCATCGTACCTACCATC,35,42,FDFFSRV,105,126,21,aacctccagagaggcaacgctTTCGACTTCTTCAGCCGGGTGgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/C Hc,No,,#20,BoNT/C Hc",Def,7aa,seq_24221,TCGGTACACACAAGCCCACGAAGATAT,299,306,TRVRGGD,897,918,21,aacctccagagaggcaacgctACCCGGGTGCGGGGCGGCGACgccagacaagcagctaccgca,2,2
+"Neurotrophin,NGF,No,,#1,NGF",Def,7aa,seq_5067,TCGGTACATAGATGCATGCCCGTCTAC,52,59,TVDPKLF,156,177,21,aacctccagagaggcaacgctACCGTGGACCCCAAGCTGTTCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_35280,TCGGTACCAGCAATTAAAGACTGGCTC,580,587,HIPFPLA,1740,1761,21,aacctccagagaggcaacgctCACATCCCCTTCCCCCTGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL10,No,,#53,HSV-1-pUL10",Def,7aa,seq_31544,TCGGTACCCATCCACCAACCTTCCCAC,447,454,EPIYDTV,1341,1362,21,aacctccagagaggcaacgctGAGCCCATCTACGACACCGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40458,TCGGTACCTGGAAGTACTTCTGCACAC,1529,1536,NDPAAAA,4587,4608,21,aacctccagagaggcaacgctAACGACCCCGCCGCCGCCGCCgccagacaagcagctaccgca,2,2
+"Japanese encephalitis virus,JEV-E,SA14-5-3,,#37,JEV-E-SA14-5-3",Def,7aa,seq_32514,TCGGTACCTTCATACACATACTCCAAG,471,478,GVNARDR,1413,1434,21,aacctccagagaggcaacgctGGCGTGAACGCCCGGGACCGGgccagacaagcagctaccgca,2,2
+"Measles virus,MV-F,Edmonston,,#78,MV-F-Edmonston",Def,7aa,seq_19794,TCGGTACGAAGGAATATATCAGGCAAT,226,233,PISAEIS,678,699,21,aacctccagagaggcaacgctCCCATCAGCGCCGAGATCAGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41894,TCGGTACGCACCAAGACAGCAGGAATT,3043,3050,PREPHSP,9129,9150,21,aacctccagagaggcaacgctCCCCGGGAGCCCCACAGCCCCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/D Hc,No,,#21,BoNT/D Hc",Def,7aa,seq_22437,TCGGTACGCAGACGTACGTCAACCTAG,267,274,TGNPITI,801,822,21,aacctccagagaggcaacgctACCGGCAACCCCATCACCATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL27,No,,#68,HSV-2-pUL27",Def,7aa,seq_35460,TCGGTAGACGCAAACCTACACACATTC,590,597,GTCYSRP,1770,1791,21,aacctccagagaggcaacgctGGCACCTGCTACAGCCGGCCCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H1N1,,#87,H1N1-HA",Def,7aa,seq_34397,TCGGTAGCTAGCCTCACACATATCTTC,534,541,TVASSLV,1602,1623,21,aacctccagagaggcaacgctACCGTGGCCAGCAGCCTGGTGgccagacaagcagctaccgca,3,3
+"Influenza A virus,HA,H5N1,,#86,H5N1-HA",Def,7aa,seq_34435,TCGGTAGGCAGAAACCCGTACAGCCAC,535,542,ASSLALA,1605,1626,21,aacctccagagaggcaacgctGCCAGCAGCCTGGCCCTGGCCgccagacaagcagctaccgca,2,2
+"Tick-borne encephalitis virus,TBEV-E,80,,#43,TBEV-E-80",Def,7aa,seq_30710,TCGGTATACACATTCGAATCTGTCAGT,427,434,GFLSSIG,1281,1302,21,aacctccagagaggcaacgctGGCTTCCTGAGCAGCATCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41331,TCGGTATACGCCCGCCTTCCTACAATC,2414,2421,SMTPVAV,7242,7263,21,aacctccagagaggcaacgctAGCATGACCCCCGTGGCCGTGgccagacaagcagctaccgca,2,2
+"Herpes B virus,Glycoprotein D,No,,#114,BV-G",Def,7aa,seq_27567,TCGGTATCATGACTTAAATCAGGCCAG,361,368,VYLVRRR,1083,1104,21,aacctccagagaggcaacgctGTGTACCTGGTGCGGCGGCGGgccagacaagcagctaccgca,2,2
+"Bornavirus,BDV-G,/,,#83,BDV-G",Def,7aa,seq_9750,TCGGTATCCACATGTCATCAAACCATT,102,109,TVKGCLN,306,327,21,aacctccagagaggcaacgctACCGTGAAGGGCTGCCTGAACgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/F Hc,No,,#23,BoNT/F Hc",Def,7aa,seq_2911,TCGGTATCCATCAATAAGGACATGAGT,30,37,SINGDVY,90,111,21,aacctccagagaggcaacgctAGCATCAACGGCGACGTGTACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS4,No,,#71,HSV-2-pUS4",Def,7aa,seq_681,TCGGTATCCTCACAGACGCGAAGGCAT,7,14,LLLLFVL,21,42,21,aacctccagagaggcaacgctCTGCTGCTGCTGTTCGTGCTGgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_22004,TCGGTATGTACACACCCAGGCTTACAT,259,266,EWSLAIP,777,798,21,aacctccagagaggcaacgctGAGTGGAGCCTGGCCATCCCCgccagacaagcagctaccgca,2,2
+"Rabies virus,RV-G,B2c,,#27,RV-G-B2c",Def,7aa,seq_5989,TCGGTATGTATGAAGCAACCCTCATAG,61,68,TGVVTEA,183,204,21,aacctccagagaggcaacgctACCGGCGTGGTGACCGAGGCCgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_26466,TCGGTGCAAGGGAACACTCATGCCAAT,340,347,HTNATAD,1020,1041,21,aacctccagagaggcaacgctCACACCAACGCCACCGCCGACgccagacaagcagctaccgca,2,2
+"Enterovirus 71,VP2,No,,#91,EV71-VP2",Def,7aa,seq_17083,TCGGTGCATATCAGTACGCACGTCATC,191,198,TIIVPYI,573,594,21,aacctccagagaggcaacgctACCATCATCGTGCCCTACATCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL10,No,,#53,HSV-1-pUL10",Def,7aa,seq_5865,TCGGTGCATATCCTTGCGGCCATACAC,59,66,FYATASS,177,198,21,aacctccagagaggcaacgctTTCTACGCCACCGCCAGCAGCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_32289,TCGGTGCCCTTCTACGCTCGCTCACAC,465,472,FHSRPQH,1395,1416,21,aacctccagagaggcaacgctTTCCACAGCCGGCCCCAGCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL19,No,,#63,HSV-1-pUL19",Def,7aa,seq_40048,TCGGTGCGCTGACATCCACACGCAAGC,1261,1268,HLNGASP,3783,3804,21,aacctccagagaggcaacgctCACCTGAACGGCGCCAGCCCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL35,No,,#46,HSV-1-pUL35",Def,7aa,seq_9721,TCGGTGCGTTTCAACCCTGATACGCAT,101,108,VVREPST,303,324,21,aacctccagagaggcaacgctGTGGTGCGGGAGCCCAGCACCgccagacaagcagctaccgca,2,2
+"Measles virus,MV-F,Edmonston,,#78,MV-F-Edmonston",Def,7aa,seq_25489,TCGGTGGAAATAATGAAATGTTGCCGC,322,329,ATQGYLI,966,987,21,aacctccagagaggcaacgctGCCACCCAGGGCTACCTGATCgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV2,,#118,PV2-VP1",Def,7aa,seq_1204,TCGGTGGATACCAGTGCATATGGAAAC,12,19,VTRNALT,36,57,21,aacctccagagaggcaacgctGTGACCCGGAACGCCCTGACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_37961,TCGGTGGCATCAAACCAATGATGATAG,807,814,ASDNNDR,2421,2442,21,aacctccagagaggcaacgctGCCAGCGACAACAACGACCGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41162,TCGGTGGCCATACTGCAATACTGAAAC,2244,2251,PDDYTEY,6732,6753,21,aacctccagagaggcaacgctCCCGACGACTACACCGAGTACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL10,No,,#66,HSV-2-pUL10",Def,7aa,seq_24197,TCGGTGGCCTCGAACCAACGATTACAC,298,305,ACEHYHT,894,915,21,aacctccagagaggcaacgctGCCTGCGAGCACTACCACACCgccagacaagcagctaccgca,2,2
+"Theilers murine encephalomyelitis virus,VP1,DQ401688.1,,#100,TMEV-VP-DQ401688.1",Def,7aa,seq_4844,TCGGTGTAATCCCTGACATCAGCAATG,50,57,NMETTFN,150,171,21,aacctccagagaggcaacgctAACATGGAGACCACCTTCAACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_38287,TCGGTGTACTCATGCATTCACACCAAT,847,854,GVCDELA,2541,2562,21,aacctccagagaggcaacgctGGCGTGTGCGACGAGCTGGCCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS6,No,,#72,HSV-2-pUS6",Def,7aa,seq_10437,TCGGTGTATGCCCTCCTACCATCACAC,110,117,DEARKHT,330,351,21,aacctccagagaggcaacgctGACGAGGCCCGGAAGCACACCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_40875,TCGGTGTCCTTAAGTCCGGAAACATTG,1949,1956,RPFAPSF,5847,5868,21,aacctccagagaggcaacgctCGGCCCTTCGCCCCCAGCTTCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",Def,7aa,seq_35181,TCGGTGTCCTTCAGCGCACACACAAGT,574,581,HQKTLFW,1722,1743,21,aacctccagagaggcaacgctCACCAGAAGACCCTGTTCTGGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL36,No,,#47,HSV-1-pUL36",Def,7aa,seq_41391,TCGGTTCACACATATCTAGATGCGTTG,2475,2482,DASLLSG,7425,7446,21,aacctccagagaggcaacgctGACGCCAGCCTGCTGAGCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL14,No,,#49,HSV-1-pUL14",Def,7aa,seq_12405,TCGGTTCACACCCTCCCACACATCCTC,133,140,DLAEGWM,399,420,21,aacctccagagaggcaacgctGACCTGGCCGAGGGCTGGATGgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV1,,#115,PV1-VP1",Def,7aa,seq_35929,TCGGTTCACTCGCATCAACCCGCCAGC,621,628,EILFNNV,1863,1884,21,aacctccagagaggcaacgctGAGATCCTGTTCAACAACGTGgccagacaagcagctaccgca,2,2
+"Neurotrophin,MANF,No,,#8,MANF",Def,7aa,seq_1774,TCGGTTCATACCTAGACATATGCACAC,18,25,DLKDRDV,54,75,21,aacctccagagaggcaacgctGACCTGAAGGACCGGGACGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_37790,TCGGTTCCATCAAATCAACCCTTCCGC,789,796,RRLYAVV,2367,2388,21,aacctccagagaggcaacgctCGGCGGCTGTACGCCGTGGTGgccagacaagcagctaccgca,2,2
+"Poliovirus,VP1,PV2,,#118,PV2-VP1",Def,7aa,seq_307,TCGGTTCCCACGCTGACATAAATGAAG,3,10,DLIEGVV,9,30,21,aacctccagagaggcaacgctGACCTGATCGAGGGCGTGGTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUL1,No,,#65,HSV-2-pUL1",Def,7aa,seq_9155,TCGGTTCCCAGACTCCCATCCATCAAC,95,102,PFLFAAG,285,306,21,aacctccagagaggcaacgctCCCTTCCTGTTCGCCGCCGGCgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 2,HSV-2-pUS8,No,,#75,HSV-2-pUS8",Def,7aa,seq_8768,TCGGTTCGAAGCAAGACTCGAGTCTTG,91,98,PLAIAYS,273,294,21,aacctccagagaggcaacgctCCCCTGGCCATCGCCTACAGCgccagacaagcagctaccgca,2,2
+"Pseudorabies virus,glycoprotein E,Becker,,#133,PRV-Becker-gE",Def,7aa,seq_1841,TCGGTTCGAATACTTCATCCATCAAAC,19,26,STEAPSL,57,78,21,aacctccagagaggcaacgctAGCACCGAGGCCCCCAGCCTGgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_28143,TCGGTTCGATTCCATCTACACATGTTC,372,379,VSSLLQL,1116,1137,21,aacctccagagaggcaacgctGTGAGCAGCCTGCTGCAGCTGgccagacaagcagctaccgca,2,2
+"Lectin,PSA Chain-C,No,,#15,PSA Chain-C",Def,7aa,seq_2599,TCGGTTCGTGGCATTCCTTGCTCCTTG,27,34,KEKLTLT,81,102,21,aacctccagagaggcaacgctAAGGAGAAGCTGACCCTGACCgccagacaagcagctaccgca,2,2
+"Chikungunya virus,CHIKV-Sp,Wuerzburg 1,,#129,CHIKV-Sp-1",Def,7aa,seq_39830,TCGGTTGAATTACTCCCTCGTTCACAC,1188,1195,CHPPKDH,3564,3585,21,aacctccagagaggcaacgctTGCCACCCCCCCAAGGACCACgccagacaagcagctaccgca,2,2
+"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",Def,7aa,seq_15372,TCGGTTGCAATAAATAAATGATCCAAG,169,176,QCAVEWI,507,528,21,aacctccagagaggcaacgctCAGTGCGCCGTGGAGTGGATCgccagacaagcagctaccgca,2,2
+"Adeno-associated virus,VP1,AAV9,,#127,AAV9-VP1",Def,7aa,seq_36500,TCGGTTTAATGCTACCCATACATACAC,664,671,DKLNSFI,1992,2013,21,aacctccagagaggcaacgctGACAAGCTGAACAGCTTCATCgccagacaagcagctaccgca,2,2
+"Canine adenovirus 2,Fiber,SH01,,#108,CAV-2-F-SH01",Def,7aa,seq_7425,TCGGTTTACAGATATACACCCAGCATG,76,83,ASLGPGL,228,249,21,aacctccagagaggcaacgctGCCAGCCTGGGCCCCGGCCTGgccagacaagcagctaccgca,2,2
+"Poliovirus,VP3,PV1,,#117,PV1-VP3",Def,7aa,seq_5079,TCGGTTTATTCCAACATGTCCTGCCAT,52,59,IPFDLSA,156,177,21,aacctccagagaggcaacgctATCCCCTTCGACCTGAGCGCCgccagacaagcagctaccgca,2,2
+"Influenza A virus,HA,H1N1,,#87,H1N1-HA",Def,7aa,seq_5008,TCGGTTTCAATGCGGATTGCCAGAATC,51,58,DSHNGKL,153,174,21,aacctccagagaggcaacgctGACAGCCACAACGGCAAGCTGgccagacaagcagctaccgca,2,2
+"Neurotoxin,TeNT Hc,No,,#25,TeNT Hc",Def,7aa,seq_15946,TCGGTTTCCACATATCCAGGAATGAAT,176,183,RLSSANL,528,549,21,aacctccagagaggcaacgctCGGCTGAGCAGCGCCAACCTGgccagacaagcagctaccgca,3,3
+"Measles virus,MV-H,Edmonston,,#77,MV-H-Edmonston",Def,7aa,seq_20512,TCGGTTTCTGTCAACATGCGTTGATGG,236,243,PNLSSKR,708,729,21,aacctccagagaggcaacgctCCCAACCTGAGCAGCAAGCGGgccagacaagcagctaccgca,2,2
+"Measles virus,MV-H,Edmonston,,#77,MV-H-Edmonston",Def,7aa,seq_9613,TCGGTTTCTTCCATTACGTCCACCAAC,100,107,DEVGLRT,300,321,21,aacctccagagaggcaacgctGACGAGGTGGGCCTGCGGACCgccagacaagcagctaccgca,2,2
+"Neurotoxin,BoNT/D Hc,No,,#21,BoNT/D Hc",Def,7aa,seq_2114,TCGGTTTCTTTCAGGAAACAATCGAAT,22,29,NAEVRVG,66,87,21,aacctccagagaggcaacgctAACGCCGAGGTGCGGGTGGGCgccagacaagcagctaccgca,2,2

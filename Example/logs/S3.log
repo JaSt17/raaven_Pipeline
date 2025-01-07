@@ -1,0 +1,24 @@
+09:52:17 - Saving unique fragments and barcodes to FASTA file
+09:52:17 - Number of unique fragment reads: 12848
+09:52:17 - Number of unique barcode reads: 16426
+09:52:17 - Processing chunk 1
+09:52:18 - All chunks have been written to Example/library_barcodes.h5
+09:52:18 - Running Starcode clustering
+09:52:19 - Number of unique BC after Starcode reduction: 16426
+09:52:19 - Replacing BC with Starcode-reduced versions
+09:52:19 - Splitting reads into single-read and multi-read barcodes
+09:52:19 - Number of single-read barcodes: 15396
+09:52:19 - Number of multi-read barcodes: 1030
+09:52:19 - Splitting multi-read barcodes into clean and chimeric
+09:52:19 - Extracting chimeric barcodes with maximal read ratio above 1.0
+09:52:19 - Combining tables to create final output
+09:52:19 - Number of barcodes-fragment pairs sequenced more than once: 1147
+09:52:19 -   Number of barcodes mapping to only one fragment: 913
+09:52:19 -   Number of barcodes mapping to more than one fragment: 234
+09:52:19 -       From these 0 are clean barcodes (ratio above 1.0)
+09:52:19 -       From these 234 are chimeric barcodes (ratio below 1.0)
+09:52:19 - Number of barcodes-fragment pairs sequenced only once: 15396
+09:52:19 - Definitiv barcodes saved to Example/library_barcodes.csv
+09:52:19 - Chimeric barcodes saved to Example/library_barcodes_chimeric.csv
+09:52:19 - Single barcodes saved to Example/library_barcodes_single.csv
+09:52:19 - Total execution time: 0:00:02.422421

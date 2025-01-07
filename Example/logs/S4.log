@@ -1,0 +1,28 @@
+09:53:39 - Processing AAV23_R1.fastq.gz with 2500 reads
+09:53:40 - bbduk2 extraction summary:
+Input:                  	2500 reads 		250000 bases.
+KTrimmed:               	4828 reads (193.12%) 	174536 bases (69.81%)
+Low quality discards:   	0 reads (0.00%) 	0 bases (0.00%)
+Total Removed:          	267 reads (10.68%) 	189709 bases (75.88%)
+Result:                 	2233 reads (89.32%) 	60291 bases (24.12%)
+09:53:40 - Running Starcode clustering on unique barcodes from the full table
+09:53:40 - Finished processing AAV23_R1 found: 2233 barcode reads; 2214 unique barcodes; 2214 reduced barcodes
+09:53:40 - Processing Tissue1.fastq.gz with 2500 reads
+09:53:41 - bbduk2 extraction summary:
+Input:                  	2500 reads 		250000 bases.
+KTrimmed:               	3016 reads (120.64%) 	107302 bases (42.92%)
+Low quality discards:   	0 reads (0.00%) 	0 bases (0.00%)
+Total Removed:          	1320 reads (52.80%) 	218140 bases (87.26%)
+Result:                 	1180 reads (47.20%) 	31860 bases (12.74%)
+09:53:41 - Running Starcode clustering on unique barcodes from the full table
+09:53:42 - Finished processing Tissue1 found: 1180 barcode reads; 259 unique barcodes; 234 reduced barcodes
+09:53:42 - Processing Tissue2.fastq.gz with 2500 reads
+09:53:42 - bbduk2 extraction summary:
+Input:                  	2500 reads 		250000 bases.
+KTrimmed:               	2892 reads (115.68%) 	100426 bases (40.17%)
+Low quality discards:   	0 reads (0.00%) 	0 bases (0.00%)
+Total Removed:          	1530 reads (61.20%) 	223810 bases (89.52%)
+Result:                 	970 reads (38.80%) 	26190 bases (10.48%)
+09:53:42 - Running Starcode clustering on unique barcodes from the full table
+09:53:43 - Finished processing Tissue2 found: 970 barcode reads; 208 unique barcodes; 144 reduced barcodes
+09:53:43 - Total execution time: 0:00:03.854246

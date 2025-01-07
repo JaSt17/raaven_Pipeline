@@ -1,0 +1,21 @@
+09:51:58 - bbduk2 barcode extraction summary:
+Input:                  	25000 reads 		3775000 bases.
+KTrimmed:               	49768 reads (199.07%) 	3097969 bases (82.07%)
+Low quality discards:   	0 reads (0.00%) 	0 bases (0.00%)
+Total Removed:          	613 reads (2.45%) 	3116551 bases (82.56%)
+Result:                 	24387 reads (97.55%) 	658449 bases (17.44%)
+09:51:59 - bbduk2 fragment extraction summary:
+Input:                  	25000 reads 		3775000 bases.
+KTrimmed:               	49542 reads (198.17%) 	3235406 bases (85.71%)
+Low quality discards:   	0 reads (0.00%) 	0 bases (0.00%)
+Total Removed:          	2185 reads (8.74%) 	3295885 bases (87.31%)
+Result:                 	22815 reads (91.26%) 	479115 bases (12.69%)
+09:51:59 - Running vsearch to match fragment reads to the reference sequence.
+09:51:59 - Ratio of matching fragment reads to the reference sequence: 17900 of 22815 (78.46%)
+09:51:59 - Running seqkit pair to synchronize paired-end reads.
+09:52:00 - Paired reads: 17523
+09:52:00 - Unpaired barcode reads: 6864
+09:52:00 - Unpaired fragment reads: 377
+09:52:00 - Paired reads saved to: Example/barcode_fragment/barcode_Example.fastq.gz
+09:52:00 - Paired fragments saved to: Example/barcode_fragment/fragment_Example.fastq.gz
+09:52:00 - Total execution time: 0:00:01.913455

@@ -1,0 +1,6 @@
+09:57:26 - Loading data from Example/found_barcodes
+09:57:26 - Empty DataFrame in file found.Tissue1.csv
+09:57:26 - Empty DataFrame in file found.AAV23_R1.csv
+09:57:26 - Empty DataFrame in file found.Tissue2.csv
+09:57:26 - Error combining data: No objects to concatenate
+09:57:26 - No data loaded. Exiting.
