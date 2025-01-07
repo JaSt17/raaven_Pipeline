@@ -3,7 +3,7 @@
 #SBATCH --nodes=4
 #SBATCH --ntasks=4
 #SBATCH --cpus-per-task=48
-#SBATCH --time=48:00:00
+#SBATCH --time=24:00:00
 #SBATCH -A lu2024-2-8
 #SBATCH -o brave_analysis%j.out
 #SBATCH -e brave_analysis%j.err
@@ -19,9 +19,10 @@ conda activate python_pipeline
 
 # change the config to the BRAVE config and rerun the BRAVE pipeline
 cp Python_Scripts/configs/config_BRAVE.py Python_Scripts/config.py
-#./Python_Scripts/S1.py
-#./Python_Scripts/S2.py
-#./Python_Scripts/S3.py
-#./Python_Scripts/S4.py
+./Python_Scripts/S1.py
+# we are using the NNK S2 script for BRAVE since we are looking for multiple different fragment types (14aa, 22aa, etc)
+./Python_Scripts/S2_NNK.py
+./Python_Scripts/S3.py
+./Python_Scripts/S4.py
 ./Python_Scripts/S5.py
 ./Python_Scripts/S6.py

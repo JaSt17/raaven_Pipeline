@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=p007_analysis
-#SBATCH --nodes=12
-#SBATCH --ntasks=12
+#SBATCH --nodes=4
+#SBATCH --ntasks=4
 #SBATCH --cpus-per-task=48
-#SBATCH --time=48:00:00
+#SBATCH --time=8:00:00
 #SBATCH -A lu2024-2-8
 #SBATCH -o p007_analysis%j.out
 #SBATCH -e p007_analysis%j.err
@@ -19,7 +19,7 @@ conda activate python_pipeline
 
 # change the config file to p007
 cp Python_Scripts/configs/config_p007.py Python_Scripts/config.py
-#./Python_Scripts/S1.py
-#./Python_Scripts/S2.py
-./Python_Scripts/S3.py
-./Python_Scripts/S5.py
+./Python_Scripts/S1.py
+./Python_Scripts/S2.py
+#./Python_Scripts/S3.py
+#./Python_Scripts/S5.py
