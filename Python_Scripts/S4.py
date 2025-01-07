@@ -215,15 +215,15 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
 
     # Read the barcodes
     try:
+        # Open the FASTQ file and stream the records
         with gzip.open(out_name_BC, "rt") as handle:
-            reads_BC = list(SeqIO.parse(handle, "fastq"))
+            # Use a generator to process each record and create a DataFrame in one step
+            barcode_table = pd.DataFrame(
+                ({'ID': record.id, 'BC': str(record.seq)} for record in SeqIO.parse(handle, "fastq"))
+            )
     except Exception as e:
-        logger.error(f"Error reading FASTQ file {out_name_BC}: {e}")
+        print(f"Error reading FASTQ file {out_name_BC}: {e}")
         return None
-    # Create a table with the barcodes and the ID
-    ids = [record.id for record in reads_BC]
-    bcs = [str(record.seq) for record in reads_BC]
-    barcode_table = pd.DataFrame({'ID': ids, 'BC': bcs})
 
     # Starcode based barcode reduction
     # ============================
@@ -256,7 +256,6 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
         # Merge with lut_dna on 'LUTnr'
         foundFrags = foundFrags.merge(lut_dna, on=['LUTnr','Peptide'], how='inner')
 
-    
     # Save the found fragments
     # ============================
     foundFrags.sort_values(by='RNAcount', ascending=False, inplace=True)

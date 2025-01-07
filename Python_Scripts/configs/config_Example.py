@@ -136,14 +136,6 @@ config_S6 = {
         "DNAse_resistant_AAVs": ['include', 'DNA_AAVlib_DNAse_30cpc_1','DNA_AAVlib_DNAse_3cpc_1'],
         "Transported_AAVs": ['contains_include', "mRNA_30cpc_SN", "mRNA_30cpc_Th", "mRNA_30cpc_Ctx", "mRNA_3cpc_SN", "mRNA_3cpc_Th", "mRNA_3cpc_Ctx"],
     },
-    "backbone_seq": ["aacctccagagaggcaacg", "cagacaagcagctaccgca"],
-    # dictionary containing the information about how different structures should be trimmed
-    "trim_dict": {
-        "14aa": [2,44],
-        "14aaG4S": [14,56],
-        "14aaA5": [14,56],
-        "22aa": [2,68],
-    },
     # output file name for the final fragments summary
     "output_table": data_dir + "/final_fragments_summary.csv",
     "log_dir": log_dir,
