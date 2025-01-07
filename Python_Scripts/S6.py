@@ -11,24 +11,23 @@ Workflow:
     - add the reference sequence lengths to the combined data
     - Normalize the read counts in the DataFrame to adjust for difference in read depth 
     - Combine information of identical fragments in each group in a DataFrame and aggregate the data to get the following infomration
-        - bitScore: weighted average of bitScore
         - tCount: sum of tCount
-        - mismatches: median of mismatches
         - mCount: sum of mCount
         - BC: unique BCs
         - LUTnr: unique LUTnrs
         - RNAcount: sum of RNAcounts
         - Normalized_RNAcount: sum of Normalized_RNAcounts
         - BC_adjusted_count: log2 of BC_count * Normalized_RNAcount
-    for each unique fragment
-    - Save the processed data to a new CSV file
+    - Finally, cut the overhangs of the sequences based on the structure of the fragment (if necessary) and save the processed data to a new CSV file.
     
 Input:
     - Directory containing CSV files with fragment information
     - CSV file with library fragments
     - FASTA file with reference sequences
     - trim_dict: A dictionary with structure names as keys and lists of start and end positions as values
-
+    - backbone_seq: A list containing the backbone sequence
+    - sample_inputs: The path to the file containing the sample inputs and the corresponding group names
+    - output_table: Path to save the processed data
     
 Output:
     - CSV file with the processed data
@@ -331,7 +330,10 @@ def main():
     logger.info("Cutting overhangs of the sequences based on the structure of the fragment")
     
     # Cut the overhangs of the sequences based on the structure of the fragment
-    combined_data = cut_overhangs_vectorized(combined_data, config["backbone_seq"], config["trim_dict"])
+    try:
+        combined_data = cut_overhangs_vectorized(combined_data, config["backbone_seq"], config["trim_dict"])
+    except Exception as e:
+        logger.info("No overhangs and backbone sequence were provided. Skipping cutting overhangs.")
     
     # Save the processed data to a new CSV file
     combined_data.to_csv(config["output_table"], index=False)

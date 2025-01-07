@@ -2,7 +2,7 @@
 """
 Author: Jaro Steindorff
 
-This script merges the fragments found in the library with the information of the created fragments.
+This script merges the information from the library fragments with the information of the fragments in their reference.
 
 Workflow:
     - Loading both input files

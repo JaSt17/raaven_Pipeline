@@ -2,11 +2,12 @@
 """
 Author: Jaro Steindorff
 
-This script extracts barcodes and fragments from sequencing files, pairs them, and saves them in separate files.
+This script extracts barcodes and fragments from sequencing files, matches them to the reference, pairs them, and saves them in separate files.
 
 Workflow:
     - Use bbduk2.sh to extract barcodes from the given barcode sequencing file
     - Use bbduk2.sh to extract fragments from the given fragment sequencing file
+    - Use vsearch to match the fragment reads to the reference sequence
     - Pair the barcodes and fragments using seqkit pair
     - Save the paired barcodes and fragments in separate files
 

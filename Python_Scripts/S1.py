@@ -3,7 +3,8 @@
 Author: Jaro Steindorff
 
 This script reads a FASTA file given by the path in the config file and generates all possible 
-fragments of a given length from the nucleotide sequences in that give file. Than it creates a Table with information
+fragments of a given length from the nucleotide sequences in that give file. It translates the refrence in human optimized
+codon usage and saves that new reference file. Than it creates a Table with information
 of every fragment and writes it to a CSV file.
 
 Workflow:
@@ -21,6 +22,8 @@ Inputs for the script are:
     - output_name: The path to the output file
 
 Output of the script is:
+    - A CSV file containing a lookup table with the columns LUTnr, ID, Peptide, AAstart, AAstop, and Sequence
+    - A file with the human codon optimized reference sequences
     - A file containing all the generated fragments with the strutcture, start and end position, and the DNA sequence and protein sequence
 """
 

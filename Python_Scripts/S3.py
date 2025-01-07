@@ -2,20 +2,17 @@
 """
 Author: Jaro Steindorff
 
-This script maps the found fragments and barcodes to the LUT data.
-It then reduces the barcodes using the Starcode. And replaces the barcodes with the Starcode-reduced versions.
+This script reduces the barcodes using the Starcode. And replaces the barcodes with the Starcode-reduced versions.
 Finally it devides the barcodes into single-read and multi-read barcodes and splits the multi-read barcodes into clean and chimeric barcodes.
-Then we set all single-read barcodes to Mode 'Amb' and all clean multi-read barcodes to Mode 'Def'.
-The chimeric barcodes are set to Mode 'Amb' if the maximal read count divided by the total read count is below a certain threshold.
-Saves all found barcodes to a CSV file.
+Then we set all single-read barcodes to Mode 'Single' and all clean multi-read barcodes to Mode 'Def'.
+The chimeric barcodes are set to Mode 'Chimeric' if the maximal read count divided by the total read count is below a certain threshold.
+Saves all found barcodes to 3 different CSV files:
+    - Definitiv barcodes
+    - Chimeric barcodes
+    - Single barcodes
 
 Workflow:
-    - Load the LUT data
-    - Create a BLAST database from the LUT sequences
     - Save unique fragments and barcodes to a FASTA file
-    - Align unique fragments against the LUT database using BLASTn
-    - Read the BLAST output into a DataFrame
-    - Map every read to its corresponding LUTnr
     - Create a full table of all fragments that matched the LUT with their BLASTn results
         - This is done for every chunk of fragments and barcodes since the files are too large to process at once
     - Perform barcode reduction using Starcode clustering
@@ -35,11 +32,10 @@ Inputs for the script are:
 
 Output of the script is:
     - A CSV file containing the found barcodes with the following columns:
-        BC,LUTnr,bitScore,mismatches,tCount,mCount,Mode
+        BC,LUTnr,tCount,Reads,Peptide,mCount,Mode
 """
 
 import gzip
-import tables
 import gc
 import tempfile
 import subprocess
@@ -47,7 +43,6 @@ import multiprocessing
 from itertools import islice
 import pandas as pd
 from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 from datetime import datetime
 import logging
@@ -129,7 +124,7 @@ def load_frag_bc_reads_chunked(fragments_file: str, barcodes_file: str, chunk_si
             yield frag_chunk, bc_chunk
 
 
-def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
+def save_unique_fragments_barcodes(fragments_file: str, barcodes_file: str) -> None:
     """
     Save all found unique fragments and barcodes from the library to a FASTA file.
     
@@ -183,8 +178,6 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
         shell=True
     )
     logger.info(f"Number of unique barcode reads: {number_of_unique_barcodes.strip()}")
-
-    return out_name_1, out_name_2
 
 
 def create_full_table(lut_df: pd.DataFrame, reads_frag: list, reads_BC: list)-> pd.DataFrame:
@@ -425,7 +418,7 @@ def main():
     lut_df = pd.read_csv(config["in_name_LUT"])
     
     # Save unique fragments and barcodes as FASTA file
-    _, _ = save_unique_fragments_barcodes(config["fragment_file"], config["barcode_file"])
+    save_unique_fragments_barcodes(config["fragment_file"], config["barcode_file"])
     
     # output file_name
     output_file = config["out_name"].replace(".csv", ".h5")

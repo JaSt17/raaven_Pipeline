@@ -2,19 +2,16 @@
 """
 Author: Jaro Steindorff
 
-This script maps the found fragments and barcodes to the LUT data.
+This script creates a full table of all fragments with their corresponding barcodes from a NNK library.
 It then reduces the barcodes using the Starcode algorithm. And replaces the barcodes with the Starcode-reduced versions.
 Finally it devides the barcodes into single-read and multi-read barcodes and splits the multi-read barcodes into clean and chimeric barcodes.
-Saves all found barcodes to a CSV file.
+Saves all found barcodes to 3 different CSV files:
+    - Definitiv barcodes
+    - Chimeric barcodes
+    - Single barcodes
 
 Workflow:
-    - Load the LUT data
-    - Load the fragments and barcodes
-    - Create a BLAST database from the LUT sequences
     - Save unique fragments to a FASTA file
-    - Align unique fragments against the LUT database using BLASTn
-    - Read the BLAST output into a DataFrame
-    - Map every read to its corresponding LUTnr
     - Create a full table of all fragments that matched the LUT with their BLASTn results
     - Perform barcode reduction using Starcode clustering
     - Replace barcodes with Starcode-reduced versions
@@ -31,7 +28,7 @@ Inputs for the script are:
 
 Output of the script is:
     - A CSV file containing the found barcodes with the following columns:
-        BC,LUTnr,bitScore,tCount,mCount,Mode
+        BC,LUTnr,tCount,Reads,Peptide,mCount,Mode
 """
 
 import gzip
