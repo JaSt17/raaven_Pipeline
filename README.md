@@ -65,9 +65,9 @@ The pipeline uses the `bbduk2` tool from the BBmap suite to extract DNA sequence
 ```bash
    git clone https://github.com/BioInfoTools/BBMap.git
 ```
+
 **or**
 Download the zip file from their official website: https://sourceforge.net/projects/bbmap/
-
 
 2. Navigate to the BBmap directory and ensure bbduk2 is executable:
 
