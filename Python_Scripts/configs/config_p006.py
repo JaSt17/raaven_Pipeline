@@ -69,8 +69,8 @@ config_S2 = {
 config_S3 = {
     # input file names are extracted from the previous step
     "in_name_LUT": config_S1["output_csv"],
-    "barcode_file": config_S2["out_dir"] + "/barcode_" + config_S2["out_name"] + ".fastq.gz",
-    "fragment_file": config_S2["out_dir"] + "/fragment_" + config_S2["out_name"] + ".fastq.gz",
+    "barcode_file": config_S2["out_dir"] + "/combined_barcode_" + config_S2["out_name"] + ".fastq.gz",
+    "fragment_file": config_S2["out_dir"] + "/combined_fragment_" + config_S2["out_name"] + ".fastq.gz",
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
     "threshold": 1.0,
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue

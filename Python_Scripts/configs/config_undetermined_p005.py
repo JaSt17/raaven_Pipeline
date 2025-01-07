@@ -7,12 +7,12 @@ log_dir = data_dir + "/logs/"
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_barcode": data_dir + "/fastq_files/p005_R1.fastq.gz",
-    "in_name_fragment": data_dir + "/fastq_files/p005_R2.fastq.gz",
+    "in_name_barcode": data_dir + "/fastq_files/Undetermined_R1.fastq.gz",
+    "in_name_fragment": data_dir + "/fastq_files/Undetermined_R2.fastq.gz",
     "input_file": data_dir + "/input/reference_seq_p005.fasta",
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": data_dir + "/barcode_fragment",
-    "out_name": "p005",
+    "out_name": "undetermined_p005",
     # arguments for the bbduk2 tool to extract the barcode and fragment sequences
     "bbduk2_args_BC" : [
         "k=20",
@@ -46,6 +46,11 @@ config_S2 = {
         "rliteral=GCCAGACAAGCAGCTACCGCAG",
     ],
     "log_dir": log_dir,
+}
+
+# create a lookup dictionary for the configuration dictionaries
+config_lookup = {
+    "S2": config_S2,
 }
 
 def get_config(step: str) -> dict:
