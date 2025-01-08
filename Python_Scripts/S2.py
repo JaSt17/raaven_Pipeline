@@ -159,6 +159,7 @@ def main():
             f"vsearch --usearch_global - "
             f"--db {db} "
             "--id 1.0 "
+            "--minseqlength 1"
             f"--blast6out {vsearch_out.name} "
             f"--threads {threads}"
         ]
