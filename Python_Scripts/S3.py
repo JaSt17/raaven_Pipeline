@@ -447,6 +447,9 @@ def main():
     
     # read the full table from the output file
     full_table = pd.read_hdf(output_file, key='data')
+    
+    # remove the output file
+    subprocess.run(f"rm {output_file}", shell=True)
 
     # Perform Starcode barcode reduction and replace barcodes with reduced versions
     full_table = starcode_based_reduction_and_replace(full_table, config['barcode_file'], 'BC')

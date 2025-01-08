@@ -1,0 +1,174 @@
+Python Pipeline for Extracting Barcodes & Fragments and Creating a Quantified Output Table
+
+Overview and Key Clarifications
+    Literal Sequences:
+        Chosen based on the adapters used during library creation.
+        Serve as the anchors (“left” and “right” flanks) for identifying and extracting barcodes/fragments in raw sequencing reads.
+
+    Sequencing Setup:
+        Paired-End Illumina Reads (R1 and R2) without overlap.
+        Barcode is found on Read 1 (R1), while the fragment is on Read 2 (R2).
+
+    Software Environment:
+        bbduk2 version is mentioned in the README.
+        Other tools (e.g., starcode, seqkit) and Python packages are listed in env/pipeline.yml.
+
+    Distance & Threshold Configurations:
+        Hamming distances: ±2 for matching literals and ±1 for barcodes.
+        Ratio threshold for chimeric barcodes: 100% (no chimeric allowance).
+-----------------------------------------------------------------------------------------------------------------------
+Step 1: Fragment Generation and Translation
+    Generate all possible DNA inserts (fragments) from reference protein sequences using a 
+    sliding window approach and record metadata in a Lookup Table (LUT).
+    
+    Processes:
+        Translation & Back-Translation:
+            Translate DNA sequences to amino acids.
+            Back-translate amino acids to DNA using a Homo sapiens–optimized codon table.
+            Output: Reference DNA sequence file for fragment validation.
+
+        Fragmentation:
+            Sliding window approach generates fragments with defined insertion sizes.
+            Automatically accounts for variations in fragment overhangs.
+
+        Lookup Table (LUT) Creation:
+            Metadata includes:
+                Protein name of origin.
+                Fragment structure type.
+                Position within the protein.
+                Peptide sequence.
+
+    Output:
+        A comprehensive LUT detailing fragments, metadata, and references for downstream matching.
+-----------------------------------------------------------------------------------------------------------------------
+Step 2: Barcode and Fragment Extraction
+    This step isolates barcodes and fragments from raw Illumina FASTQ files using known
+    adapter-based “literal” sequences on both ends.
+
+    Processes:
+        Defining the Literals:
+            Left/Right Flanks based on library adapters.
+            Configurable Hamming distance (typically 2).
+
+        Barcode Extraction (R1):
+            Barcodes on Read 1.
+            Length variation: ±1 base.
+            Literal matching with Hamming distance of 2.
+
+        Fragment Extraction (R2):
+            Fragments on Read 2.
+            Exact length only (no frameshift).
+            Literal matching with Hamming distance of 2.
+
+        Matching to Reference Sequences:
+            Compare extracted fragments to reference DNA with 100% identity.
+            Non-matching fragments are discarded.
+
+        Pairing Barcodes with Fragments:
+            Use seqkit pair to link barcodes (R1) with fragments (R2).
+
+    Output:
+        Paired barcode–fragment FASTQ files for clustering and classification.
+-----------------------------------------------------------------------------------------------------------------------
+Step 3: Barcode Reduction and Classification
+    Create a comprehensive Barcode–Fragment table, cluster similar barcodes to correct
+    sequencing errors, and exclude ambiguous entries.
+
+    Processes:
+        Extracting Unique Fragments & Barcodes:
+            Collect unique barcodes and fragments for reference and diversity analysis.
+
+        Building the Full Table:
+            Merge barcode–fragments in manageable chunks.
+            Link each row to a LUT entry.
+
+        Barcode Clustering (Starcode):
+            Cluster barcodes within a Hamming distance of 1.
+            Replace original barcodes with cluster consensus versions.
+
+        Filtering Ambiguous Barcodes:
+            Single-Read Barcodes: Marked as ambiguous and excluded.
+            Multi-Read Barcodes: Exclude chimeric barcodes (threshold: 100%).
+
+        Generating the Final Table:
+            library_barcodes.csv: Contains valid barcode–fragment pairs.
+            Ambiguous barcodes are saved separately.
+
+    Output:
+        Cleaned and consolidated table linking barcodes to fragments.
+-----------------------------------------------------------------------------------------------------------------------
+Step 4: Sample Barcode Processing
+    Extract and process barcodes from RNA samples using the same general approach as in Step 2,
+    but now applying it to experimental data.
+
+    Processes:
+        Loading Data:
+            Load library fragments, LUT, and sample metadata.
+
+        Barcode Extraction (R1):
+            Apply ±1 base rule and Hamming distance of 2 for literals.
+
+        Barcode Clustering (Starcode):
+            Generate consensus barcodes (Hamming distance of 1).
+
+        Matching Barcodes with Fragments:
+            Append peptide sequences and metadata to results.
+
+        Summary Statistics:
+            Log read counts, barcodes, clusters, matched fragments, etc.
+
+    Output:
+        Per-sample CSV files with matched fragments and read frequencies.
+-----------------------------------------------------------------------------------------------------------------------
+Step 5: Data Merging (Library Fragments + Reference Positions)
+    Merge the library fragment data (from Steps 1–4) with additional positional information,
+    yielding an annotated table.
+
+    Processes:
+        Loading Data:
+            Load library fragments and positional info.
+
+        Merging & Annotation:
+            Merge LUT and peptide information.
+            Reorder and rename columns for clarity.
+
+        Saving Annotated Data:
+            Output CSV includes:
+                Fragment info.
+                Positional details.
+                Read counts.
+
+    Output:
+        Annotated library fragments CSV with positional data.
+-----------------------------------------------------------------------------------------------------------------------
+Step 6: Final Dataset Processing and Normalization
+    Combine data from multiple samples, normalize read counts to account for sequencing depth,
+    and optionally trim overhangs.
+
+    Processes:
+        Loading & Combining Data:
+            Integrate data from all samples.
+            Add sequence length info if required.
+
+        Subsetting Data:
+            Create and merge subsets for analysis.
+
+        Normalizing Read Counts:
+            Perform group-wise normalization.
+
+        Aggregating Identical Fragments:
+            Sum counts for identical fragments.
+            Track unique barcodes and LUT numbers.
+
+        Trimming Fragment Overhangs:
+            Remove backbones and adjust boundaries.
+
+        Saving the Final Output:
+            Save the dataset for statistical analysis or machine learning.
+
+    Output:
+        Final annotated dataset of barcodes and fragments.
+-----------------------------------------------------------------------------------------------------------------------
+Conclusion:
+    This pipeline efficiently links reference protein sequences to high-confidence barcode–fragment associations.
+    It is customizable for different sequencing platforms and quality requirements via configuration files.
