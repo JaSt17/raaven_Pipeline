@@ -135,7 +135,7 @@ Since proprietary data from rAAven Therapeutics cannot be published, a folder na
 
 Before running the pipeline, customize the configuration file. The config file is a Python script containing a dictionary with parameters for each pipeline step.
 
-Config files are stored in the `Python_Scripts/configs/` subdirectory.
+Config files are stored in the `configs/` subdirectory.
 This directory contains all configs that were used for the different libraries in our analysis.
 
 ├── configs  
@@ -150,22 +150,22 @@ This directory contains all configs that were used for the different libraries i
 │   ├── README.md  
 
 
- For the example data, use the provided `Python_Scripts/configs/config_Example.py` file in this directory.
+ For the example data, use the provided `configs/config_Example.py` file in this directory.
 
-**Note:** Detailed parameter explanations are available in `Python_Scripts/configs/README.md`.
+**Note:** Detailed parameter explanations are available in `configs/README.md`.
 
 ### Start the Pipeline
 
 After setting up the configuration file and verifying that all parameters are correctly defined, you can start the pipeline. The easiest way to execute it is by running the `run_pipeline.sh` script as follows:
 
 ```bash
-./Bash_scripts/run_pipeline.sh Python_Scripts/configs/example_config.py
+./Bash_scripts/run_pipeline.sh configs/example_config.py
 ```
 
 In case we want to run the pipeline with an NNK library instead of one that was designed with rational design (with a reference) we can also run the code like this:
 
 ```bash
-./Bash_scripts/run_pipeline.sh Python_Scripts/configs/example_config.py -nnk True
+./Bash_scripts/run_pipeline.sh configs/example_config.py -nnk True
 ```
 
 This way Step 2 and 3 of the pipeline will be run according of a design of a NNK library.
