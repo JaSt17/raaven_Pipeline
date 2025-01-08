@@ -19,7 +19,7 @@ conda activate python_pipeline
 
 # for p005
 # change the config filte to undetermined_p005.py
-cp Python_Scripts/configs/config_undetermined_p005.py Python_Scripts/config.py
+cp configs/config_undetermined_p005.py Python_Scripts/config.py
 # run the second step of the pipeline
 ./Python_Scripts/S2.py
 # rename the S2.log file to S2_undetermined_p005.log
@@ -27,7 +27,7 @@ mv raav-60/undetermined/logs/S2.log raav-60/undetermined/logs/S2_undetermined_p0
 
 # for p006
 # change the config filte to undetermined_p006.py
-cp Python_Scripts/configs/config_undetermined_p006.py Python_Scripts/config.py
+cp configs/config_undetermined_p006.py Python_Scripts/config.py
 # run the second step of the pipeline
 ./Python_Scripts/S2_NNK.py
 # rename the S2.log file to S2_undetermined_p006.log
@@ -35,7 +35,7 @@ mv raav-60/undetermined/logs/S2.log raav-60/undetermined/logs/S2_undetermined_p0
 
 # for p007
 # change the config filte to undetermined_p007.py
-cp Python_Scripts/configs/config_undetermined_p007.py Python_Scripts/config.py
+cp configs/config_undetermined_p007.py Python_Scripts/config.py
 # run the second step of the pipeline
 ./Python_Scripts/S2.py
 # rename the S2.log file to S2_undetermined_p007.log

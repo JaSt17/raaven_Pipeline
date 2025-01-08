@@ -18,7 +18,7 @@ source config_conda.sh
 conda activate python_pipeline
 
 # change the config to the BRAVE config and rerun the BRAVE pipeline
-cp Python_Scripts/configs/config_BRAVE.py Python_Scripts/config.py
+cp configs/config_BRAVE.py Python_Scripts/config.py
 ./Python_Scripts/S1.py
 # we are using the NNK S2 script for BRAVE since we are looking for multiple different fragment types (14aa, 22aa, etc)
 ./Python_Scripts/S2_NNK.py

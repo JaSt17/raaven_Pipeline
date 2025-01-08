@@ -18,7 +18,7 @@ source config_conda.sh
 conda activate python_pipeline
 
 # change the config to the Example config and rerun the pipeline
-cp Python_Scripts/configs/config_Example.py Python_Scripts/config.py
+cp configs/config_Example.py Python_Scripts/config.py
 ./Python_Scripts/S1.py
 ./Python_Scripts/S2.py
 ./Python_Scripts/S3.py

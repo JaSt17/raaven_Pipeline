@@ -18,7 +18,7 @@ source config_conda.sh
 conda activate python_pipeline
 
 # change the config file to p006
-cp Python_Scripts/configs/config_p006.py Python_Scripts/config.py
+cp configs/config_p006.py Python_Scripts/config.py
 #running only S2 and S3_NNK since p006 does not have reference data
 #./Python_Scripts/S2_NNK.py
 #./Python_Scripts/S3_NNK.py
