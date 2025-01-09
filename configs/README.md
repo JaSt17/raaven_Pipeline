@@ -109,7 +109,7 @@ There are two global parameters that **must** be set:
 
 ## Config_S4
 
-1. **input_table, in_name_LUT**  
+1. **input_table, in_name_LUT, chunk_size**
    - Set according to the names given in **Config_S1** and **Config_S3**.
 
 2. **sample_inputs**  

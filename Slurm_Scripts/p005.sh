@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=p005_analysis
-#SBATCH --nodes=4
-#SBATCH --ntasks=4
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
 #SBATCH --cpus-per-task=48
-#SBATCH --time=8:00:00
+#SBATCH --time=24:00:00
 #SBATCH -A lu2024-2-8
 #SBATCH -o p005_analysis%j.out
 #SBATCH -e p005_analysis%j.err

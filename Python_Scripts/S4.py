@@ -36,7 +36,9 @@ from datetime import datetime
 import pandas as pd
 import multiprocessing
 import gzip
+import gc
 from Bio import SeqIO
+from itertools import islice
 # local import
 from config import get_config
 
@@ -153,8 +155,47 @@ def extract_summary(stdout: str) -> str:
     return None
 
 
+def load_barcodes_chunked(barcodes_file: str, chunk_size: int):
+    """
+    Load barcodes in chunks from FASTQ files.
+
+    Parameters:
+        barcodes_file (str): Path to the barcodes FASTQ file.
+        chunk_size (int): Number of records to read in each chunk.
+
+    Yields:
+        tuple: A chunk of fragment reads and barcode reads as lists of SeqRecords.
+    """
+    with gzip.open(barcodes_file, "rt") as bc_handle:
+        bc_iter = SeqIO.parse(bc_handle, "fastq")
+        while True:
+            bc_chunk = list(islice(bc_iter, chunk_size))
+            if not bc_chunk:
+                break
+            yield bc_chunk
+            
+            
+def create_full_table(reads_BC: list)-> pd.DataFrame:
+    """
+    Create a full table of all found fragments with their corresponding barcodes and matching LUT data.
+    
+    Parameters:
+        reads_BC (list): List of barcodes as SeqRecords
+    
+    Returns:
+        pd.DataFrame: DataFrame containing the full table barcodes and ids
+    """
+    # Create full table with all found fragments and barcodes combinations
+    full_table = pd.DataFrame({
+        'ID': [record.id for record in reads_BC],
+        'BC': [str(rec.seq) for rec in reads_BC]
+    })
+
+    return full_table
+
+
 def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: pd.DataFrame,
-                    lut_dna: pd.DataFrame, threads:int, bbduk2_args: list) -> dict:
+                    lut_dna: pd.DataFrame, threads:int, bbduk2_args: list, chunk_size:int) -> dict:
     """
     Analyze a single tissue sample based on its index in the load list.
 
@@ -176,17 +217,8 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
     log_entry['Name'] = os.path.basename(file_path).replace('.fastq.gz', '')
     
     path = os.path.join(data_dir, file_path)
-
-    # Count the reads in the FASTQ file
-    try:
-        with gzip.open(path, "rt") as handle:
-            read_count = sum(1 for _ in SeqIO.parse(handle, "fastq"))
-    except Exception as e:
-        logger.info(f"Error reading FASTQ file {path}: {e}")
-        return None
-    log_entry['Reads'] = read_count
     
-    logger.info(f"Processing {file_path} with {read_count} reads")
+    logger.info(f"Processing {file_path}")
 
     # Extraction of barcodes
     # ============================
@@ -199,7 +231,7 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
         f"in={path}",
         f"out={out_name_BC}",
     ]
-    stdout, stderr = run_command(bbduk2_command, f"bbduk2 barcode extraction for {file_path}")
+    _ , stderr = run_command(bbduk2_command, f"bbduk2 barcode extraction for {file_path}")
     
     # Extract summary from the fragments extraction
     summary = extract_summary(stderr)
@@ -213,18 +245,32 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
     else:
         log_entry['BC_reads'] = 0
 
-    # Read the barcodes
-    try:
-        with gzip.open(out_name_BC, "rt") as handle:
-            reads_BC = list(SeqIO.parse(handle, "fastq"))
-    except Exception as e:
-        logger.error(f"Error reading FASTQ file {out_name_BC}: {e}")
-        return None
-    # Create a table with the barcodes and the ID
-    ids = [record.id for record in reads_BC]
-    bcs = [str(record.seq) for record in reads_BC]
-    barcode_table = pd.DataFrame({'ID': ids, 'BC': bcs})
+    # Chunked reading of barcodes
+    # ============================
+    # temp h5 output file_name
+    output_file = os.path.join(out_dir, f"barcodes.h5")
+    write_mode = 'w'
+    
+    for bc_chunk in load_barcodes_chunked(out_name_BC, chunk_size):
+        # Create a full table of all found fragments with their corresponding barcodes and matching LUT data
+        chunk_table = create_full_table(bc_chunk)
+        
+        # Save the full table to an h5 file
+        chunk_table.to_hdf(output_file, key='data', mode=write_mode, format='table', append=True)
 
+        # After the first write, change mode to 'append'
+        write_mode = 'a'
+        print("chunk written")
+        # Explicitly free memory
+        del bc_chunk, chunk_table
+        gc.collect()
+    
+    # read in the full table
+    barcode_table = pd.read_hdf(output_file, key='data')
+    
+    # remove the h5 file
+    os.remove(output_file)
+    
     # Starcode based barcode reduction
     # ============================
     table_BC_sc = starcode_based_barcode_reduction(barcode_table)
@@ -263,7 +309,7 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
     
     foundFrags.to_csv(output_filename, index=False)
     
-    logger.info(f"Finished processing {log_entry['Name']} found: {log_entry['BC_reads']} barcode reads; {log_entry['unique_BCs']} unique barcodes; {log_entry['scBCs']} reduced barcodes")    
+    logger.info(f"Finished processing {file_path} found: {log_entry['BC_reads']} barcode reads; {log_entry['unique_BCs']} unique barcodes; {log_entry['scBCs']} reduced barcodes")    
     
     return log_entry
 
@@ -306,12 +352,13 @@ def main():
     log_table = []
     # get the settings for the barcode extraction
     bbduk2_args_BC = config["bbduk2_args"]
+    chunk_size = config["chunk_size"]
 
     # Analyze each tissue sample
     for row in load_list.iterrows():
         # Extract the file name from the first column
         file_path = row[1]['Sample']
-        log_entry = analyze_tissue(file_path, data_dir, output_dir, library_fragments, lut_dna, threads, bbduk2_args_BC)
+        log_entry = analyze_tissue(file_path, data_dir, output_dir, library_fragments, lut_dna, threads, bbduk2_args_BC, chunk_size)
         if log_entry:
             log_table.append(log_entry)
 

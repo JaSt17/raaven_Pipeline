@@ -75,7 +75,7 @@ config_S3 = {
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
     "threshold": 1.0,
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue
-    "chunk_size": 10000000,
+    "chunk_size": 10,
     # output file name for the library barcodes
     "out_name": data_dir + "/library_barcodes.csv",
     "log_dir": log_dir,
@@ -85,6 +85,7 @@ config_S4 = {
     # input file names are extracted from the previous step
     "input_table": config_S3["out_name"],
     "in_name_LUT": config_S1["output_csv"],
+    "chunk_size": config_S3["chunk_size"],
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": data_dir + "/input/load_list.csv",
     # directory containing the fastq files for the samples

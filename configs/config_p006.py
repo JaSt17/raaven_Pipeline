@@ -83,7 +83,8 @@ config_S3 = {
 config_S4 = {
     # input file names are extracted from the previous step
     "input_table": config_S3["out_name"],
-    "in_name_LUT": config_S1["output_csv"],
+    "in_name_LUT": None,
+    "chunk_size": config_S3["chunk_size"],
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": data_dir + "/input/load_list.csv",
     # directory containing the fastq files for the samples

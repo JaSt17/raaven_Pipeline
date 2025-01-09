@@ -37,13 +37,13 @@ Output of the script is:
 
 import gzip
 import gc
+import os
 import tempfile
 import subprocess
 import multiprocessing
 from itertools import islice
 import pandas as pd
 from Bio import SeqIO
-from Bio.Seq import Seq
 from datetime import datetime
 import logging
 import sys
@@ -449,7 +449,7 @@ def main():
     full_table = pd.read_hdf(output_file, key='data')
     
     # remove the output file
-    subprocess.run(f"rm {output_file}", shell=True)
+    os.remove(output_file)
 
     # Perform Starcode barcode reduction and replace barcodes with reduced versions
     full_table = starcode_based_reduction_and_replace(full_table, config['barcode_file'], 'BC')
