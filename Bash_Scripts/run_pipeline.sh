@@ -69,25 +69,27 @@ cp "$CONFIG_FILE_PATH" Python_Scripts/config.py
 
 # Execute the pipeline steps
 if [ "$NNK_FLAG" = false ]; then
-echo "Running S1.py..."
-./Python_Scripts/S1.py
-
-if [ "$NNK_FLAG" = true ]; then
-  echo "Running S2_NNK.py..."
-  ./Python_Scripts/S2_NNK.py
-  echo "Running S3_NNK.py..."
-  ./Python_Scripts/S3_NNK.py
-else
-  echo "Running S2.py..."
+  echo "Running Step 1..."
+  ./Python_Scripts/S1.py
+  echo "Running Step 2..."
   ./Python_Scripts/S2.py
-  echo "Running S3.py..."
+  echo "Running Step 3..."
   ./Python_Scripts/S3.py
+else
+  echo "Running Step 2 for NKK library..."
+  ./Python_Scripts/S2_NNK.py
+  echo "Running Step 3 for NKK library..."
+  ./Python_Scripts/S3_NNK.py
 fi
 
-echo "Running S4.py..."
+  echo "Running Step 4..."
 ./Python_Scripts/S4.py
 
-echo "Running S5.py..."
+  echo "Running Step 5..."
 ./Python_Scripts/S5.py
 
+  echo "Running Step 6..."
+./Python_Scripts/S6.py
+
 echo "Pipeline execution completed."
+
