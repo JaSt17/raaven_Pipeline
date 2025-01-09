@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=example_analysis
-#SBATCH --nodes=4
-#SBATCH --ntasks=4
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
 #SBATCH --cpus-per-task=48
-#SBATCH --time=2:00:00
+#SBATCH --time=1:00:00
 #SBATCH -A lu2024-2-8
 #SBATCH -o example_analysis%j.out
 #SBATCH -e example_analysis%j.err
