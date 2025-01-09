@@ -1,1 +1,2 @@
-BC,LUTnr,tCount,Reads,Peptide,mCount,Mode,RNAcount,Origion_seq,AAstart,AAend,Structure,Sequence,start,end,width,LibID
+BC,LUTnr,tCount,Sequence,Peptide,mCount,Mode,RNAcount,Origion_seq,AAstart,AAend,Structure,start,end,width,LibID
+TCGCTACATAGCCACACAGCTACCTAG,seq_38172,3,GCCAGCCTGGCCAGCCTGCGG,ASLASLR,3,Def,1,"Herpes simplex virus type 1,HSV-1-pUL37,No,,#48,HSV-1-pUL37",830,837,7aa,2490,2511,21,Example

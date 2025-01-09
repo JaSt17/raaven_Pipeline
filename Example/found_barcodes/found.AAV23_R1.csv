@@ -1,1 +1,5 @@
-BC,LUTnr,tCount,Reads,Peptide,mCount,Mode,RNAcount,Origion_seq,AAstart,AAend,Structure,Sequence,start,end,width,LibID
+BC,LUTnr,tCount,Sequence,Peptide,mCount,Mode,RNAcount,Origion_seq,AAstart,AAend,Structure,start,end,width,LibID
+TCGAAATGTGTAAAGCCACACGTCCAG,seq_32710,2,CACACCAAGAAGCGGCAGATC,HTKKRQI,2,Def,1,"Vesicular stomatitis Indiana virus,G protein,Orsay,,#130,VSV-Orsay-G",477,484,7aa,1431,1452,21,Example
+TCGAATTATTCATACATATACAGCATT,seq_20370,3,AGCCGGCCCTGGGTGCGGGGC,SRPWVRG,3,Def,1,"Influenza A virus,HA,H3N2,,#89,H3N2-HA",234,241,7aa,702,723,21,Example
+TCGATGCACACATGTCAGTCTACACTG,seq_37316,2,ACCCCCGCCGGCGAGGTGATG,TPAGEVM,2,Def,1,"Herpes simplex virus type 1,HSV-1-pUL22,No,,#55,HSV-1-pUL22",737,744,7aa,2211,2232,21,Example
+TCGATTGAATCCTACGCGCATATGTGC,seq_13505,2,CCCGAGATGGGCATCGGCGAC,PEMGIGD,2,Def,1,"Pseudorabies virus,glycoprotein E,TJ,,#134,PRV-TJ-gE",146,153,7aa,438,459,21,Example
