@@ -4,6 +4,8 @@ This Git repository contains all the code and notebooks used to process raw Illu
 
 In general, this pipeline enables the analysis of Illumina short reads from AAV libraries and tissue samples to identify recombinant AAV variants found in different cell types.
 
+**Note:** For better organization, each directory contains its own dedicated README file describing its contents and purpose.
+
 ---
 
 ## Table of Contents
@@ -32,6 +34,9 @@ In general, this pipeline enables the analysis of Illumina short reads from AAV 
       - [**Step 4: Sample Barcode Processing**](#step-4-sample-barcode-processing)
       - [**Step 5: Data Merging**](#step-5-data-merging)
       - [**Step 6: Final Dataset Processing and Normalization**](#step-6-final-dataset-processing-and-normalization)
+  - [License](#license)
+  - [Acknowledgments](#acknowledgments)
+  - [Contact Information](#contact-information)
 
 ---
 
@@ -259,3 +264,15 @@ This list provides a concise explanation of each step in the pipeline workflow. 
 ---
 
 **Note:** A more detailed explaination of the Workflow can be found in `Supplementaries/Workflow.pdf`
+
+## License
+
+This pipeline free to use, modify, and distribute.
+
+## Acknowledgments
+
+I sincerely thank **rAAVen Therapeutics** for their support, guidance, and the opportunity to contribute to this project. Special thanks to my supervisor at Lund University for their mentorship and encouragement throughout this journey.
+
+## Contact Information
+
+If there are any problems with the pipeline please file an issue on GitHub.

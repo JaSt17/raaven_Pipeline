@@ -260,7 +260,6 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
 
         # After the first write, change mode to 'append'
         write_mode = 'a'
-        print("chunk written")
         # Explicitly free memory
         del bc_chunk, chunk_table
         gc.collect()
@@ -299,8 +298,12 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
     # Extract only BC that are in BCcount
     foundFrags = library_fragments.merge(BCcount, on='BC', how='inner')
     if lut_dna is not None:
+        # Drop the 'Sequence' column from lut_dna
+        lut_dna.drop(columns='Sequence', inplace=True)
         # Merge with lut_dna on 'LUTnr'
         foundFrags = foundFrags.merge(lut_dna, on=['LUTnr','Peptide'], how='inner')
+        # Rename the 'Reads' coulmn to 'Sequence'
+        foundFrags.rename(columns={'Reads': 'Sequence'}, inplace=True)
     
     # Save the found fragments
     # ============================

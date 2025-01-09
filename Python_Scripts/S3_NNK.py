@@ -191,7 +191,7 @@ def create_full_table(reads_frag: list, reads_BC: list)-> pd.DataFrame:
     unique_fragments = full_table['Reads'].unique()
     lutnrs_df = pd.DataFrame({'Reads': unique_fragments})
     # add the Peptide column to the DataFrame
-    lutnrs_df['Peptide'] = lutnrs_df['Reads'].apply(lambda x: translate(x[2:-2]))
+    lutnrs_df['Peptide'] = lutnrs_df['Reads'].apply(lambda x: translate(x))
     # change all * to M in the Peptide column
     lutnrs_df['Peptide'] = lutnrs_df['Peptide'].str.replace('*', 'M')
     # add a column with the LUTnr for each fragment

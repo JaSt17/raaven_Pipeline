@@ -83,8 +83,14 @@ def main():
     logger.info(f"Number of unique fragments created with the input file: {len(fragments_pos['LUTnr'].unique())}")
     logger.info(f"Percentage of fragments found in the library: {len(library_barcodes['LUTnr'].unique()) / len(fragments_pos['LUTnr'].unique()) * 100:.2f}%")
     
+    # Drop the 'Sequence' column from lut_dna
+    fragments_pos.drop(columns=['Sequence'], inplace=True)
+
     # merge library_barcodes with the LUT 
     library_barcodes = pd.merge(library_barcodes, fragments_pos, on=["LUTnr","Peptide"], how="inner")
+    
+    # Rename the 'Reads' coulmn to 'Sequence'
+    library_barcodes.rename(columns={"Reads": "Sequence"}, inplace=True)
     
     # remove unnecessary columns Reads,identity,alignmentLength,gapOpens,q_start,q_end,s_start,s_end,evalue,
     unessary_columns = ["Reads", "identity", "alignmentLength", "gapOpens", "q_start", "q_end", "s_start", "s_end", "evalue",'bitScore','mismatches',]
