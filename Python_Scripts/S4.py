@@ -298,8 +298,6 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
     # Extract only BC that are in BCcount
     foundFrags = library_fragments.merge(BCcount, on='BC', how='inner')
     if lut_dna is not None:
-        # Drop the 'Sequence' column from lut_dna
-        lut_dna.drop(columns='Sequence', inplace=True)
         # Merge with lut_dna on 'LUTnr'
         foundFrags = foundFrags.merge(lut_dna, on=['LUTnr','Peptide'], how='inner')
         # Rename the 'Reads' coulmn to 'Sequence'
@@ -332,6 +330,8 @@ def main():
         library_fragments = pd.read_csv(config["input_table"], dtype={7: str})
         if config["in_name_LUT"] is not None:
             lut_dna = pd.read_csv(config["in_name_LUT"])
+            # Drop the 'Sequence' column from lut_dna
+            lut_dna.drop(columns='Sequence', inplace=True)
         else:
             lut_dna = None
     except Exception as e:
