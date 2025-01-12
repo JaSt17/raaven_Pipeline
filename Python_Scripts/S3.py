@@ -428,7 +428,6 @@ def main():
     
     # Process fragments and barcodes in chunks
     for i, (frag_chunk, bc_chunk) in enumerate(load_frag_bc_reads_chunked(config["fragment_file"], config["barcode_file"], chunk_size)):
-        logger.info(f"Processing chunk {i + 1}")
 
         # Create full table for the chunk
         chunk_table = create_full_table(lut_df, frag_chunk, bc_chunk)

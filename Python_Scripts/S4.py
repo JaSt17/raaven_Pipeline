@@ -256,7 +256,7 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
         chunk_table = create_full_table(bc_chunk)
         
         # Save the full table to an h5 file
-        chunk_table.to_hdf(output_file, key='data', mode=write_mode, format='table', append=True)
+        chunk_table.to_hdf(output_file, key='data', mode=write_mode, format='table', append=(write_mode == 'a'))
 
         # After the first write, change mode to 'append'
         write_mode = 'a'
