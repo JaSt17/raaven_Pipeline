@@ -186,21 +186,35 @@ def create_full_table(reads_frag: list, reads_BC: list)-> pd.DataFrame:
         'Reads': [str(rec.seq) for rec in reads_frag],
         'BC': [str(rec.seq) for rec in reads_BC]
     })
+
+    return full_table
+
+
+def create_LUTnr_column(full_table: pd.DataFrame)-> pd.DataFrame:
+    """
+    Create a LUTnr column for the full table.
+
+    Parameters:
+        full_table (pd.DataFrame): DataFrame containing the full table with fragments and barcodes
+        
+    Returns:
+        pd.DataFrame: DataFrame containing the full table with the LUTnr column
+    """
+    logger.info("Creating LUTnr column")
     # create unique Lutnrs for each fragment and translate the fragment to a peptide
-    # create a DataFrame thatonly contains unique fragments
-    unique_fragments = full_table['Reads'].unique()
-    lutnrs_df = pd.DataFrame({'Reads': unique_fragments})
+    # get all unique pairs of framgements with barcodes
+    unique_pairs = full_table[['Reads', 'BC']].drop_duplicates()
     # add the Peptide column to the DataFrame
-    lutnrs_df['Peptide'] = lutnrs_df['Reads'].apply(lambda x: translate(x))
+    unique_pairs['Peptide'] = unique_pairs['Reads'].apply(lambda x: translate(x))
     # change all * to M in the Peptide column
-    lutnrs_df['Peptide'] = lutnrs_df['Peptide'].str.replace('*', 'M')
-    # add a column with the LUTnr for each fragment
-    lutnrs_df['LUTnr'] = lutnrs_df.index
+    unique_pairs['Peptide'] = unique_pairs['Peptide'].str.replace('*', 'M')
+    # add the LUTnr column to the DataFrame
+    unique_pairs['LUTnr'] = unique_pairs.index
     # add seq_ in front of the LUTnr
-    lutnrs_df['LUTnr'] = 'seq_' + lutnrs_df['LUTnr'].astype(str)
+    unique_pairs['LUTnr'] = 'seq_' + unique_pairs['LUTnr'].astype(str)
     
     # merge the lutnrs_df with the full table
-    full_table = full_table.merge(lutnrs_df, on='Reads', how='left')
+    full_table = full_table.merge(unique_pairs, on=['Reads', 'BC'], how='left')
 
     return full_table
 
@@ -440,6 +454,9 @@ def main():
     
     # Perform barcode reduction using Starcode clustering
     full_table = starcode_based_reduction_and_replace(full_table, config['barcode_file'], 'BC')
+    
+    # create LUTnr column
+    full_table = create_LUTnr_column(full_table)
 
     # Split reads into single-read and multi-read barcodes
     temp_table_single, temp_table_multi = split_reads_into_single_and_multi_read_barcodes(full_table)
