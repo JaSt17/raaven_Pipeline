@@ -1,0 +1,20 @@
+Group,count
+Plasmid_Library,39699
+DNAse_resistant_AAVs,38733
+Infective_AAVs,4446
+Sox10+_IC,3130
+Sox10+_striatum,2659
+Sox10-_striatum,2645
+Sox10-_IC,2598
+Sox10+_sort_pooled,2090
+Sox10-_sort_pooled,1381
+Medulla,1232
+Cerebellum,1187
+Fimbria,910
+Sox10+_midbrain,715
+Optic_tract,414
+Forebrain_ventricle,379
+Corpus_callosum,279
+Posterior_commisure ,203
+Stria_medularis,165
+Striatal_ventricle,127

@@ -39,7 +39,7 @@ def plot_top_counts(df: pd.DataFrame, top_n: int, group_col: str=None, y_axis: s
         plt.ylabel(y_label)
     
     
-    return plt.show()
+    return plt
 
 
 def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, column: str, y_label: str=None):
@@ -129,7 +129,7 @@ def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, 
     ax.spines['right'].set_visible(False)
 
     # Return the plot
-    return plt.show()
+    return plt
 
 
 def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: int = 10000):
@@ -188,8 +188,8 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
     ax.spines['polar'].set_visible(False)
     
     # Generate colors using the 'bone' colormap
-    cmap = plt.get_cmap("bone")
-    colors = [cmap(i / (len(group_size) + 1)) for i in range(len(group_size) + 1)]
+    cmap = plt.get_cmap("mako")
+    colors = [cmap(0.1 + (i / (len(group_size) + 1)*0.8)) for i in range(len(group_size) + 1)]
     
     # Sort group sizes for consistent plotting (largest first)
     group_items = sorted(group_size.items(), key=lambda x: x[1], reverse=True)
@@ -295,7 +295,69 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
     ax.text(0, 0, 'Fragment Quantity per Group', ha='center', va='center', fontsize=12, color='black')
     
     # return the plot
-    return plt.show()
+    return plt
+
+def create_grouped_barplot(df, tissue_col, count_col, library_col):
+    """
+    Creates a grouped bar plot from a DataFrame. Shows the count values of found fragments in each group, split by library.
+
+    Parameters:
+    df : pandas.DataFrame
+        DataFrame containing the data about the tissue groups, count values, and libraries.
+        
+    tissue_col : str
+        Name of the column in the DataFrame that contains the groups.
+        
+    count_col : str
+        Name of the column in the DataFrame that contains the count values.
+        
+    library_col : str
+        Name of the column in the DataFrame that contains the libraries.
+
+    Returns:
+    plot : matplotlib.pyplot
+    """
+    # Pivot the DataFrame for easier plotting
+    pivot_df = df.pivot(index=tissue_col, columns=library_col, values=count_col)
+    
+    # Sort rows by total counts across all libraries
+    pivot_df['Total'] = pivot_df.sum(axis=1)
+    pivot_df = pivot_df.sort_values(by='Total', ascending=False).drop(columns='Total')
+    
+    # Plot setup
+    libraries = pivot_df.columns
+    x = np.arange(len(pivot_df))  # x locations for the groups
+    width = 0.2  # Width of each bar
+    spacing = 0.05  # Space between bars within a group
+
+    # Generate colors using the colormap
+    cmap = plt.get_cmap("twilight_shifted")
+    colors = [cmap(0.2 + (i / (len(libraries) + 1) * 0.8)) for i in range(len(libraries))]
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Create bars for each library
+    for i, (library, color) in enumerate(zip(libraries, colors)):
+        ax.bar(x + i * (width + spacing), pivot_df[library], width, label=library, color=color)
+
+    # Customization
+    ax.set_ylabel(f'Log10({count_col})', fontsize=10)
+    ax.set_title('Number of Fragments per Tissue', fontsize=12)
+    ax.set_xticks(x + (len(libraries) - 1) * (width + spacing) / 2) 
+    ax.set_xticklabels(pivot_df.index, fontsize=10, rotation=45, ha='right')  # Rotate labels at 45 degrees
+
+    ax.legend(title=library_col, fontsize=10)
+
+    # Set y-axis to log2 scale
+    ax.set_yscale('log', base=10)
+
+    # Remove the top and right spines
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+    plt.tight_layout()
+    return plt
+
 
 
 def plot_amino_acid_heatmap(df, group_name:str=None, structure_name:str=None):
@@ -358,4 +420,4 @@ def plot_amino_acid_heatmap(df, group_name:str=None, structure_name:str=None):
     plt.yticks(rotation=0)
     
     #return the plot
-    return plt.show()
+    return plt
