@@ -75,21 +75,25 @@ if [ "$NNK_FLAG" = false ]; then
   ./Python_Scripts/S2.py
   echo "Running Step 3..."
   ./Python_Scripts/S3.py
+  echo "Running Step 4..."
+  ./Python_Scripts/S4.py
+  echo "Running Step 5..."
+  ./Python_Scripts/S5.py
+  echo "Running Step 6..."
+  ./Python_Scripts/S6.py
+
 else
   echo "Running Step 2 for NKK library..."
   ./Python_Scripts/S2_NNK.py
   echo "Running Step 3 for NKK library..."
   ./Python_Scripts/S3_NNK.py
-fi
-
   echo "Running Step 4..."
-./Python_Scripts/S4.py
-
+  ./Python_Scripts/S4.py
   echo "Running Step 5..."
-./Python_Scripts/S5.py
-
-  echo "Running Step 6..."
-./Python_Scripts/S6.py
+  ./Python_Scripts/S5.py
+  echo "Running Step 6 for NKK library..."
+  ./Python_Scripts/S6_NNK.py
+fi
 
 echo "Pipeline execution completed."
 
