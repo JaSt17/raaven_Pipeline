@@ -132,31 +132,6 @@ def load_combined_data(dir_path: str, sample_inputs_path: str) -> pd.DataFrame:
     
     return combined_data
     
-    
-    
-def get_ref_sequence_length_df(file_path:str) -> pd.DataFrame:
-    """
-    Reads a FASTA file containing reference sequences and returns a DataFrame with sequence ids and lengths.
-    Args:
-        file_path (str): path to the file containing the reference sequences
-
-    Returns:
-        pd.DataFrame: DataFrame with the reference sequence ids and lengths
-    """
-    
-    # read in file with original sequences
-    seqs_original = list(SeqIO.parse(file_path, "fasta"))
-    # translate sequences to amino acids
-    seq = [str(seq_record.seq).strip() for seq_record in seqs_original]
-    # get sequence ids
-    ids = [seq_record.description for seq_record in seqs_original]
-    
-    # create a DataFrame with sreference sequence ids and lengths
-    ref_seq_len_df = pd.DataFrame({"Origion_seq": ids,
-                                    "seqlength": [len(s) for s in seq]})
-    
-    return ref_seq_len_df
-
 
 def create_subsets(df: pd.DataFrame, subsets: dict) -> pd.DataFrame:
     """
@@ -238,7 +213,6 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
         'BC': lambda x: ','.join(pd.unique(x)),
         'RNAcount': 'sum',
         'RNAcount_ratio': 'sum',
-        'seqlength': 'max',
     }
     
     # Perform groupby aggregation
@@ -251,14 +225,6 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
 
     # Barcode adjusted count ratio
     combined_data['BC_adjusted_count_ratio'] = combined_data['RNAcount_ratio'] + combined_data['BC_ratio'] / 2
-
-    # Vectorized computation for AAwidth and AAseqlength
-    combined_data['AAwidth'] = (combined_data['width'] // 3).astype(int)
-    combined_data['AAseqlength'] = (combined_data['seqlength'] // 3).astype(int)
-
-    # Compute AA_pos and AA_rel_pos
-    combined_data['AA_pos'] = (combined_data['AAstart'] + combined_data['AAwidth'] / 2).astype(int)
-    combined_data['AA_rel_pos'] = combined_data['AA_pos'] / combined_data['AAseqlength']
 
     return combined_data
 
@@ -307,12 +273,6 @@ def main():
     # Add the library fragments to the combined data
     combined_data = pd.concat([library_fragments, combined_data], ignore_index=True)
     
-    # Get the reference sequence lengths
-    logger.info("Getting reference sequence lengths")
-    ref_seq_len_df = get_ref_sequence_length_df(config["original_seq_file"])
-    # add the reference sequence lengths to the combined data with the reference_name as the key
-    combined_data = pd.merge(combined_data, ref_seq_len_df, how="left", on="Origion_seq")
-    
     logger.info("Creating Subsets")
     # Create subsets based on the specified conditions
     combined_data = create_subsets(combined_data, config["subsets"])
@@ -323,7 +283,7 @@ def main():
     
     logger.info("Combining fragment information")
     # Define the key columns for the groupby operation
-    key_cols = ["Group", "Origion_seq", "LUTnr", "AAstart", "AAend", "Structure", "Peptide", "start", "end", "width", "Sequence"]
+    key_cols = ["Group", "LUTnr", "Peptide", "Sequence"]
     # Combine information of identical fragments in a DataFrame
     combined_data = combine_information_of_identical_fragments(combined_data, key_cols)
     

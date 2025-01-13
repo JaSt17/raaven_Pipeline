@@ -126,23 +126,14 @@ config_S6 = {
     # input file names are extracted from the previous step
     "original_seq_file": config_S1["input_file"],
     "input_dir": config_S4["output_dir"],
+    "sample_inputs": config_S4["sample_inputs"],
     "library_fragments": config_S5["output_table"],
     # group name for the library
     "library_name": "Plasmid_Library",
     # dictionary containing the information about the different subsets that should be created
     # the key is the name of the subset and the value is a list of the fragments that should be included
     "subsets": {
-        "Infective_AAVs": ['exclude','DNA_AAVlib_DNAse_30cpc_1', 'DNA_AAVlib_DNAse_3cpc_1','Plasmid_Library', 'DNA_pscAAVlib_Prep2_1'],
-        "DNAse_resistant_AAVs": ['include', 'DNA_AAVlib_DNAse_30cpc_1','DNA_AAVlib_DNAse_3cpc_1'],
-        "Transported_AAVs": ['contains_include', "mRNA_30cpc_SN", "mRNA_30cpc_Th", "mRNA_30cpc_Ctx", "mRNA_3cpc_SN", "mRNA_3cpc_Th", "mRNA_3cpc_Ctx"],
-    },
-    "backbone_seq": ["aacctccagagaggcaacg", "cagacaagcagctaccgca"],
-    # dictionary containing the information about how different structures should be trimmed
-    "trim_dict": {
-        "14aa": [2,44],
-        "14aaG4S": [14,56],
-        "14aaA5": [14,56],
-        "22aa": [2,68],
+        "Infective_AAVs": ['exclude','DNAse_resistant_AAVs','Plasmid_Library'],
     },
     # output file name for the final fragments summary
     "output_table": data_dir + "/final_fragments_summary.csv",

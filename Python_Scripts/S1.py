@@ -137,13 +137,12 @@ def get_unique_fragments(frag_list: list) -> list:
     """
     unique_frag_list = []
     seen_fragments = set()
-
     for frag in frag_list:
         fragment = frag["Peptide"]
         if fragment not in seen_fragments:
             seen_fragments.add(fragment)
             unique_frag_list.append(frag)
-
+    
     return unique_frag_list
 
 
@@ -284,7 +283,7 @@ def main():
         temp_sorted_fragments = generate_fragments(config["wSet"], aa_list, structure, info["length"], info["freq"])
         # add overhangs to the fragments
         temp_sorted_fragments = add_overhangs(temp_sorted_fragments, info["overhangs"][0], info["overhangs"][1])
-        logger.info(f"Number of {structure} fragments: {len(temp_sorted_fragments)}")
+        logger.info(f"Number of unqiue {structure} fragments: {len(temp_sorted_fragments)}")
         sorted_fragments.extend(temp_sorted_fragments)
     
     # get all fragments
