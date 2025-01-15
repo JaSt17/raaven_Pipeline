@@ -19,7 +19,7 @@ conda activate python_pipeline
 
 # change the config file to p006
 cp configs/config_p006.py Python_Scripts/config.py
-# We dont need to run S1.py since we dont have a reference file
+# A NNK library starts at step 2 since there is no reference file
 ./Python_Scripts/S2_NNK.py
 ./Python_Scripts/S3_NNK.py
 ./Python_Scripts/S4.py
