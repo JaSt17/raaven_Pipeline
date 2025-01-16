@@ -190,7 +190,7 @@ def create_full_table(reads_frag: list, reads_BC: list)-> pd.DataFrame:
     return full_table
 
 
-def create_LUTnr_column(full_table: pd.DataFrame)-> pd.DataFrame:
+def create_LUTnr_column(full_table: pd.DataFrame) -> pd.DataFrame:
     """
     Create a LUTnr column for the full table.
 
@@ -200,23 +200,29 @@ def create_LUTnr_column(full_table: pd.DataFrame)-> pd.DataFrame:
     Returns:
         pd.DataFrame: DataFrame containing the full table with the LUTnr column
     """
-    logger.info("Creating LUTnr column")
-    # create unique Lutnrs for each fragment and translate the fragment to a peptide
-    # get all unique pairs of framgements with barcodes
-    unique_pairs = full_table[['Reads', 'BC']].drop_duplicates()
-    # add the Peptide column to the DataFrame
-    unique_pairs['Peptide'] = unique_pairs['Reads'].apply(lambda x: translate(x))
-    # change all * to M in the Peptide column
-    unique_pairs['Peptide'] = unique_pairs['Peptide'].str.replace('*', 'M')
-    # add the LUTnr column to the DataFrame
-    unique_pairs['LUTnr'] = unique_pairs.index
-    # add seq_ in front of the LUTnr
-    unique_pairs['LUTnr'] = 'seq_' + unique_pairs['LUTnr'].astype(str)
+    import pandas as pd
+
+    # Ensure 'Reads' column exists
+    if 'Reads' not in full_table.columns:
+        raise ValueError("The input DataFrame must contain a 'Reads' column.")
     
-    # merge the lutnrs_df with the full table
-    full_table = full_table.merge(unique_pairs, on=['Reads', 'BC'], how='left')
+    # Create unique pairs of 'Reads' and their translated Peptides
+    unique_pairs = pd.DataFrame(full_table['Reads'].drop_duplicates())
+    unique_pairs['Peptide'] = unique_pairs['Reads'].apply(lambda x: translate(x))  # Assuming 'translate' is defined
+    unique_pairs['Peptide'] = unique_pairs['Peptide'].str.replace('*', 'M')  # Replace '*' with 'M'
+    
+    # Create a unique peptides table with LUTnr
+    unique_peptides = unique_pairs[['Peptide']].drop_duplicates().reset_index(drop=True)
+    unique_peptides['LUTnr'] = 'seq_' + unique_peptides.index.astype(str)
+    
+    # Merge LUTnr back to unique_pairs
+    unique_pairs = unique_pairs.merge(unique_peptides, on='Peptide', how='left')
+    
+    # Merge the LUTnr column back to the full table
+    full_table = full_table.merge(unique_pairs[['Reads', 'LUTnr', 'Peptide']], on='Reads', how='left')
 
     return full_table
+
 
 
 def starcode_based_reduction_and_replace(full_table: pd.DataFrame, input_file_name: str, columns_name: str)-> pd.DataFrame:

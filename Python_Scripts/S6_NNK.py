@@ -210,6 +210,7 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
     # Define aggregation functions
     aggregations = {
         'mCount': 'sum',
+        'Sequence': 'first',
         'BC': lambda x: ','.join(pd.unique(x)),
         'RNAcount': 'sum',
         'RNAcount_ratio': 'sum',
@@ -227,28 +228,6 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
     combined_data['BC_adjusted_count_ratio'] = combined_data['RNAcount_ratio'] + combined_data['BC_ratio'] / 2
 
     return combined_data
-
-
-def cut_overhangs_vectorized(df: pd.DataFrame, backbone_seq: list, trim_dict: dict) -> pd.DataFrame:
-    """ 
-    This function cuts the backbone sequence and the overhangs of the sequences based on the structure of the fragment.
-    
-    Args:
-        df (pd.DataFrame): The input DataFrame containing the 'structure' and 'Sequence' columns.
-        backbone_seq (list): A list containing the backbone sequence.
-        trim_dict (dict): A dictionary with structure names as keys and lists of start and end positions as values.
-        
-    Returns:
-        pd.DataFrame: The DataFrame with the overhangs of the sequences cut based on the structure of the fragment.
-    """
-    # Remove the backbone sequence from the sequences
-    df['Sequence'] = df['Sequence'].str.replace(backbone_seq[0], '', regex=False)
-    df['Sequence'] = df['Sequence'].str.replace(backbone_seq[1], '', regex=False)
-    # Cut the overhangs of the sequences based on the structure of the fragment
-    for key, value in trim_dict.items():
-        df.loc[df['Structure'] == key, 'Sequence'] = df.loc[df['Structure'] == key, 'Sequence'].str.slice(value[0], value[1])
-
-    return df
 
     
 def main():
@@ -283,17 +262,9 @@ def main():
     
     logger.info("Combining fragment information")
     # Define the key columns for the groupby operation
-    key_cols = ["Group", "LUTnr", "Peptide", "Sequence"]
+    key_cols = ["Group", "LUTnr", "Peptide"]
     # Combine information of identical fragments in a DataFrame
     combined_data = combine_information_of_identical_fragments(combined_data, key_cols)
-    
-    logger.info("Cutting overhangs of the sequences based on the structure of the fragment")
-    
-    # Cut the overhangs of the sequences based on the structure of the fragment
-    try:
-        combined_data = cut_overhangs_vectorized(combined_data, config["backbone_seq"], config["trim_dict"])
-    except Exception as e:
-        logger.info("No overhangs and backbone sequence were provided. Skipping cutting overhangs.")
     
     # Save the processed data to a new CSV file
     combined_data.to_csv(config["output_table"], index=False)

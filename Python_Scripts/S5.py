@@ -73,7 +73,7 @@ def main():
             library_barcodes.rename(columns={"tCount": "RNAcount"}, inplace=True)
             library_barcodes.to_csv(config["output_table"], index=False)
             logger.info(f"Could not find fragments position file, saved library fragments with RNAcount to {config['output_table']}")
-            sys.exit(1)
+            sys.exit(0)
         except FileNotFoundError as e:
             logger.error(f"Could not find input file: {e}")
             sys.exit(1)
