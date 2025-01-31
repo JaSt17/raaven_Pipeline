@@ -87,10 +87,12 @@ def load_combined_data(dir_path: str, sample_inputs_path: str) -> pd.DataFrame:
     # Use glob to get all CSV files in the directory
     csv_files = glob.glob(os.path.join(dir_path, '*.csv'))
     
+    # Check if any CSV files were found
     if not csv_files:
         logger.info("No CSV files found in the directory.")
         return pd.DataFrame()
 
+    # Define a function to read a CSV file
     def read_file(file_path):
         file_name = os.path.basename(file_path)
         # Robust group name extraction using regex
@@ -131,7 +133,6 @@ def load_combined_data(dir_path: str, sample_inputs_path: str) -> pd.DataFrame:
     combined_data['Group'] = combined_data['Group'].replace(sample_inputs_dict)
     
     return combined_data
-    
     
     
 def get_ref_sequence_length_df(file_path:str) -> pd.DataFrame:
@@ -234,7 +235,6 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
     
     # Define aggregation functions
     aggregations = {
-        'mCount': 'sum',
         'BC': lambda x: ','.join(pd.unique(x)),
         'RNAcount': 'sum',
         'RNAcount_ratio': 'sum',
