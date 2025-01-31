@@ -2,15 +2,16 @@
 """
 Author: Jaro Steindorff
 
-This script extracts barcodes from given cell samples, reduces them using the Starcode algorithm, and matches them with
+This script extracts barcodes from given samples, reduces them using the Starcode algorithm, and matches them with
 corresponding fragments. It processes a csv file with Sample and Group and saves the results in a log table and saves the found fragments in a csv file.
 
 Workflow:
     - Load the library fragments and LUT data
     - For each RNA sample:
+        - Extrating known barcodes from the sample using vsearch
         - Extract barcodes using bbduk2.sh
         - Reduce barcodes using Starcode
-        - Match reduced barcodes with fragments
+        - Match reduced barcodes with fragment information
         - Save found fragments for the sample
     - Save a log table with summary statistics
     
@@ -31,6 +32,7 @@ import sys
 import subprocess
 import tempfile
 import re
+import shutil
 import logging
 from datetime import datetime
 import pandas as pd
@@ -194,18 +196,20 @@ def create_full_table(reads_BC: list)-> pd.DataFrame:
     return full_table
 
 
-def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: pd.DataFrame,
-                    lut_dna: pd.DataFrame, threads:int, bbduk2_args: list, chunk_size:int) -> dict:
+def analyze_tissue(file_path:str, data_dir:str, db:str, out_dir:str, library_fragments: pd.DataFrame,
+                    lut_dna: pd.DataFrame, threads:int, bc_len:int, bbduk2_args: list, chunk_size:int) -> dict:
     """
     Analyze a single tissue sample based on its index in the load list.
 
     Parameters:
         file_path (str): The path to the FASTQ file
         data_dir (str): The directory containing the FASTQ files
+        db (str): The path to the known barcodes FASTA file
         out_dir (str): The directory to save the found fragments
         library_fragments (pd.DataFrame): The library fragments
         lut_dna (pd.DataFrame): The LUT data
         threads (int): The number of threads to use
+        bc_len (int): The length of the barcodes
         bbduk2_args (list): The arguments for bbduk2.sh
         
     Returns:
@@ -222,13 +226,51 @@ def analyze_tissue(file_path:str, data_dir:str, out_dir:str, library_fragments: 
 
     # Extraction of barcodes
     # ============================
-    # Create a temporary file for the output
+    # Create a temporary file for the outputs
     out_name_BC = tempfile.NamedTemporaryFile(prefix="BC_", suffix=".fastq.gz", delete=False).name
+    out_name_seqkit = tempfile.NamedTemporaryFile(prefix="BC_", suffix=".fastq.gz", delete=False).name
+    
+    # Run vsearch to extract the matching fragment reads fromt he tissue sample
+    with tempfile.NamedTemporaryFile(delete=True, mode='w+', suffix='.txt') as vsearch_out, \
+        tempfile.NamedTemporaryFile(delete=True, mode='w+', suffix='.txt') as keep_fragments:
+        
+        # Run vsearch and store the output in a temporary file allow for 1 missmatch
+        vsearch_command = [
+            f"zcat {path} | "
+            f"vsearch --usearch_global - "
+            f"--db {db} "
+            "--id 0.95 "
+            f"--blast6out {vsearch_out.name} "
+            f"--threads {threads} "
+            f"--minseqlength {bc_len}"
+        ]
+        _, stderr = run_command(vsearch_command, "vsearch", shell=True)
 
-    # Run the bbduk2 command to extract barcodes from the reads
+        match = re.search(r"(\d+ of \d+ \(\d+\.\d+%\))", stderr)
+        if match:
+            info = match.group(0)
+            logger.info(f"Number of found Fragment reads that match to the reference: {info}")
+
+        # Use awk to extract the matching fragment reads from the vsearch output
+        awk_command = [f"awk '{{print $1}}' {vsearch_out.name} > {keep_fragments.name}"]
+        _, stderr = run_command(awk_command, "awk", shell=True)
+        
+        # Extracting fragment reads and corresponding barcode reads that match to the reference
+
+        # Use seqkit to extract the matching fragment reads
+        seqkit_command = [
+            f"seqkit grep -f {keep_fragments.name} {path} "
+            f"-o filtered_fragments.fastq.gz -j {threads}"
+        ]
+        _, stderr = run_command(seqkit_command, "seqkit grep", shell=True)
+
+        # Move the filtered fragment reads to the output directory
+        shutil.move("filtered_fragments.fastq.gz", out_name_seqkit)
+
+    # Run the bbduk2 command to extract barcodes from the barcode reads that match to a found fragment
     bbduk2_command = ["bbmap/bbduk2.sh"] + bbduk2_args + [
         f"threads={threads}",
-        f"in={path}",
+        f"in={out_name_seqkit}",
         f"out={out_name_BC}",
     ]
     _ , stderr = run_command(bbduk2_command, f"bbduk2 barcode extraction for {file_path}")
@@ -343,9 +385,11 @@ def main():
     except Exception as e:
         logger.error(f"Error loading sample inputs: {e}")
         sys.exit(1)
-    # check if the data directory exists
+    # get the data directory and output directory from the config
     data_dir = config["sample_directory"]
     output_dir = config["output_dir"]
+    db = config["db"]
+    bc_len = config["bc_len"]
     # Create the output directory if it does not exist
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
@@ -361,7 +405,7 @@ def main():
     for row in load_list.iterrows():
         # Extract the file name from the first column
         file_path = row[1]['Sample']
-        log_entry = analyze_tissue(file_path, data_dir, output_dir, library_fragments, lut_dna, threads, bbduk2_args_BC, chunk_size)
+        log_entry = analyze_tissue(file_path, data_dir, db, output_dir, library_fragments, lut_dna, threads, bc_len, bbduk2_args_BC, chunk_size)
         if log_entry:
             log_table.append(log_entry)
 
