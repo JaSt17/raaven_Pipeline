@@ -62,11 +62,13 @@ def main():
     # Create a logger
     create_logger(config["log_dir"], "S5")
     
+    # Load the input files and see if there is a reference file
     try:
         library_barcodes = pd.read_csv(config["input_table"], dtype={7: str})
         fragments_pos = pd.read_csv(config["in_name_LUT"], dtype={0: str})
     except FileNotFoundError as e:
         logger.error(f"Could not find input file: {e}")
+        # If no reference file was found, save the library fragments with RNAcount
         try:
             library_barcodes = pd.read_csv(config["input_table"], dtype={7: str})
             # add column RNAcount and set it to tcount
@@ -74,13 +76,14 @@ def main():
             library_barcodes.to_csv(config["output_table"], index=False)
             logger.info(f"Could not find fragments position file, saved library fragments with RNAcount to {config['output_table']}")
             sys.exit(0)
+        # If the library fragments file was not found, exit the script
         except FileNotFoundError as e:
             logger.error(f"Could not find input file: {e}")
             sys.exit(1)
         sys.exit(1)
     
     logger.info(f"Number of unique fragments in the library: {len(library_barcodes['LUTnr'].unique())}")
-    logger.info(f"Number of unique fragments created with the input file: {len(fragments_pos['LUTnr'].unique())}")
+    logger.info(f"Number of unique fragments created with the reference file: {len(fragments_pos['LUTnr'].unique())}")
     logger.info(f"Percentage of fragments found in the library: {len(library_barcodes['LUTnr'].unique()) / len(fragments_pos['LUTnr'].unique()) * 100:.2f}%")
     
     # Drop the 'Sequence' column from lut_dna
@@ -99,12 +102,12 @@ def main():
         if col in library_barcodes.columns:
             library_barcodes.drop(col, axis=1, inplace=True)    
     
-    # rename tcount to RNAcount
-    library_barcodes.rename(columns={"tCount": "RNAcount"}, inplace=True)
+    # add RNAcount column
+    library_barcodes["RNAcount"] = library_barcodes["tCount"]
     
     # reorder columns
     library_barcodes = library_barcodes[['Origion_seq','Mode','Structure', 'LUTnr',  'BC', 'AAstart', 'AAend', 'Peptide',
-                                        'start', 'end', 'width', 'Sequence', 'mCount', 'RNAcount']]
+                                        'start', 'end', 'width', 'Sequence', 'mCount', 'tCount', 'RNAcount']]
     
     # save the merged library_barcodes
     library_barcodes.to_csv(config["output_table"], index=False)
