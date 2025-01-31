@@ -4,6 +4,9 @@
 data_dir = "raav-60/undetermined"
 # Define the directory where the logs are stored
 log_dir = data_dir + "/logs/"
+# Define the length of the barcode and fragment sequences in DNA bases
+bc_len = 27
+frag_len = 21
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
@@ -15,34 +18,32 @@ config_S2 = {
     # arguments for the bbduk2 tool to extract the barcode and fragment sequences
     "bbduk2_args_BC" : [
         "k=20",
-        "hammingdistance=2",
+        "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
         "rcomp=f",
-        "qhdist=1",
         "minavgquality=0",
         "maxns=0",
-        "minlength=27",
-        "maxlength=27",
+        f"minlength={bc_len}",
+        f"maxlength={bc_len}",
         "ordered=t",
         "lliteral=GCCATCCTCTTATCTCGTGG",
-        "rliteral=ATAACTTCGTATAATGTATGC",
+        "rliteral=ATAACTTCGTATAATGTATG",
     ],
     "bbduk2_args_Frag" : [
-        "k=18",
-        "hammingdistance=2",
+        "k=20",
+        "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
         "maskmiddle=t",
         "rcomp=f",
-        "qhdist=1",
         "minavgquality=0",
         "maxns=0",
-        "minlength=21",
-        "maxlength=21",
+        f"minlength={frag_len}",
+        f"maxlength={frag_len}",
         "ordered=t",
-        "lliteral=CAACCTCCAGAGAGGCAACGCT",
-        "rliteral=GCCAGACAAGCAGCTACCGCAG",
+        "lliteral=ACCTCCAGAGAGGCAACGCT",
+        "rliteral=GCCAGACAAGCAGCTACCGC",
     ],
     "log_dir": log_dir,
 }
