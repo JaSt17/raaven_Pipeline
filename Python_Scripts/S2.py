@@ -203,6 +203,9 @@ def main():
     summary = extract_summary(stderr)
     if summary:
         logger.info(f"bbduk2 barcode extraction summary:\n{summary}")
+    
+    # remove the filtered barcode and fragment files
+    os.remove("filtered_barcodes.fastq.gz")
 
     # Use seqkit pair
     seqkit_command = [f"seqkit pair -1 {out_name_barcode} -2 {out_name_fragment} -u -j {threads}"]

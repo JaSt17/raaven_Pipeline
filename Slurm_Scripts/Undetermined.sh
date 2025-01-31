@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=undetermined_analysis
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
+#SBATCH --nodes=2
+#SBATCH --ntasks=2
 #SBATCH --cpus-per-task=48
 #SBATCH --time=24:00:00
 #SBATCH -A lu2024-2-8
