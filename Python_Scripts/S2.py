@@ -5,9 +5,12 @@ Author: Jaro Steindorff
 This script extracts barcodes and fragments from sequencing files, matches them to the reference, pairs them, and saves them in separate files.
 
 Workflow:
-    - Use bbduk2.sh to extract barcodes from the given barcode sequencing file
     - Use bbduk2.sh to extract fragments from the given fragment sequencing file
-    - Use vsearch to match the fragment reads to the reference sequence
+    - Use vsearch to match the found fragment reads to the reference sequence
+    - Use awk to extract the matching fragment reads from the vsearch output
+    - Use seqkit to extract the matching fragment reads
+    - Use seqkit to extract the matching barcode reads
+    - Use bbduk2.sh to extract barcodes from the barcode reads that match to a found fragment
     - Pair the barcodes and fragments using seqkit pair
     - Save the paired barcodes and fragments in separate files
 
@@ -115,20 +118,10 @@ def main():
     
     # get the number of available threads
     threads = os.cpu_count()
-    
+    # Create the output directory if it does not exist
     os.makedirs(out_dir, exist_ok=True)
-    out_name_barcode = os.path.join(out_dir, f"barcode_{out_name}.fastq.gz")
-    bbduk2_args_BC = config["bbduk2_args_BC"] + [
-        f"threads={threads}",
-        f"in={in_name_barcode}",
-        f"out={out_name_barcode}",
-    ]
-    _, stderr = run_command(["bbmap/bbduk2.sh"] + bbduk2_args_BC, "bbduk2 barcode extraction")
     
-    # Extract summary from the barcodes extraction
-    summary = extract_summary(stderr)
-    if summary:
-        logger.info(f"bbduk2 barcode extraction summary:\n{summary}")
+    # Extracting fragments from the sequencing files
 
     # BBDuk extraction for fragments
     out_name_fragment = os.path.join(out_dir, f"fragment_{out_name}.fastq.gz")
@@ -143,6 +136,9 @@ def main():
     summary = extract_summary(stderr)
     if summary:
         logger.info(f"bbduk2 fragment extraction summary:\n{summary}")
+        
+
+    # Matching fragment reads to the reference sequence
         
     # Use vsearch to match the fragment reads to the reference sequence
     logger.info("Running vsearch to match fragment reads to the reference sequence.")
@@ -167,11 +163,14 @@ def main():
         match = re.search(r"(\d+ of \d+ \(\d+\.\d+%\))", stderr)
         if match:
             info = match.group(0)
-            logger.info(f"Ratio of matching fragment reads to the reference sequence: {info}")
+            logger.info(f"Number of found Fragment reads that match to the reference: {info}")
 
         # Use awk to extract the matching fragment reads from the vsearch output
         awk_command = [f"awk '{{print $1}}' {vsearch_out.name} > {keep_fragments.name}"]
         _, stderr = run_command(awk_command, "awk", shell=True)
+        
+        
+        # Extracting fragment reads and corresponding barcode reads that match to the reference
 
         # Use seqkit to extract the matching fragment reads
         seqkit_command = [
@@ -182,7 +181,28 @@ def main():
 
         # Move the filtered fragment reads to the output directory
         shutil.move("filtered_fragments.fastq.gz", out_name_fragment)
+        
+        # Use seqkit to extract the matching barcode reads
+        seqkit_command = [
+            f"seqkit grep -f {keep_fragments.name} {in_name_barcode} "
+            f"-o filtered_barcodes.fastq.gz -j {threads}"
+        ]
+        _, stderr = run_command(seqkit_command, "seqkit grep", shell=True)
+        
+    # extracting barcodes from the barcode reads that match to a found fragment <==
+        
+    out_name_barcode = os.path.join(out_dir, f"barcode_{out_name}.fastq.gz")
+    bbduk2_args_BC = config["bbduk2_args_BC"] + [
+        f"threads={threads}",
+        f"in=filtered_barcodes.fastq.gz",
+        f"out={out_name_barcode}",
+    ]
+    _, stderr = run_command(["bbmap/bbduk2.sh"] + bbduk2_args_BC, "bbduk2 barcode extraction")
     
+    # Extract summary from the barcodes extraction
+    summary = extract_summary(stderr)
+    if summary:
+        logger.info(f"bbduk2 barcode extraction summary:\n{summary}")
 
     # Use seqkit pair
     seqkit_command = [f"seqkit pair -1 {out_name_barcode} -2 {out_name_fragment} -u -j {threads}"]
@@ -202,9 +222,8 @@ def main():
     unpaired_reads_matches = re.findall(unpaired_reads_regex, stderr)
 
     # Print results
-    logger.info(f"Paired reads: {paired_reads}")
-    logger.info(f"Unpaired barcode reads: {unpaired_reads_matches[0]}")
-    logger.info(f"Unpaired fragment reads: {unpaired_reads_matches[1]}")
+    logger.info(f"Fragments reads with a vailid barcode:: {paired_reads} (paried reads)")
+    logger.info(f"Fragments reads without a vailid barcode: {unpaired_reads_matches[0]} (unpaired reads)")
     
     os.makedirs(out_dir, exist_ok=True)
     paired_barcode_out = os.path.join(out_dir, f"barcode_{out_name}.fastq.gz")
@@ -213,19 +232,13 @@ def main():
     # output names 
     seqkit_barcode_out = out_name_barcode.replace(".fastq.gz", ".paired.fastq.gz")
     seqkit_fragment_out = out_name_fragment.replace(".fastq.gz", ".paired.fastq.gz")
-    seqkit_barcode_unpaired = out_name_barcode.replace(".fastq.gz", ".unpaired.fastq.gz")
-    seqkit_fragment_unpaired = out_name_fragment.replace(".fastq.gz", ".unpaired.fastq.gz")
     
     # use shutil to move the files to the output directory
     shutil.move(seqkit_barcode_out, paired_barcode_out)
     shutil.move(seqkit_fragment_out, paired_fragment_out)
-    
-    #remove the unpaired files
-    os.remove(seqkit_barcode_unpaired)
-    os.remove(seqkit_fragment_unpaired)
 
-    logger.info(f"Paired reads saved to: {paired_barcode_out}")
-    logger.info(f"Paired fragments saved to: {paired_fragment_out}")
+    logger.info(f"Paired barcode reads saved to: {paired_barcode_out}")
+    logger.info(f"Paired fragment reads saved to: {paired_fragment_out}")
     logger.info(f"Total execution time: {datetime.now() - start_time}")
 
 if __name__ == "__main__":
