@@ -236,8 +236,8 @@ def starcode_based_reduction_and_replace(full_table: pd.DataFrame, input_file_na
     Returns:
         pd.DataFrame: DataFrame containing the Starcode-reduced barcodes
     """
-    logger.info("Running Starcode clustering")
     
+    logger.info("Running Starcode clustering")
     # get the number of threads
     num_threads = multiprocessing.cpu_count()
     starcode_output = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".txt")
@@ -258,7 +258,6 @@ def starcode_based_reduction_and_replace(full_table: pd.DataFrame, input_file_na
     logger.info(f"Number of unique {columns_name} after Starcode reduction: {number_of_clusters}")
     
     # combine the full table with the starcode exploded table based on the input column
-    logger.info(f"Replacing {columns_name} with Starcode-reduced versions")
     full_table = full_table.merge(starcode_exploded[[columns_name, starcode_column]], on=columns_name, how='left')
     # rename the coulmns and drop the old BC column
     full_table.rename(columns={columns_name: 'old', starcode_column: columns_name}, inplace=True)
@@ -405,15 +404,12 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimer
     Returns:
         pd.DataFrame: DataFrame containing the final output table
     """
-    logger.info("Combining tables to create final output")
     # Combine clean and consensus tables
     temp_table_multi_final = pd.concat([temp_table_multi_clean, temp_table_multi_chimeric], ignore_index=True)
-    logger.info(f"Number of barcodes-fragment pairs sequenced more than once: {len(temp_table_multi_final)}")
-    logger.info(f"  Number of barcodes mapping to only one fragment: {len(temp_table_multi_clean)}")
-    logger.info(f"  Number of barcodes mapping to more than one fragment: {len(temp_table_multi_chimeric)}")
-    logger.info(f"      From these {len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Def'])} are clean barcodes (ratio above {threshold})")
-    logger.info(f"      From these {len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Chimeric'])} are chimeric barcodes (ratio below {threshold})")
-    logger.info(f"Number of barcodes-fragment pairs sequenced only once: {len(temp_table_single)}")
+    logger.info(f"Number of barcodes mapping to only one fragment: {len(temp_table_multi_clean)}")
+    logger.info(f"Number of barcodes mapping to more than one fragment: {len(temp_table_multi_chimeric)}")
+    logger.info(f"  From these {len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Def'])} are clean barcodes (ratio above {threshold})")
+    logger.info(f"  From these {len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Chimeric'])} are chimeric barcodes (ratio below {threshold})")
 
     Def_barcodes = temp_table_multi_final[temp_table_multi_final['Mode'] == 'Def']
     Chimeric_barcodes = temp_table_multi_final[temp_table_multi_final['Mode'] == 'Chimeric']
@@ -449,14 +445,10 @@ def main():
         chunk_files.append(chunk_file)
 
     # Combine all chunk tables
-    logger.info("Combining all chunks into the full table")
     full_table = pd.concat([pd.read_pickle(chunk_file) for chunk_file in chunk_files], ignore_index=True)
     del chunk_files
     
     save_unique_fragments_barcodes(config["fragment_file"], config["barcode_file"])
-    
-    # Perform fragment reduction using Starcode clustering
-    full_table = starcode_based_reduction_and_replace(full_table, config['fragment_file'], 'Reads')
     
     # Perform barcode reduction using Starcode clustering
     full_table = starcode_based_reduction_and_replace(full_table, config['barcode_file'], 'BC')
@@ -467,6 +459,10 @@ def main():
     # Split reads into single-read and multi-read barcodes
     temp_table_single, temp_table_multi = split_reads_into_single_and_multi_read_barcodes(full_table)
     del full_table
+    
+    if config["single_read"]:
+        # merge single read barcodes with the multi read barcodes
+        temp_table_multi = pd.concat([temp_table_multi, temp_table_single], ignore_index=True)
 
     # Split multi-read barcodes into clean and chimeric
     temp_table_multi_clean, temp_table_multi_chimeric = split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi)

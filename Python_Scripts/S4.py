@@ -110,7 +110,6 @@ def starcode_based_barcode_reduction(full_table: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: DataFrame containing the Starcode-reduced barcodes
     """
-    logger.info("Running Starcode clustering on unique barcodes from the full table")
     
     # Write unique barcodes to a temporary file
     barcode_temp_file = tempfile.NamedTemporaryFile(delete=False, mode='w+')
@@ -307,10 +306,16 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, out_dir:str, library_fra
         gc.collect()
     
     # read in the full table
-    barcode_table = pd.read_hdf(output_file, key='data')
-    
-    # remove the h5 file
-    os.remove(output_file)
+    try:
+        barcode_table = pd.read_hdf(output_file, key='data')
+        # remove the h5 file
+        os.remove(output_file)
+    except Exception as e:
+        log_entry['unique_BCs'] = 0
+        log_entry['scBCs'] = 0
+        log_entry['SCdroppedBC'] = 0
+        logger.info(f"Finished processing {file_path} found: {log_entry['BC_reads']} barcode reads; {log_entry['unique_BCs']} unique barcodes; {log_entry['scBCs']} reduced barcodes")
+        return log_entry
     
     # Starcode based barcode reduction
     # ============================

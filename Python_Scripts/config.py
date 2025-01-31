@@ -1,9 +1,12 @@
 """ This file contains the config dictionary that are used to store the configuration parameters for the pipeline. """
 
 # Define the data directory where the input and output files are stored
-data_dir = "raav-60/p005"
+data_dir = "raav-60/p006_test"
 # Define the directory where the logs are stored
 log_dir = data_dir + "/logs/"
+# Define the length of the barcode and fragment sequences in DNA bases
+bc_len = 27
+frag_len = 21
 
 # configuration for Step 1 in the pipeline
 config_S1 = {
@@ -17,7 +20,7 @@ config_S1 = {
         "7aa": {"length": 7, "freq": 1,
                 "overhangs": ["AACCTCCAGAGAGGCAACGCT", "GCCAGACAAGCAGCTACCGCA"]}},
     # Library ID for the library so we can combine multiple libraries in the future
-    "LibID": "p005",
+    "LibID": "p006",
     # output file names for the LUT csv and the list of all inserted fragments
     "output_csv": data_dir + "/LUT.csv",
     "output_name": data_dir + "/SortedFragments.txt",
@@ -26,43 +29,40 @@ config_S1 = {
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_barcode": data_dir + "/fastq_files/p005_R1.fastq.gz",
-    "in_name_fragment": data_dir + "/fastq_files/p005_R2.fastq.gz",
-    "input_file": config_S1["input_file"],
+    "in_name_barcode": data_dir + "/fastq_files/p006_R1.fastq.gz",
+    "in_name_fragment": data_dir + "/fastq_files/p006_R2.fastq.gz",
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": data_dir + "/barcode_fragment",
-    "out_name": "p005",
+    "out_name": "p006",
     # arguments for the bbduk2 tool to extract the barcode and fragment sequences
     "bbduk2_args_BC" : [
         "k=20",
-        "hammingdistance=2",
+        "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
         "rcomp=f",
-        "qhdist=1",
         "minavgquality=0",
         "maxns=0",
-        "minlength=27",
-        "maxlength=27",
+        f"minlength={bc_len}",
+        f"maxlength={bc_len}",
         "ordered=t",
-        "lliteral=GTACGTCTGAACTTGGGACT",
-        "rliteral=ATAACTTCGTATAATGTATGC",
+        "lliteral=GCCATCCTCTTATCTCGTGG",
+        "rliteral=ATAACTTCGTATAATGTATG",
     ],
     "bbduk2_args_Frag" : [
-        "k=18",
-        "hammingdistance=2",
+        "k=20",
+        "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
         "maskmiddle=t",
         "rcomp=f",
-        "qhdist=1",
         "minavgquality=0",
         "maxns=0",
-        "minlength=21",
-        "maxlength=21",
+        f"minlength={frag_len}",
+        f"maxlength={frag_len}",
         "ordered=t",
-        "lliteral=CAACCTCCAGAGAGGCAACGCT",
-        "rliteral=GCCAGACAAGCAGCTACCGCAG",
+        "lliteral=ACCTCCAGAGAGGCAACGCT",
+        "rliteral=GCCAGACAAGCAGCTACCGC",
     ],
     "log_dir": log_dir,
 }
@@ -70,10 +70,12 @@ config_S2 = {
 config_S3 = {
     # input file names are extracted from the previous step
     "in_name_LUT": config_S1["output_csv"],
-    "barcode_file": config_S2["out_dir"] + "/combined_barcode_" + config_S2["out_name"] + ".fastq.gz",
-    "fragment_file": config_S2["out_dir"] + "/combined_fragment_" + config_S2["out_name"] + ".fastq.gz",
+    "barcode_file": config_S2["out_dir"] + "/barcode_" + config_S2["out_name"] + ".fastq.gz",
+    "fragment_file": config_S2["out_dir"] + "/fragment_" + config_S2["out_name"] + ".fastq.gz",
+    # Do we want to allwo single read barcodes
+    "single_read": True,
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
-    "threshold": 0.6, # 60% of the barcodes must be the same to be considered a non-chimeric barcode
+    "threshold": 1,
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue
     "chunk_size": 10000000,
     # output file name for the library barcodes
@@ -84,8 +86,10 @@ config_S3 = {
 config_S4 = {
     # input file names are extracted from the previous step
     "input_table": config_S3["out_name"],
-    "in_name_LUT": config_S1["output_csv"],
+    "in_name_LUT": None,
     "chunk_size": config_S3["chunk_size"],
+    "bc_len": bc_len,
+    "db": data_dir + "/barcode_fragment/unique_barcodes.fasta",
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": data_dir + "/input/load_list.csv",
     # directory containing the fastq files for the samples
@@ -97,18 +101,18 @@ config_S4 = {
     # arguments for the bbduk2 tool to extract the barcodes from the samples
     "bbduk2_args" : [        
         "k=20",
-        "hammingdistance=2",
+        "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
+        "maskmiddle=t",
         "rcomp=f",
-        "qhdist=1",
         "minavgquality=0",
         "maxns=0",
-        "minlength=27",
-        "maxlength=27",
+        f"minlength={bc_len}",
+        f"maxlength={bc_len}",
         "ordered=t",
-        "lliteral=GTACGTCTGAACTTGGGACT",
-        "rliteral=ATAACTTCGTATAATGTATGC",
+        "lliteral=GCCATCCTCTTATCTCGTGG",
+        "rliteral=ATAACTTCGTATAATGTATG",
     ],
     "log_dir": log_dir,
 }
