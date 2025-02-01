@@ -62,8 +62,12 @@ for library in "${libraries[@]}"; do
         # Concatenate the files
         cat "$input1" "$input2" > "$output"
         
-        # Notify user of the concatenation
-        echo "Processed ${output}"
+        # Rename files
+        mv "$input1" "${folder_path}${library}/barcode_fragment/small_${file_type}_${library}.fastq.gz"
+        mv "$output" "$input1"
+
+        # Notify user of the renaming
+        echo "Processed ${input1} (newly created file) and renamed old file to small_${file_type}_${library}.fastq.gz"
     done
 done
 
