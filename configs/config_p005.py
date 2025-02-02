@@ -90,7 +90,7 @@ config_S4 = {
     "in_name_LUT": config_S1["output_csv"],
     "chunk_size": config_S3["chunk_size"],
     "bc_len": bc_len,
-    "db": data_dir + "/barcode_fragment/unique_barcodes.fasta",
+    "db": data_dir + "/barcode_db.fasta",
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": data_dir + "/input/load_list.csv",
     # directory containing the fastq files for the samples
