@@ -168,7 +168,7 @@ def load_barcodes_chunked(barcodes_file: str, chunk_size: int):
         tuple: A chunk of fragment reads and barcode reads as lists of SeqRecords.
     """
     with gzip.open(barcodes_file, "rt") as bc_handle:
-        bc_iter = SeqIO.parse(bc_handle, "fastq")
+        bc_iter = SeqIO.parse(bc_handle, "fasta")
         while True:
             bc_chunk = list(islice(bc_iter, chunk_size))
             if not bc_chunk:
@@ -223,19 +223,41 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, out_dir:str, library_fra
     
     logger.info(f"Processing {file_path}")
 
-    # Extraction of barcodes
+    # Extraction of barcodes first
     # ============================
-    # Create a temporary file for the outputs
+
+    # Create a temporary file for the barcode outputs
     out_name_BC = tempfile.NamedTemporaryFile(prefix="BC_", suffix=".fastq.gz", delete=False).name
-    out_name_seqkit = tempfile.NamedTemporaryFile(prefix="BC_", suffix=".fastq.gz", delete=False).name
-    
-    # Run vsearch to extract the matching fragment reads fromt he tissue sample
+
+    # Run the bbduk2 command to extract barcodes first
+    bbduk2_command = ["bbmap/bbduk2.sh"] + bbduk2_args + [
+        f"threads={threads}",
+        f"in={path}",
+        f"out={out_name_BC}",
+    ]
+    _, stderr = run_command(bbduk2_command, f"bbduk2 barcode extraction for {path}")
+
+    # Extract summary from the barcode extraction
+    summary = extract_summary(stderr)
+    if summary:
+        logger.info(f"bbduk2 extraction summary:\n{summary}")
+
+    # Save the Barcode extraction result in the log entry
+    match = re.search(r"Result:\s*(\d+)", stderr)
+    if match:
+        log_entry['BC_reads'] = int(match.group(1))
+    else:
+        log_entry['BC_reads'] = 0
+
+    # Run vsearch to align extracted barcodes to the reference
+    # ========================================================
+
     with tempfile.NamedTemporaryFile(delete=True, mode='w+', suffix='.txt') as vsearch_out, \
-        tempfile.NamedTemporaryFile(delete=True, mode='w+', suffix='.txt') as keep_fragments:
-        
-        # Run vsearch and store the output in a temporary file allow for 1 missmatch
+        tempfile.NamedTemporaryFile(delete=True, mode='w+', suffix='.txt') as keep_barcodes:
+
+        # Run vsearch and store the output in a temporary file allowing for 1 mismatch
         vsearch_command = [
-            f"zcat {path} | "
+            f"zcat {out_name_BC} | "
             f"vsearch --usearch_global - "
             f"--db {db} "
             "--id 0.95 "
@@ -248,43 +270,24 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, out_dir:str, library_fra
         match = re.search(r"(\d+ of \d+ \(\d+\.\d+%\))", stderr)
         if match:
             info = match.group(0)
-            logger.info(f"Number of found Fragment reads that match to the reference: {info}")
+            logger.info(f"Number of found barcode reads that match to the reference: {info}")
+            # extract the first number from the match
+            info = re.search(r"(\d+)", info).group(0)
+            log_entry['BC_matched'] = int(info)
 
-        # Use awk to extract the matching fragment reads from the vsearch output
-        awk_command = [f"awk '{{print $1}}' {vsearch_out.name} > {keep_fragments.name}"]
+        # Use awk to extract the matching refernce barcode reads from the db
+        awk_command = [f"awk '{{print $2}}' {vsearch_out.name} > {keep_barcodes.name}"]
         _, stderr = run_command(awk_command, "awk", shell=True)
-        
-        # Extracting fragment reads and corresponding barcode reads that match to the reference
 
-        # Use seqkit to extract the matching fragment reads
+        # Use seqkit to extract the matching barcode reads from the reference db
         seqkit_command = [
-            f"seqkit grep -f {keep_fragments.name} {path} "
-            f"-o filtered_fragments.fastq.gz -j {threads}"
+            f"seqkit grep -D -f {keep_barcodes.name} {db} "
+            f"-o filtered_barcodes.fasta.gz -j {threads}"
         ]
         _, stderr = run_command(seqkit_command, "seqkit grep", shell=True)
 
-        # Move the filtered fragment reads to the output directory
-        shutil.move("filtered_fragments.fastq.gz", out_name_seqkit)
-
-    # Run the bbduk2 command to extract barcodes from the barcode reads that match to a found fragment
-    bbduk2_command = ["bbmap/bbduk2.sh"] + bbduk2_args + [
-        f"threads={threads}",
-        f"in={out_name_seqkit}",
-        f"out={out_name_BC}",
-    ]
-    _ , stderr = run_command(bbduk2_command, f"bbduk2 barcode extraction for {file_path}")
-    
-    # Extract summary from the fragments extraction
-    summary = extract_summary(stderr)
-    if summary:
-        logger.info(f"bbduk2 extraction summary:\n{summary}")
-
-    # Save the Barcode extraction result in the log entry
-    match = re.search(r"Result:\s*(\d+)", stderr)
-    if match:
-        log_entry['BC_reads'] = int(match.group(1))
-    else:
-        log_entry['BC_reads'] = 0
+        # Move the filtered barcode reads to the output directory
+        shutil.move("filtered_barcodes.fasta.gz", out_name_BC)
 
     # Chunked reading of barcodes
     # ============================
@@ -310,56 +313,48 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, out_dir:str, library_fra
         barcode_table = pd.read_hdf(output_file, key='data')
         # remove the h5 file
         os.remove(output_file)
-    except Exception as e:
-        log_entry['unique_BCs'] = 0
-        log_entry['scBCs'] = 0
-        log_entry['SCdroppedBC'] = 0
-        logger.info(f"Finished processing {file_path} found: {log_entry['BC_reads']} barcode reads; {log_entry['unique_BCs']} unique barcodes; {log_entry['scBCs']} reduced barcodes")
+        
+        # Save the number of unique barcodes
+        all_BCs = barcode_table['BC'].nunique()
+        log_entry['unique_BCs'] = all_BCs
+        
+        # Matching barcodes with information form the LUT and adding RNAcount
+        # ============================
+        # Reorganize the barcode_table to have BC and RNAcount
+        BCcount = barcode_table['BC'].value_counts().reset_index()
+        BCcount.columns = ['BC', 'RNAcount']
+        # Extract only BC that are in BCcount
+        foundFrags = library_fragments.merge(BCcount, on='BC', how='inner')
+        if lut_dna is not None:
+            # Merge with lut_dna on 'LUTnr'
+            foundFrags = foundFrags.merge(lut_dna, on=['LUTnr','Peptide'], how='inner')
+            # Rename the 'Reads' coulmn to 'Sequence'
+            foundFrags.rename(columns={'Reads': 'Sequence'}, inplace=True)
+        
+        # Save the found fragments
+        # ============================
+        foundFrags.sort_values(by='RNAcount', ascending=False, inplace=True)
+        output_filename = os.path.join(out_dir, f"found.{log_entry['Name']}.csv")
+        
+        foundFrags.to_csv(output_filename, index=False)
+        
+        logger.info(
+                f"Finished processing {file_path} found: "
+                f"{log_entry['BC_reads']} barcode reads; "
+                f"{log_entry['BC_matched']} barcode reads that match to the reference; "
+                f"{log_entry['unique_BCs']} unique barcodes; ")
+        
         return log_entry
     
-    # Starcode based barcode reduction
-    # ============================
-    table_BC_sc = starcode_based_barcode_reduction(barcode_table)
-
-    # Replacing barcodes with Starcode reduced versions
-    # ============================
-    # Merge barcode_table with table_BC_sc on 'BC'
-    barcode_table = barcode_table.merge(table_BC_sc[['BC', 'scBC']], on='BC', how='inner')
-    # Rename columns
-    barcode_table.rename(columns={'BC': 'oldBC', 'scBC': 'BC'}, inplace=True)
-    # Save the number of unique old barcodes and remaining barcodes in the log entry
-    all_BCs = barcode_table['oldBC'].nunique()
-    sc_BCs = barcode_table['BC'].nunique()
-    SC_dropped_BC = all_BCs - sc_BCs
-    log_entry['unique_BCs'] = all_BCs
-    log_entry['scBCs'] = sc_BCs
-    log_entry['SCdroppedBC'] = SC_dropped_BC
-    # Delete the old barcodes column
-    barcode_table.drop(columns=['oldBC'], inplace=True)
-    
-    # Matching barcodes with information form the LUT and adding RNAcount
-    # ============================
-    # Reorganize the barcode_table to have BC and RNAcount
-    BCcount = barcode_table['BC'].value_counts().reset_index()
-    BCcount.columns = ['BC', 'RNAcount']
-    # Extract only BC that are in BCcount
-    foundFrags = library_fragments.merge(BCcount, on='BC', how='inner')
-    if lut_dna is not None:
-        # Merge with lut_dna on 'LUTnr'
-        foundFrags = foundFrags.merge(lut_dna, on=['LUTnr','Peptide'], how='inner')
-        # Rename the 'Reads' coulmn to 'Sequence'
-        foundFrags.rename(columns={'Reads': 'Sequence'}, inplace=True)
-    
-    # Save the found fragments
-    # ============================
-    foundFrags.sort_values(by='RNAcount', ascending=False, inplace=True)
-    output_filename = os.path.join(out_dir, f"found.{log_entry['Name']}.csv")
-    
-    foundFrags.to_csv(output_filename, index=False)
-    
-    logger.info(f"Finished processing {file_path} found: {log_entry['BC_reads']} barcode reads; {log_entry['unique_BCs']} unique barcodes; {log_entry['scBCs']} reduced barcodes")    
-    
-    return log_entry
+    except Exception as e:
+        log_entry['unique_BCs'] = 0
+        log_entry['BC_matched'] = 0
+        logger.info(
+            f"Finished processing {file_path} found: "
+            f"{log_entry['BC_reads']} barcode reads; "
+            f"{log_entry['BC_matched']} barcode reads that match to the reference; "
+            f"{log_entry['unique_BCs']} unique barcodes; ")
+        return log_entry
 
 
 def main():
