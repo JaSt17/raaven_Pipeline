@@ -21,7 +21,11 @@ conda activate python_pipeline
 cp configs/config_p006.py Python_Scripts/config.py
 # A NNK library starts at step 2 since there is no reference file
 ./Python_Scripts/S2_NNK.py
+cp configs/config_p006.py Python_Scripts/config.py
 ./Python_Scripts/S3_NNK.py
+cp configs/config_p006.py Python_Scripts/config.py
 ./Python_Scripts/S4.py
+cp configs/config_p006.py Python_Scripts/config.py
 ./Python_Scripts/S5.py
+cp configs/config_p006.py Python_Scripts/config.py
 ./Python_Scripts/S6_NNK.py

@@ -1,7 +1,7 @@
 """ This file contains the config dictionary that are used to store the configuration parameters for the pipeline. """
 
 # Define the data directory where the input and output files are stored
-data_dir = "raav-60/p006_test"
+data_dir = "raav-60/p006"
 # Define the directory where the logs are stored
 log_dir = data_dir + "/logs/"
 # Define the length of the barcode and fragment sequences in DNA bases
@@ -69,7 +69,7 @@ config_S4 = {
     "in_name_LUT": None,
     "chunk_size": config_S3["chunk_size"],
     "bc_len": bc_len,
-    "db": data_dir + "/barcode_fragment/unique_barcodes.fasta",
+    "db": data_dir + "/barcode_db.fasta",
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": data_dir + "/input/load_list.csv",
     # directory containing the fastq files for the samples
