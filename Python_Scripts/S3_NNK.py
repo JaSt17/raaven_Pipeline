@@ -417,6 +417,29 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimer
     return Def_barcodes, Chimeric_barcodes
 
 
+def write_def_barcodes(Def_barcodes: pd.DataFrame, out_name: str)-> None:
+    """
+    Write the definitiv barcodes to a CSV file.
+    
+    Parameters:
+        Def_barcodes (pd.DataFrame): DataFrame containing the definitiv barcodes
+        out_name (str): Path to the output file
+        
+    Returns:
+        None
+    """
+    # split out_name to get the path
+    out_path = "/".join(out_name.split("/")[:-1])
+    save_path = out_path + "/barcode_db.fasta"
+    # remove the file if it already exists
+    if os.path.exists(save_path):
+        os.remove(save_path)
+    # save the definitiv barcodes from the BC column to a fasta file
+    for i, row in Def_barcodes.iterrows():
+        with open(save_path, 'a') as f:
+            f.write(f">BC_{i+1}\n{row['BC']}\n")
+
+
 def main():
     start_time = datetime.now()
 
@@ -485,6 +508,9 @@ def main():
     logger.info(f"Chimeric barcodes saved to {config['out_name'].replace('.csv', '_chimeric.csv')}")
     temp_table_single.to_csv(config['out_name'].replace(".csv", "_single.csv"), index=False)
     logger.info(f"Single barcodes saved to {config['out_name'].replace('.csv', '_single.csv')}")
+    
+    # write the definitiv barcodes to a fasta file
+    write_def_barcodes(def_barcodes_table, config['out_name'])
 
     # Print total analysis time
     logger.info(f"Total execution time: {datetime.now() - start_time}")

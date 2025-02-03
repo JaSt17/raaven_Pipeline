@@ -62,6 +62,10 @@ def main():
     # Create a logger
     create_logger(config["log_dir"], "S5")
     
+    # give the in_name_LUT a default value if it is None
+    if config["in_name_LUT"] is None:
+        config["in_name_LUT"] = "No_file"
+    
     # Load the input files and see if there is a reference file
     try:
         library_barcodes = pd.read_csv(config["input_table"], dtype={7: str})
