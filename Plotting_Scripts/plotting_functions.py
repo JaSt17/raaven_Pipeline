@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+from matplotlib_venn import venn3
 
 def plot_top_counts(df: pd.DataFrame, top_n: int, group_col: str=None, y_axis: str="RNAcount", y_label: str=None):
     """
@@ -42,7 +43,47 @@ def plot_top_counts(df: pd.DataFrame, top_n: int, group_col: str=None, y_axis: s
     return plt
 
 
-def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, column: str, y_label: str=None):
+def plot_venn_diagram(set1, set2, set3, labels=("Set 1", "Set 2", "Set 3"), title="Venn Diagram"):
+    """
+    Plots a Venn diagram for three sets.
+    
+    Parameters:
+    - set1, set2, set3: The three sets of sequences.
+    - labels: Tuple of three strings representing the labels for the sets.
+    """
+    # Calculate the subset sizes
+    subsets = {
+        '100': len(set1 - set2 - set3),  # Only in set1
+        '010': len(set2 - set1 - set3),  # Only in set2
+        '001': len(set3 - set1 - set2),  # Only in set3
+        '110': len(set1 & set2 - set3),  # In set1 and set2, but not in set3
+        '101': len(set1 & set3 - set2),  # In set1 and set3, but not in set2
+        '011': len(set2 & set3 - set1),  # In set2 and set3, but not in set1
+        '111': len(set1 & set2 & set3)   # In all three sets
+    }
+
+    # Create the Venn diagram
+    plt.figure(figsize=(6, 6))
+    
+    # Generate colors using the colormap
+    cmap = plt.get_cmap("twilight_shifted")
+    colors = [cmap(0.1 + (i / (len(labels) + 1) * 0.9)) for i in range(len(labels))]
+    venn = venn3(subsets=subsets, set_labels=labels, set_colors=colors)
+
+    # Customize text properties
+    for text in venn.set_labels:
+        if text:
+            text.set_fontsize(12)
+    for text in venn.subset_labels:
+        if text:
+            text.set_fontsize(8)
+
+    # Show the plot
+    plt.title(title, fontsize=14)
+    plt.show()
+    
+
+def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, column: str, y_label: str=None, normalize: bool=False) -> plt:
     """
     Plots the Normalized_RNAcount for two groups across the relative length of a gene.
 
@@ -84,6 +125,12 @@ def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, 
     x = pivot_df.index.astype(float)
     y1 = pivot_df[group1].values
     y2 = pivot_df[group2].values
+    
+    # Normalize the data if specified
+    if normalize:
+        y1 = np.log10(y1 + 1)
+        y2 = np.log10(y2 + 1)
+        y_label = f'log10 {y_label}'
 
     # Create the back-to-back histogram
     fig, ax = plt.subplots(figsize=(12, 5))
@@ -357,6 +404,9 @@ def create_grouped_barplot(df, tissue_col, count_col, library_col):
 
     plt.tight_layout()
     return plt
+
+
+
 
 
 
