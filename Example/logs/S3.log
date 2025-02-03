@@ -1,18 +1,18 @@
-14:06:05 - Saving unique fragments and barcodes to FASTA file
-14:06:05 - Number of unique fragment reads: 12755
-14:06:05 - Number of unique barcode reads: 16257
-14:06:06 - Running Starcode clustering
-14:06:09 - Number of unique BC after Starcode reduction: 16257
-14:06:09 - Splitting reads into single-read and multi-read barcodes
-14:06:09 - Number of single-read barcodes: 15245
-14:06:09 - Number of multi-read barcodes: 1012
-14:06:09 - Splitting multi-read barcodes into clean and chimeric
-14:06:10 - Extracting chimeric barcodes with maximal read ratio above 1
-14:06:10 - Number of barcodes mapping to only one fragment: 16140
-14:06:10 - Number of barcodes mapping to more than one fragment: 234
-14:06:10 -    From these 0 are clean barcodes (ratio above 1)
-14:06:10 -    From these 234 are chimeric barcodes (ratio below 1)
-14:06:10 - Definitiv barcodes saved to Example/library_barcodes.csv
-14:06:10 - Chimeric barcodes saved to Example/library_barcodes_chimeric.csv
-14:06:10 - Single barcodes saved to Example/library_barcodes_single.csv
-14:06:10 - Total execution time: 0:00:04.653054
+16:27:32 - Saving unique fragments and barcodes to FASTA file
+16:27:32 - Number of unique fragment reads: 12755
+16:27:32 - Number of unique barcode reads: 16257
+16:27:34 - Running Starcode clustering
+16:27:37 - Number of unique BC after Starcode reduction: 16257
+16:27:37 - Splitting reads into single-read and multi-read barcodes
+16:27:37 - Number of single-read barcodes: 15245
+16:27:37 - Number of multi-read barcodes: 1012
+16:27:37 - Splitting multi-read barcodes into clean and chimeric
+16:27:37 - Extracting chimeric barcodes with maximal read ratio above 1
+16:27:37 - Number of barcodes mapping to only one fragment: 16140
+16:27:37 - Number of barcodes mapping to more than one fragment: 234
+16:27:37 -    From these 0 are clean barcodes (ratio above 1)
+16:27:37 -    From these 234 are chimeric barcodes (ratio below 1)
+16:27:37 - Definitiv barcodes saved to Example/library_barcodes.csv
+16:27:37 - Chimeric barcodes saved to Example/library_barcodes_chimeric.csv
+16:27:37 - Single barcodes saved to Example/library_barcodes_single.csv
+16:27:39 - Total execution time: 0:00:07.068258

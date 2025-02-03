@@ -1,4 +1,4 @@
-Name,BC_reads,unique_BCs,scBCs,SCdroppedBC
-AAV23_R1,94,89,89,0
-Tissue1,61,36,35,1
-Tissue2,34,11,11,0
+Name,BC_reads,BC_matched,unique_BCs
+AAV23_R1,23922,94,88
+Tissue1,15262,61,34
+Tissue2,13537,34,11

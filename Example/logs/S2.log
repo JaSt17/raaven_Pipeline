@@ -1,19 +1,19 @@
-14:05:56 - bbduk2 fragment extraction summary:
+16:27:25 - bbduk2 fragment extraction summary:
 Input:                  	25000 reads 		3775000 bases.
 KTrimmed:               	48437 reads (193.75%) 	3119746 bases (82.64%)
 Low quality discards:   	0 reads (0.00%) 	0 bases (0.00%)
 Total Removed:          	2579 reads (10.32%) 	3304159 bases (87.53%)
 Result:                 	22421 reads (89.68%) 	470841 bases (12.47%)
-14:05:56 - Running vsearch to match fragment reads to the reference sequence.
-14:05:57 - Number of found Fragment reads that match to the reference: 17743 of 22421 (79.14%)
-14:05:58 - bbduk2 barcode extraction summary:
+16:27:25 - Running vsearch to match fragment reads to the reference sequence.
+16:27:25 - Number of found Fragment reads that match to the reference: 17743 of 22421 (79.14%)
+16:27:26 - bbduk2 barcode extraction summary:
 Input:                  	17743 reads 		2679193 bases.
 KTrimmed:               	35325 reads (199.09%) 	2196559 bases (81.99%)
 Low quality discards:   	0 reads (0.00%) 	0 bases (0.00%)
 Total Removed:          	408 reads (2.30%) 	2211148 bases (82.53%)
 Result:                 	17335 reads (97.70%) 	468045 bases (17.47%)
-14:05:58 - Fragments reads with a vailid barcode:: 17335 (paried reads)
-14:05:58 - Fragments reads without a vailid barcode: 408 (unpaired reads)
-14:05:58 - Paired barcode reads saved to: Example/barcode_fragment/barcode_Example.fastq.gz
-14:05:58 - Paired fragment reads saved to: Example/barcode_fragment/fragment_Example.fastq.gz
-14:05:58 - Total execution time: 0:00:01.973256
+16:27:26 - Fragments reads with a vailid barcode:: 17335 (paried reads)
+16:27:26 - Fragments reads without a vailid barcode: 408 (unpaired reads)
+16:27:26 - Paired barcode reads saved to: Example/barcode_fragment/barcode_Example.fastq.gz
+16:27:26 - Paired fragment reads saved to: Example/barcode_fragment/fragment_Example.fastq.gz
+16:27:26 - Total execution time: 0:00:02.668307
