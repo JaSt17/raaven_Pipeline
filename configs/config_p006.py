@@ -100,6 +100,7 @@ config_S4 = {
 config_S5 = {
     # input file names are extracted from the previous step
     "input_table": config_S3["out_name"],
+    "in_name_LUT": None,
     # output file name for the library barcodes with their information form the LUT
     "output_table": data_dir + "/pos_library_barcodes.csv",
     "log_dir": log_dir,
