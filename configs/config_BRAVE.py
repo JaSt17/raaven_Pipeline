@@ -137,8 +137,8 @@ config_S6 = {
     # dictionary containing the information about the different subsets that should be created
     # the key is the name of the subset and the value is a list of the fragments that should be included
     "subsets": {
-        "Infective_AAVs": ['exclude','DNA_AAVlib_DNAse_30cpc_1', 'DNA_AAVlib_DNAse_3cpc_1','Plasmid_Library', 'DNA_pscAAVlib_Prep2_1'],
-        "DNAse_resistant_AAVs": ['include', 'DNA_AAVlib_DNAse_30cpc_1','DNA_AAVlib_DNAse_3cpc_1'],
+        "Infective_AAVs": ['exclude','DNA_AAVlib_DNAse_30cpc', 'DNA_AAVlib_DNAse_3cpc','Plasmid_Library', 'DNA_pscAAVlib_Prep2'],
+        "DNAse_resistant_AAVs": ['include', 'DNA_AAVlib_DNAse_30cpc','DNA_AAVlib_DNAse_3cpc'],
         "Transported_AAVs": ['contains_include', "mRNA_30cpc_SN", "mRNA_30cpc_Th", "mRNA_30cpc_Ctx", "mRNA_3cpc_SN", "mRNA_3cpc_Th", "mRNA_3cpc_Ctx"],
     },
     # output file name for the final fragments summary
