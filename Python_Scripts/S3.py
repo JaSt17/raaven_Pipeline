@@ -233,10 +233,10 @@ def starcode_based_reduction_and_replace(full_table: pd.DataFrame, input_file_na
     starcode_df = pd.read_csv(starcode_output.name, sep='\t', header=None, names=[starcode_column, 'count', 'seq_list'])
     starcode_df['seq_list'] = starcode_df['seq_list'].str.split(',')
     number_of_clusters = len(starcode_df)
-
     # Explode the seq_list to have one row per seq and rename the columns
     starcode_exploded = starcode_df.explode('seq_list')
     starcode_exploded.rename(columns={'seq_list': columns_name}, inplace=True)
+    logger.info(starcode_exploded.head())
     # only keep the unique barcodes
     starcode_exploded.drop_duplicates(subset=[columns_name], inplace=True)
     logger.info(f"Number of unique {columns_name} after Starcode reduction: {number_of_clusters}")

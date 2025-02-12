@@ -4,8 +4,7 @@ Author: Jaro Steindorff
 
 This script reads a FASTA file given by the path in the config file and generates all possible 
 fragments of a given length from the nucleotide sequences in that give file. It translates the refrence in human optimized
-codon usage and saves that new reference file. Than it creates a Table with information
-of every fragment and writes it to a CSV file.
+codon usage and saves that  as a new reference file. Than it creates a Table with information of every fragment and writes it to a CSV file.
 
 Workflow:
     - Read the input FASTA file

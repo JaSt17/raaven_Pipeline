@@ -100,7 +100,7 @@ def main():
     library_barcodes.rename(columns={"Reads": "Sequence"}, inplace=True)
     
     # remove unnecessary columns Reads,identity,alignmentLength,gapOpens,q_start,q_end,s_start,s_end,evalue,
-    unessary_columns = ["Reads", "identity", "alignmentLength", "gapOpens", "q_start", "q_end", "s_start", "s_end", "evalue",'bitScore','mismatches',]
+    unessary_columns = ["Reads"]
     # remove each column if it exists
     for col in unessary_columns:
         if col in library_barcodes.columns:

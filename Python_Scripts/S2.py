@@ -2,7 +2,8 @@
 """
 Author: Jaro Steindorff
 
-This script extracts barcodes and fragments from sequencing files, matches them to the reference, pairs them, and saves them in separate files.
+This script extracts barcodes and fragments from sequencing files from rational designed libraries,
+matches them to the reference, pairs them, and saves them in separate files.
 
 Workflow:
     - Use bbduk2.sh to extract fragments from the given fragment sequencing file
@@ -149,7 +150,7 @@ def main():
     with tempfile.NamedTemporaryFile(delete=True, mode='w+', suffix='.txt') as vsearch_out, \
         tempfile.NamedTemporaryFile(delete=True, mode='w+', suffix='.txt') as keep_fragments:
         
-        # Run vsearch and store the output in a temporary file
+        # Run vsearch to find exact matches of the reference sequence in the fragment reads
         vsearch_command = [
             f"zcat {out_name_fragment} | "
             f"vsearch --usearch_global - "
@@ -168,7 +169,6 @@ def main():
         # Use awk to extract the matching fragment reads from the vsearch output
         awk_command = [f"awk '{{print $1}}' {vsearch_out.name} > {keep_fragments.name}"]
         _, stderr = run_command(awk_command, "awk", shell=True)
-        
         
         # Extracting fragment reads and corresponding barcode reads that match to the reference
 
@@ -189,7 +189,7 @@ def main():
         ]
         _, stderr = run_command(seqkit_command, "seqkit grep", shell=True)
         
-    # extracting barcodes from the barcode reads that match to a found fragment <==
+    # extracting barcodes from the barcode reads that match to a found fragment
         
     out_name_barcode = os.path.join(out_dir, f"barcode_{out_name}.fastq.gz")
     bbduk2_args_BC = config["bbduk2_args_BC"] + [

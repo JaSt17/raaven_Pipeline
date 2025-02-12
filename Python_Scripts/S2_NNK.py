@@ -2,7 +2,7 @@
 """
 Author: Jaro Steindorff
 
-This script extracts barcodes and fragments from sequencing files, pairs them, and saves them in separate files.
+This script extracts barcodes and fragments from sequencing files of random NNK libaries, pairs them, and saves them in separate files.
 
 Workflow:
     - Use bbduk2.sh to extract barcodes from the given barcode sequencing file

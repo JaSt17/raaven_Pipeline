@@ -2,15 +2,14 @@
 """
 Author: Jaro Steindorff
 
-This script extracts barcodes from given samples, reduces them using the Starcode algorithm, and matches them with
-corresponding fragments. It processes a csv file with Sample and Group and saves the results in a log table and saves the found fragments in a csv file.
+This script extracts barcodes from given samples, and matches them with corresponding fragments suing the LUT.
+It processes a csv file with Sample and Group and saves the results in a log table and saves the found fragments in a csv file.
 
 Workflow:
     - Load the library fragments and LUT data
     - For each RNA sample:
-        - Extrating known barcodes from the sample using vsearch
         - Extract barcodes using bbduk2.sh
-        - Reduce barcodes using Starcode
+        - Match barcodes with reference barcodes using vsearch
         - Match reduced barcodes with fragment information
         - Save found fragments for the sample
     - Save a log table with summary statistics
@@ -98,46 +97,6 @@ def run_command(command, description: str, shell=False, verbose=False):
     except Exception as e:
         logger.error(f"Exception running {description}: {e}")
         sys.exit(1)
-        
-        
-def starcode_based_barcode_reduction(full_table: pd.DataFrame) -> pd.DataFrame:
-    """
-    Perform barcode reduction using Starcode clustering on the unique barcodes from the full table.
-
-    Parameters:
-        full_table (pd.DataFrame): DataFrame containing the full table with barcodes (column 'BC')
-        
-    Returns:
-        pd.DataFrame: DataFrame containing the Starcode-reduced barcodes
-    """
-    
-    # Write unique barcodes to a temporary file
-    barcode_temp_file = tempfile.NamedTemporaryFile(delete=False, mode='w+')
-    barcode_temp_file.writelines(f"{bc}\n" for bc in full_table['BC'])
-    barcode_temp_file.close()
-    
-    # Run Starcode clustering
-    num_threads = multiprocessing.cpu_count()
-    starcode_output = tempfile.NamedTemporaryFile(delete=False, suffix=".txt")
-    starcode_cmd = f"starcode -t {num_threads-1} --print-clusters -d 1 -r5 -q -i {barcode_temp_file.name} -o {starcode_output.name}"
-    subprocess.run(starcode_cmd, shell=True, check=True)
-
-    # Read Starcode output
-    starcode_df = pd.read_csv(starcode_output.name, sep='\t', header=None, names=['scBC', 'count', 'BC_list'])
-    starcode_df['BC_list'] = starcode_df['BC_list'].str.split(',')
-
-    # Explode the BC_list to create a mapping between original barcodes and Starcode-reduced barcodes
-    starcode_exploded = starcode_df.explode('BC_list')
-    starcode_exploded.rename(columns={'BC_list': 'BC'}, inplace=True)
-
-    # Clean up temporary files
-    for temp_file in [barcode_temp_file.name, starcode_output.name]:
-        try:
-            os.remove(temp_file)
-        except Exception as e:
-            logger.warning(f"Failed to delete temporary file {temp_file}: {e}")
-
-    return starcode_exploded
 
 
 def extract_summary(stdout: str) -> str:
@@ -263,7 +222,8 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, out_dir:str, library_fra
             "--id 0.95 "
             f"--blast6out {vsearch_out.name} "
             f"--threads {threads} "
-            f"--minseqlength {bc_len}"
+            f"--minseqlength {bc_len} "
+            f"--mincols {bc_len} "
         ]
         _, stderr = run_command(vsearch_command, "vsearch", shell=True)
 

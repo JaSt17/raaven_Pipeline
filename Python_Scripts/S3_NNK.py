@@ -200,7 +200,6 @@ def create_LUTnr_column(full_table: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: DataFrame containing the full table with the LUTnr column
     """
-    import pandas as pd
 
     # Ensure 'Reads' column exists
     if 'Reads' not in full_table.columns:
@@ -222,7 +221,6 @@ def create_LUTnr_column(full_table: pd.DataFrame) -> pd.DataFrame:
     full_table = full_table.merge(unique_pairs[['Reads', 'LUTnr', 'Peptide']], on='Reads', how='left')
 
     return full_table
-
 
 
 def starcode_based_reduction_and_replace(full_table: pd.DataFrame, input_file_name: str, columns_name: str)-> pd.DataFrame:
