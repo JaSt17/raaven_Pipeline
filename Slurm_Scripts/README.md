@@ -27,12 +27,13 @@ Each Slurm script first loads the **Anaconda3** module and activates the **conda
 This directory contains six Slurm scripts, each named after the dataset it analyzes:
 
 - **Brave**
+- **Brave_22aa**
 - **Example**
 - **p005**
 - **p006**
 - **p007**
 - **Undetermined**
 
-The first five scripts (**Brave**, **Example**, **p005**, **p006**, **p007**) can all be used to analyze their respective datasets. 
+The first five scripts (**Brave**, **Brave_22aa**, **Example**, **p005**, **p006**, **p007**) can all be used to analyze their respective datasets. 
 
 The **Undetermined** script runs only the second step of the pipeline on any undetermined reads. These are the barcodes and fragments from the **p005**, **p006**, and **p007** pipelines that could not be distinguished by the sequencer.

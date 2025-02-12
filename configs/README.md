@@ -9,6 +9,7 @@ This config scripts hold **six dictionaries**, one for every step of the pipelin
 This directory contains **8 config scripts** that were used for the analysis of different sequencing data:
 
 - **config_BRAVE**: Config for the re-analysis of the sequencing data from the [BRAVE study](https://www.biorxiv.org/content/10.1101/335372v1.full.pdf)
+- **config_BRAVE_22aa**: Config for the re-analysis of the sequencing data from the [BRAVE study](https://www.biorxiv.org/content/10.1101/335372v1.full.pdf)
 - **config_Example**: Config for the example data that was published with this pipeline
 - **config_p005**: Config for the analysis of the library created with the same reference as in BRAVE but with a fragment length of 7 amino acids
 - **config_p006**: Config for the analysis of the library created using NNK random creation of fragments with a length of 7 amino acids

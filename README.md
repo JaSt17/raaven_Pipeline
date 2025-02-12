@@ -46,7 +46,7 @@ In general, this pipeline enables the analysis of Illumina short reads from AAV 
 Before running the tool, ensure the following software and libraries are installed:
 
 - **Anaconda** (version 24.1.2)
-- **BBmap** (bioinformatics tool)
+- **BBmap** (version 39.08)
 
 ---
 
@@ -272,11 +272,13 @@ All the code required for creating data visualizations and performing analysis c
 
 ## License
 
-This pipeline free to use, modify, and distribute.
+This pipeline is free to **use**, **modify**, and **distribute**.
+
+If you use it in your work, please provide proper attribution by referencing this **GitHub repository**.
 
 ## Acknowledgments
 
-I sincerely thank **rAAVen Therapeutics** for their support, guidance, and the opportunity to contribute to this project. Special thanks to my supervisor at Lund University for their mentorship and encouragement throughout this journey.
+I sincerely thank **rAAVen Therapeutics** for their support, guidance, and the opportunity to contribute to this project. Special thanks to my supervisor at Lund University for their mentorship and encouragement throughout this thesis.
 
 ## Contact Information
 
