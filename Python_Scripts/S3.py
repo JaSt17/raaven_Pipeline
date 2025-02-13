@@ -516,6 +516,14 @@ def main():
     single_barcode_table.to_csv(config['out_name'].replace(".csv", "_single.csv"), index=False)
     logger.info(f"Single barcodes saved to {config['out_name'].replace('.csv', '_single.csv')}")
     
+    allowed = "Definitiv"
+    if config["single_read"]:
+        allowed += ", Single"
+    if config["chimeric_read"]:
+        allowed += ", Chimeric"
+        
+    logger.info(f"Included barcodes: {allowed}")
+    
     # write the definitiv barcodes to a fasta file
     write_def_barcodes(final_barcodes_table, config['out_name'])
     
