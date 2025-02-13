@@ -77,6 +77,7 @@ def main():
             library_barcodes = pd.read_csv(config["input_table"], dtype={7: str})
             # add column RNAcount and set it to tcount
             library_barcodes.rename(columns={"tCount": "RNAcount"}, inplace=True)
+            library_barcodes.rename(columns={"Reads": "Sequence"}, inplace=True)
             library_barcodes.to_csv(config["output_table"], index=False)
             logger.info(f"Could not find fragments position file, saved library fragments with RNAcount to {config['output_table']}")
             sys.exit(0)

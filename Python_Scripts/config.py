@@ -1,7 +1,7 @@
 """ This file contains the config dictionary that are used to store the configuration parameters for the pipeline. """
 
 # Define the data directory where the input and output files are stored
-data_dir = "raav-60/p006"
+data_dir = "raav-60/p006_test"
 # Define the directory where the logs are stored
 log_dir = data_dir + "/logs/"
 # Define the length of the barcode and fragment sequences in DNA bases
@@ -54,8 +54,10 @@ config_S3 = {
     "fragment_file": config_S2["out_dir"] + "/fragment_" + config_S2["out_name"] + ".fastq.gz",
     # Do we want to allwo single read barcodes
     "single_read": True,
+    # Do we want to allow chimeric barcodes
+    "chimeric_read": True,
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
-    "threshold": 0.8,
+    "threshold": 1,
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue
     "chunk_size": 10000000,
     # output file name for the library barcodes
@@ -69,7 +71,7 @@ config_S4 = {
     "in_name_LUT": None,
     "chunk_size": config_S3["chunk_size"],
     "bc_len": bc_len,
-    "db": data_dir + "/barcode_db.fasta",
+    "db": data_dir + "/barcode_fragment/unique_barcodes.fasta",
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": data_dir + "/input/load_list.csv",
     # directory containing the fastq files for the samples

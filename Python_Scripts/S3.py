@@ -265,9 +265,11 @@ def split_reads_into_single_and_multi_read_barcodes(full_table: pd.DataFrame)-> 
     single_read_barcodes = barcode_counts[barcode_counts == 1].index
     # get multi read barcodes table
     multi_read_barcodes = barcode_counts[barcode_counts > 1].index
+    
+    total_number_of_barcodes = len(barcode_counts)
 
-    logger.info(f"Number of single-read barcodes: {len(single_read_barcodes)}")
-    logger.info(f"Number of multi-read barcodes: {len(multi_read_barcodes)}")
+    logger.info(f"Number of single-read barcodes: {len(single_read_barcodes)} ({len(single_read_barcodes)/total_number_of_barcodes*100:.2f}%)")
+    logger.info(f"Number of multi-read barcodes: {len(multi_read_barcodes)} ({len(multi_read_barcodes)/total_number_of_barcodes*100:.2f}%)")
 
     # create tables with single and multi read barcodes
     temp_table_single = full_table[full_table['BC'].isin(single_read_barcodes)].copy()
@@ -389,15 +391,25 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimer
     """
     # Combine clean and consensus tables
     temp_table_multi_final = pd.concat([temp_table_multi_clean, temp_table_multi_chimeric], ignore_index=True)
-    logger.info(f"Number of barcodes mapping to only one fragment: {len(temp_table_multi_clean)}")
-    logger.info(f"Number of barcodes mapping to more than one fragment: {len(temp_table_multi_chimeric)}")
-    logger.info(f"   From these {len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Def'])} are clean barcodes (ratio above {threshold})")
-    logger.info(f"   From these {len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Chimeric'])} are chimeric barcodes (ratio below {threshold})")
+    Def_barcodes = temp_table_multi_final[temp_table_multi_final['Mode'] == 'Def']
+    Chimeric_barcodes = temp_table_multi_final[temp_table_multi_final['Mode'] == 'Chimeric']
+    
+    # Get the number of unique barcodes in each table
+    num_unique_clean = len(temp_table_multi_clean['BC'].unique())
+    num_unique_chimeric = len(temp_table_multi_chimeric['BC'].unique())
+    num_unique_single = len(temp_table_single['BC'].unique())
+    total_barcodes = num_unique_clean + num_unique_chimeric + num_unique_single
+    
+    logger.info(f"Number of single read barcodes mapping to only one fragment: Reads:{len(temp_table_single)} Barcodes:{num_unique_single} ({num_unique_single/total_barcodes*100:.2f}%)")
+    logger.info(f"Number of multi read barcodes mapping to only one fragment: Reads:{len(temp_table_multi_clean)} Barcodes:{num_unique_clean} ({num_unique_clean/total_barcodes*100:.2f}%)")
+    logger.info(f"   Of theses are cleaned chimeric barcodes (ratio above {threshold}) Reads:{len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Def'])} Barcodes: {len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Def']['BC'].unique())} ({len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Def']['BC'].unique())/total_barcodes*100:.2f}%)")
+    logger.info(f"Number of multi read barcodes mapping to multiple fragments: Reads:{len(temp_table_multi_chimeric)} Barcodes:{num_unique_chimeric} ({num_unique_chimeric/total_barcodes*100:.2f}%)")
 
     Def_barcodes = temp_table_multi_final[temp_table_multi_final['Mode'] == 'Def']
     Chimeric_barcodes = temp_table_multi_final[temp_table_multi_final['Mode'] == 'Chimeric']
     
-    return Def_barcodes, Chimeric_barcodes
+    return Def_barcodes, Chimeric_barcodes, temp_table_single
+
 
 def write_def_barcodes(Def_barcodes: pd.DataFrame, out_name: str, name_suffix:str="")-> None:
     """
@@ -474,10 +486,6 @@ def main():
     temp_table_single, temp_table_multi = split_reads_into_single_and_multi_read_barcodes(full_table)
     #remove full_table df from memory
     del full_table
-    
-    if config["single_read"]:
-        # merge single read barcodes with the multi read barcodes
-        temp_table_multi = pd.concat([temp_table_multi, temp_table_single], ignore_index=True)
 
     # Split multi-read barcodes into clean and chimeric
     temp_table_multi_clean, temp_table_multi_chimeric = split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi)
@@ -486,22 +494,30 @@ def main():
     temp_table_multi_chimeric = get_valid_chimeric_barcodes(temp_table_multi_chimeric, config["threshold"])
 
     # Combine all tables into final output
-    def_barcodes_table, chimeric_barcode_table = combine_tables(temp_table_multi_clean, temp_table_multi_chimeric, temp_table_single, config["threshold"])
-    del temp_table_multi_clean, temp_table_multi_chimeric
+    def_barcodes_table, chimeric_barcode_table, single_barcode_table = combine_tables(temp_table_multi_clean, temp_table_multi_chimeric, temp_table_single, config["threshold"])
+    del temp_table_multi_clean, temp_table_multi_chimeric, temp_table_single
+    
+    # Add the single barcodes to the final table or chimeric barcodes
+    final_barcodes_table = def_barcodes_table.copy()
+    if config["single_read"]:
+        # merge single read barcodes with the multi read barcodes
+        final_barcodes_table = pd.concat([final_barcodes_table, single_barcode_table], ignore_index=True)
+    if config["chimeric_read"]:
+        # merge chimeric barcodes with the multi read barcodes
+        final_barcodes_table = pd.concat([final_barcodes_table, chimeric_barcode_table], ignore_index=True)
 
     # Save the output tables
-    def_barcodes_table.to_csv(config['out_name'], index=False)
+    final_barcodes_table.to_csv(config['out_name'], index=False)
+    logger.info(f"Final barcodes saved to {config['out_name']}")
+    def_barcodes_table.to_csv(config['out_name'].replace(".csv", "_def.csv"), index=False)
     logger.info(f"Definitiv barcodes saved to {config['out_name']}")
     chimeric_barcode_table.to_csv(config['out_name'].replace(".csv", "_chimeric.csv"), index=False)
     logger.info(f"Chimeric barcodes saved to {config['out_name'].replace('.csv', '_chimeric.csv')}")
-    temp_table_single.to_csv(config['out_name'].replace(".csv", "_single.csv"), index=False)
+    single_barcode_table.to_csv(config['out_name'].replace(".csv", "_single.csv"), index=False)
     logger.info(f"Single barcodes saved to {config['out_name'].replace('.csv', '_single.csv')}")
     
     # write the definitiv barcodes to a fasta file
-    write_def_barcodes(def_barcodes_table, config['out_name'])
-    
-    # write the chimeric barcodes to a fasta file
-    write_def_barcodes(chimeric_barcode_table, config['out_name'], "_chimeric")
+    write_def_barcodes(final_barcodes_table, config['out_name'])
     
     # Print total analysis time
     logger.info(f"Total execution time: {datetime.now() - start_time}")
