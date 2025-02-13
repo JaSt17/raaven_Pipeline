@@ -1,39 +1,20 @@
 """ This file contains the config dictionary that are used to store the configuration parameters for the pipeline. """
 
 # Define the data directory where the input and output files are stored
-data_dir = "Brave_test"
+data_dir = "raav-60/p006"
 # Define the directory where the logs are stored
 log_dir = data_dir + "/logs/"
 # Define the length of the barcode and fragment sequences in DNA bases
-bc_len = 20
-frag_len = 42
-
-# configuration for Step 1 in the pipeline
-config_S1 = {
-    # input file containing the DNA sequences to create the library from
-    "input_file": data_dir + "/input/reference_seq.fasta",
-    # wSet file containing the hsa codon usage table
-    "wSet": data_dir + "/input/wSet.csv",
-    # dictionary containing the information about the different structures with
-    # their name as the key and then the length, frequency, and overhangs as the values
-    "structure_dict": {
-        "14aa": {"length": 14, "freq": 1,
-                "overhangs": ["AACCTCCAGAGAGGCAACGCT", "GCCAGACAAGCAGCTACCGCA"]},
-    },
-    # output file names for the LUT csv and the list of all inserted fragments
-    "output_csv": data_dir + "/LUT.csv",
-    "output_name": data_dir + "/SortedFragments.txt",
-    "log_dir": log_dir,
-}
+bc_len = 27
+frag_len = 21
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_barcode": data_dir + "/fastq_files/DNA_pscAAVlib_1.fastq.gz",
-    "in_name_fragment": data_dir + "/fastq_files/DNA_pscAAVlib_2.fastq.gz",
-    "input_file": config_S1["input_file"],
+    "in_name_barcode": data_dir + "/fastq_files/p006_R1.fastq.gz",
+    "in_name_fragment": data_dir + "/fastq_files/p006_R2.fastq.gz",
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": data_dir + "/barcode_fragment",
-    "out_name": "DNA_pscAAVlib_1",
+    "out_name": "p006",
     # arguments for the bbduk2 tool to extract the barcode and fragment sequences
     "bbduk2_args_BC" : [
         "k=20",
@@ -46,7 +27,7 @@ config_S2 = {
         f"minlength={bc_len}",
         f"maxlength={bc_len}",
         "ordered=t",
-        "lliteral=GCCTAGCGGCCGCTTTACTT",
+        "lliteral=GCCATCCTCTTATCTCGTGG",
         "rliteral=ATAACTTCGTATAATGTATG",
     ],
     "bbduk2_args_Frag" : [
@@ -69,13 +50,12 @@ config_S2 = {
 
 config_S3 = {
     # input file names are extracted from the previous step
-    "in_name_LUT": config_S1["output_csv"],
     "barcode_file": config_S2["out_dir"] + "/barcode_" + config_S2["out_name"] + ".fastq.gz",
     "fragment_file": config_S2["out_dir"] + "/fragment_" + config_S2["out_name"] + ".fastq.gz",
     # Do we want to allwo single read barcodes
     "single_read": True,
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
-    "threshold": 1,
+    "threshold": 0.8,
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue
     "chunk_size": 10000000,
     # output file name for the library barcodes
@@ -86,21 +66,21 @@ config_S3 = {
 config_S4 = {
     # input file names are extracted from the previous step
     "input_table": config_S3["out_name"],
-    "in_name_LUT": config_S1["output_csv"],
+    "in_name_LUT": None,
     "chunk_size": config_S3["chunk_size"],
     "bc_len": bc_len,
     "db": data_dir + "/barcode_db.fasta",
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": data_dir + "/input/load_list.csv",
     # directory containing the fastq files for the samples
-    "sample_directory": data_dir + "/fastq_files",
+    "sample_directory": "raav-60/sample_fastq",
     # filename for the log file that will be created and show how many barcodes were found in each sample
     "log_file_path": data_dir + "/found_barcode_report.csv",
     # output directory for the found barcodes csv files
     "output_dir": data_dir + "/found_barcodes",
     # arguments for the bbduk2 tool to extract the barcodes from the samples
     "bbduk2_args" : [        
-        "k=10",
+        "k=20",
         "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
@@ -111,8 +91,8 @@ config_S4 = {
         f"minlength={bc_len}",
         f"maxlength={bc_len}",
         "ordered=t",
-        "lliteral=CGCTTTACTT",
-        "rliteral=ATAACTTCGT",
+        "lliteral=GCCATCCTCTTATCTCGTGG",
+        "rliteral=ATAACTTCGTATAATGTATG",
     ],
     "log_dir": log_dir,
 }
@@ -120,7 +100,7 @@ config_S4 = {
 config_S5 = {
     # input file names are extracted from the previous step
     "input_table": config_S3["out_name"],
-    "in_name_LUT": config_S1["output_csv"],
+    "in_name_LUT": None,
     # output file name for the library barcodes with their information form the LUT
     "output_table": data_dir + "/pos_library_barcodes.csv",
     "log_dir": log_dir,
@@ -128,7 +108,6 @@ config_S5 = {
 
 config_S6 = {
     # input file names are extracted from the previous step
-    "original_seq_file": config_S1["input_file"],
     "input_dir": config_S4["output_dir"],
     "sample_inputs": config_S4["sample_inputs"],
     "library_fragments": config_S5["output_table"],
@@ -137,9 +116,7 @@ config_S6 = {
     # dictionary containing the information about the different subsets that should be created
     # the key is the name of the subset and the value is a list of the fragments that should be included
     "subsets": {
-        "Infective_AAVs": ['exclude','DNA_AAVlib_DNAse_30cpc_1', 'DNA_AAVlib_DNAse_3cpc_1','Plasmid_Library', 'DNA_pscAAVlib_Prep2_1'],
-        "DNAse_resistant_AAVs": ['include', 'DNA_AAVlib_DNAse_30cpc_1','DNA_AAVlib_DNAse_3cpc_1'],
-        "Transported_AAVs": ['contains_include', "mRNA_30cpc_SN", "mRNA_30cpc_Th", "mRNA_30cpc_Ctx", "mRNA_3cpc_SN", "mRNA_3cpc_Th", "mRNA_3cpc_Ctx"],
+        "Infective_AAVs": ['exclude','DNAse_resistant_AAVs','Plasmid_Library'],
     },
     # output file name for the final fragments summary
     "output_table": data_dir + "/final_fragments_summary.csv",
@@ -148,7 +125,6 @@ config_S6 = {
 
 # create a lookup dictionary for the configuration dictionaries
 config_lookup = {
-    "S1": config_S1,
     "S2": config_S2,
     "S3": config_S3,
     "S4": config_S4,

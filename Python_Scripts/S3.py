@@ -236,7 +236,6 @@ def starcode_based_reduction_and_replace(full_table: pd.DataFrame, input_file_na
     # Explode the seq_list to have one row per seq and rename the columns
     starcode_exploded = starcode_df.explode('seq_list')
     starcode_exploded.rename(columns={'seq_list': columns_name}, inplace=True)
-    logger.info(starcode_exploded.head())
     # only keep the unique barcodes
     starcode_exploded.drop_duplicates(subset=[columns_name], inplace=True)
     logger.info(f"Number of unique {columns_name} after Starcode reduction: {number_of_clusters}")
@@ -400,7 +399,7 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimer
     
     return Def_barcodes, Chimeric_barcodes
 
-def write_def_barcodes(Def_barcodes: pd.DataFrame, out_name: str)-> None:
+def write_def_barcodes(Def_barcodes: pd.DataFrame, out_name: str, name_suffix:str="")-> None:
     """
     Write the definitiv barcodes to a CSV file.
     
@@ -413,10 +412,12 @@ def write_def_barcodes(Def_barcodes: pd.DataFrame, out_name: str)-> None:
     """
     # split out_name to get the path
     out_path = "/".join(out_name.split("/")[:-1])
-    save_path = out_path + "/barcode_db.fasta"
+    save_path = out_path + f"/barcode_db{name_suffix}.fasta"
     # remove the file if it already exists
     if os.path.exists(save_path):
         os.remove(save_path)
+    # get all unique barcodes from the Def_barcodes table
+    Def_barcodes = Def_barcodes.drop_duplicates(subset=['BC'])
     # save the definitiv barcodes from the BC column to a fasta file
     for i, row in Def_barcodes.iterrows():
         with open(save_path, 'a') as f:
@@ -498,6 +499,9 @@ def main():
     
     # write the definitiv barcodes to a fasta file
     write_def_barcodes(def_barcodes_table, config['out_name'])
+    
+    # write the chimeric barcodes to a fasta file
+    write_def_barcodes(chimeric_barcode_table, config['out_name'], "_chimeric")
     
     # Print total analysis time
     logger.info(f"Total execution time: {datetime.now() - start_time}")
