@@ -77,7 +77,7 @@ config_S3 = {
     # Do we want to allow chimeric barcodes
     "chimeric_read": True,
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
-    "threshold": 1,
+    "threshold": 0.8,
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue
     "chunk_size": 20000000,
     # output file name for the library barcodes
