@@ -210,7 +210,7 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
     # Define aggregation functions
     aggregations = {
         'mCount': 'sum',
-        'Sequence': 'first',
+        'Reads': 'first',
         'BC': lambda x: ','.join(pd.unique(x)),
         'RNAcount': 'sum',
         'RNAcount_ratio': 'sum',
@@ -226,6 +226,9 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
 
     # Barcode adjusted count ratio
     combined_data['BC_adjusted_count_ratio'] = combined_data['RNAcount_ratio'] + combined_data['BC_ratio'] / 2
+    
+    # Rename Reads to Sequence
+    combined_data.rename(columns={'Reads': 'Sequence'}, inplace=True)
 
     return combined_data
 
