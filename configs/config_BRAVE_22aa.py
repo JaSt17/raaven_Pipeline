@@ -82,7 +82,7 @@ config_S3 = {
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue
     "chunk_size": 20000000,
     # output file name for the library barcodes
-    "out_name": data_dir + "/library_barcodes.csv",
+    "out_name": data_dir_save + "/library_barcodes.csv",
     "log_dir": log_dir,
 }
 
