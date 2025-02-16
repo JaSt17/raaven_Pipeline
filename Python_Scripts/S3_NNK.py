@@ -432,14 +432,14 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimer
     num_cleaned_chimeric = len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Chimeric_Def']['BC'].unique())
     num_unique_chimeric = len(temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Chimeric']['BC'].unique())
     num_unique_single = len(temp_table_single['BC'].unique())
-    total_barcodes = num_unique_clean + num_unique_chimeric + num_unique_single
+    total_barcodes = num_unique_clean + num_unique_chimeric + num_unique_single + num_cleaned_chimeric
     
     # Get the number of reads in each table
     num_reads_clean = temp_table_multi_clean['mCount'].sum()
     num_reads_cleaned_chimeric = temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Chimeric_Def']['mCount'].sum()
     num_reads_chimeric = temp_table_multi_chimeric[temp_table_multi_chimeric['Mode'] == 'Chimeric']['mCount'].sum()
     num_reads_single = temp_table_single['mCount'].sum()
-    total_reads = num_reads_clean + num_reads_chimeric + num_reads_single
+    total_reads = num_reads_clean + num_reads_chimeric + num_reads_single + num_reads_cleaned_chimeric
 
     # Print Header
     logger.info("=" * 100)
