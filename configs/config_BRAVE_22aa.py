@@ -76,7 +76,7 @@ config_S3 = {
     # Do we want to allwo single read barcodes
     "single_read": True,
     # Do we want to allow chimeric barcodes
-    "chimeric_read": True,
+    "chimeric_read": False,
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
     "threshold": 0.8,
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue
