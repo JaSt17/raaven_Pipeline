@@ -405,7 +405,7 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimer
     # Combine clean and consensus tables
     temp_table_multi_final = pd.concat([temp_table_multi_clean, temp_table_multi_chimeric], ignore_index=True)
     Def_barcodes = temp_table_multi_final[temp_table_multi_final['Mode'] == 'Def']
-    Chimeric_barcodes = temp_table_multi_final
+    Chimeric_barcodes = temp_table_multi_final[temp_table_multi_final['Mode'] == 'Chimeric']
     
     # Get the number of unique barcodes in each table
     num_unique_clean = len(temp_table_multi_clean['BC'].unique())
