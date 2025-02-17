@@ -3,10 +3,10 @@
 #SBATCH --nodes=4
 #SBATCH --ntasks=4
 #SBATCH --cpus-per-task=48
-#SBATCH --time=12:00:00
-#SBATCH -A lu2024-2-8
-#SBATCH -o p006_analysis%j.out
-#SBATCH -e p006_analysis%j.err
+#SBATCH --time=24:00:00
+#SBATCH -A lu2024-2-79
+#SBATCH -o %x_%j.out  # %x = job name, %j = job ID
+#SBATCH -e %x_%j.err  # %x = job name, %j = job ID
 
 # exit when any command fails
 set -e
@@ -20,7 +20,7 @@ conda activate python_pipeline
 # change the config file to p006
 cp configs/config_p006.py Python_Scripts/config.py
 # A NNK library starts at step 2 since there is no reference file
-./Python_Scripts/S2_NNK.py
+#./Python_Scripts/S2_NNK.py
 cp configs/config_p006.py Python_Scripts/config.py
 ./Python_Scripts/S3_NNK.py
 cp configs/config_p006.py Python_Scripts/config.py

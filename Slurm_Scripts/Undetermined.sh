@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=undetermined_analysis
-#SBATCH --nodes=2
-#SBATCH --ntasks=2
+#SBATCH --job-name=p006_analysis
+#SBATCH --nodes=4
+#SBATCH --ntasks=4
 #SBATCH --cpus-per-task=48
 #SBATCH --time=24:00:00
-#SBATCH -A lu2024-2-8
-#SBATCH -o undetermined_analysis%j.out
-#SBATCH -e undetermined_analysis%j.err
+#SBATCH -A lu2024-2-79
+#SBATCH -o %x_%j.out  # %x = job name, %j = job ID
+#SBATCH -e %x_%j.err  # %x = job name, %j = job ID
 
 # exit when any command fails
 set -e
