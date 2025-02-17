@@ -287,9 +287,8 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
         
         # Increment the radius for the next ring
         radius += size  
-        
-    # create a list of values for the grid lines and labels
-    values = [i for i in range(0, max_val, step_size)]
+    
+    values = [max_val*i/10 for i in range(0,10,1)]
     
     # sort the groups in group items assending based on their values
     group_items = sorted(group_size.items(), key=lambda x: x[1])
@@ -298,7 +297,7 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
     radius = 1 
     for i, (_,length) in enumerate(group_items):
         # Generate values for grid lines
-        temp_values = [value for value in values if value <= length]
+        temp_values = [value for value in values if value <= (length+max_val*0.05)]
         
         # delete all values in temp_values from values
         for value in temp_values:
@@ -324,10 +323,10 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
             ax.text(
                 angle,
                 label_radius,
-                f"{value}",
+                f"{value/max_val*100:.0f}%",
                 ha='center',
                 va='center',
-                fontsize=8,
+                fontsize=10,
                 color='black',
                 rotation=rotation,
                 rotation_mode='anchor'
@@ -343,6 +342,7 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
     
     # return the plot
     return plt
+
 
 def create_grouped_barplot(df, tissue_col, count_col, library_col):
     """
@@ -389,7 +389,7 @@ def create_grouped_barplot(df, tissue_col, count_col, library_col):
 
     # Customization
     ax.set_ylabel(f'Log10({count_col})', fontsize=10)
-    ax.set_title('Number of Fragments per Tissue', fontsize=12)
+    ax.set_title('Number of Fragments per Group', fontsize=12)
     ax.set_xticks(x + (len(libraries) - 1) * (width + spacing) / 2) 
     ax.set_xticklabels(pivot_df.index, fontsize=10, rotation=45, ha='right')  # Rotate labels at 45 degrees
 
