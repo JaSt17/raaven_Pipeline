@@ -1,6 +1,6 @@
 # Python Scripts Overview
 
-This directory contains all **Python scripts** required for the pipeline. A detailed explanation of the workflow can be found in both PDF and TXT formats in the `Supplementaries` folder.
+This directory contains all **Python scripts** required for the pipeline. A detailed explanation of the workflow can be found in the `Supplementaries` folder.
 
 ---
 

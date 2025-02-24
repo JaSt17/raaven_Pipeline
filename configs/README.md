@@ -6,7 +6,7 @@ This config scripts hold **six dictionaries**, one for every step of the pipelin
 
 ## Config Files
 
-This directory contains **8 config scripts** that were used for the analysis of different sequencing data:
+This directory contains **9 config scripts** that were used for the analysis of different sequencing data:
 
 - **config_BRAVE**: Config for the re-analysis of the sequencing data from the [BRAVE study](https://www.biorxiv.org/content/10.1101/335372v1.full.pdf)
 - **config_BRAVE_22aa**: Config for the re-analysis of the sequencing data from the [BRAVE study](https://www.biorxiv.org/content/10.1101/335372v1.full.pdf)
@@ -63,13 +63,16 @@ There are two global parameters that **must** be set:
 2. **in_name_fragment**  
    Path to the fastq file of the library fragment reads.
 
-3. **out_dir**  
+3. **input_file**  
+   Path to the fasta file of all the reference proteins that were used to build the library.
+
+4. **out_dir**  
    Path to the directory where we will save the found barcodes and fragments.
 
-4. **out_name**  
+5. **out_name**  
    Name that will be appended to the found fragments and barcode files.
 
-5. **bbduk2_args**  
+6. **bbduk2_args**  
    Two lists of arguments for the `bbduk2` runs. Below is a short description of each parameter:
 
    - **k**: Specifies the k-mer length used for matching.
@@ -95,40 +98,48 @@ There are two global parameters that **must** be set:
 1. **in_name_LUT, barcode_file, fragment_file**  
    - All set according to the names given in **Config_S1** and **Config_S2**.
 
-2. **threshold**  
+2. **single_read, chimeric_read**
+   - Two boolean values to allow single read barcodes and chimeric barcodes in the creation of the Library Look up Table
+
+3. **threshold**  
    - Minimal ratio of the most frequent barcode to all found barcodes for chimeric barcode detection.
    - If the ratio of a barcode matched to one fragment is higher than the threshold, it is classified as a valid barcode; if lower, it is classified as chimeric.
 
-3. **chunk_size**  
+4. **chunk_size**  
    - Number of lines processed at a time from the barcode and fragment files.
    - Adjust based on the computing power of the system. Smaller values increase processing time but reduce memory requirements, and vice versa.
 
-4. **out_name**  
+5. **out_name**  
    - Path to the output file that will be created at the end of **S3**.
 
 ---
 
 ## Config_S4
 
-1. **input_table, in_name_LUT, chunk_size**
+1. **input_table, in_name_LUT, chunk_size,**
    - Set according to the names given in **Config_S1** and **Config_S3**.
 
-2. **sample_inputs**  
+2. **bc_len**
+   - Lenght of the Barcodes used in the Library in base pairs (e.g 20 bp)
+
+3. **db**
+   - reference file of all found barcodes in the Plasmid library sequecneing created in **S3** of the pipeline
+4. **sample_inputs**  
    - Path to the list containing the names of all tissue samples to be analyzed for barcodes.
    - The list should have two columns:  
      1. The name of the file.  
      2. The tissue or group from which we have the sequencing data.
 
-3. **sample_directory**  
+5. **sample_directory**  
    - Path to the directory that contains the sequencing data for the tissues/samples listed in `sample_inputs`.
 
-4. **log_file_path**  
+6. **log_file_path**  
    - Path to the file where the details of the found barcodes will be saved.
 
-5. **output_dir**  
+7. **output_dir**  
    - Path to the directory where all found barcode files will be saved.
 
-6. **bbduk2_args**  
+8. **bbduk2_args**  
    - A list of arguments for the `bbduk2` runs to extract the barcodes.
    - Below are parameters not yet explained in **Config_S2**:
      - **trd**: Trims adapters from both the read and its reverse complement.
@@ -158,16 +169,7 @@ There are two global parameters that **must** be set:
    - A dictionary containing information about different subsets to be created in the final output.
    - The key is the name of the subset group, and the value is a list of the fragments that should be included or excluded.
 
-4. **backbone_seq**  
-   - The backbone sequence added to the fragments, which will be cut away in this last step.
-
-5. **trim_dict**  
-   - A dictionary holding the positions for trimming for every structure created in **S1**.
-   - These trimming positions depend on the overhangs that were given to the sequences.
-
-6. **output_table**  
+4. **output_table**  
    - Path to the final output file of the pipeline.
-
-> **Note**: The `backbone_seq` and `trim_dict` do not have to be set. They are only necessary depending on how the fragments were cut during the `bbduk2` step in **S2**.
 
 ---
