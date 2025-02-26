@@ -2,7 +2,7 @@
 
 This Git repository contains all the code and notebooks used to process raw Illumina short-read data into a format suitable for data analysis and machine learning tasks conducted during my Master's thesis project at rAAven Therapeutics.
 
-In general, this pipeline enables the analysis of Illumina short reads from AAV libraries and tissue samples to identify recombinant AAV variants found in different cell types.
+This pipeline analyzes sequencing data from both the initial plasmid AAV library and tissue samples collected from model organisms injected with that library. This allows for the identification of recombinant AAV variants present in different cell types.
 
 **Note:** For better organization, each directory contains its own dedicated README file describing its contents and purpose.
 
@@ -20,13 +20,12 @@ In general, this pipeline enables the analysis of Illumina short reads from AAV 
     - [The Data](#the-data)
       - [Required Files](#required-files)
         - [Illumina Short-Read FASTQ Files](#illumina-short-read-fastq-files)
-        - [Example-Directory](#example-directory)
         - [Additional Files](#additional-files)
-        - [Example-Directory](#example-directory-1)
+        - [Example-Directory](#example-directory)
     - [The Config File](#the-config-file)
     - [Start the Pipeline](#start-the-pipeline)
       - [Alternative](#alternative)
-      - [HPC](#hpc)
+        - [Running the Pipeline on an HPC](#running-the-pipeline-on-an-hpc)
   - [Workflow of the Pipeline](#workflow-of-the-pipeline)
       - [**Step 1: Fragment Generation and Translation**](#step-1-fragment-generation-and-translation)
       - [**Step 2: Barcode and Fragment Extraction**](#step-2-barcode-and-fragment-extraction)
@@ -105,9 +104,20 @@ Since proprietary data from rAAven Therapeutics cannot be published, a folder na
 
 ##### Illumina Short-Read FASTQ Files
 
-- Paired-end reads of fragments and barcodes from the AAV library.
-- Barcode reads from AAV capsids to identify which variants formed capsids.
-- Barcode reads from tissue samples to analyze AAV variant presence.
+- Sequencing of paired-end reads to identify and match barcodes with their corresponding fragments from the Plasmid Library.
+- Sequencing of barcode reads from the Plasmid Library after DNAse treatment to determine which variants successfully formed capsids.
+- Sequencing of barcode reads from tissue samples to analyze the presence of AAV variants across different cell and tissue types.
+
+##### Additional Files
+
+1. **Reference Sequences**:
+   - If the library was based on known protein sequences, include a reference sequence file: `reference_seq.fasta`.
+
+2. **Codon Usage File**:
+   - `wSet.csv`: Contains human-optimized codon usage percentages for *Homo sapiens*.
+
+3. **Load List**:
+   - `loadlist.csv`: : A reference file that links tissue/sample FASTQ filenames to their respective tissue groups. This mapping is essential in Step 4 of the pipeline to ensure barcodes are extracted from the correct samples.
 
 ##### Example-Directory
 
@@ -119,19 +129,6 @@ Since proprietary data from rAAven Therapeutics cannot be published, a folder na
   - `Example/sample_fastq/Tissue1.fastq.gz`
   - `Example/sample_fastq/Tissue2.fastq.gz`
 
-##### Additional Files
-
-1. **Reference Sequences**:
-   - If the library was based on known protein sequences, include a reference sequence file: `reference_seq.fasta`.
-
-2. **Codon Usage File**:
-   - `wSet.csv`: Contains human-optimized codon usage percentages for *Homo sapiens*.
-
-3. **Load List**:
-   - `loadlist.csv`: Maps tissue/sample FASTQ filenames to their corresponding tissue groups.
-
-##### Example-Directory
-
 - **Additional Files**:
   - `Example/input/load_list.csv`
   - `Example/input/reference_seq.fasta`
@@ -139,12 +136,13 @@ Since proprietary data from rAAven Therapeutics cannot be published, a folder na
 
 ### The Config File
 
-Before running the pipeline, customize the configuration file. The config file is a Python script containing a dictionary with parameters for each pipeline step.
+Before running the pipeline, customize the configuration file. The config file is a Python script containing dictionaries with all necessary parameters for each pipeline step.
 
 Config files are stored in the `configs/` subdirectory.
 This directory contains all configs that were used for the different libraries in our analysis.
 
 ├── configs  
+│   ├── config_BRAVE_22aa.py
 │   ├── config_BRAVE.py  
 │   ├── config_Example.py  
 │   ├── config_p005.py  
@@ -155,26 +153,25 @@ This directory contains all configs that were used for the different libraries i
 │   ├── config_undetermined_p007.py  
 │   ├── README.md  
 
-
  For the example data, use the provided `configs/config_Example.py` file in this directory.
 
 **Note:** Detailed parameter explanations are available in `configs/README.md`.
 
 ### Start the Pipeline
 
-After setting up the configuration file and verifying that all parameters are correctly defined, you can start the pipeline. The easiest way to execute it is by running the `run_pipeline.sh` script as follows:
+After configuring the settings file and ensuring all parameters are correctly defined, the pipeline can be initiated. The most straightforward method to execute it is by running the run_pipeline.sh script as follows:
 
 ```bash
 ./Bash_scripts/run_pipeline.sh configs/example_config.py
 ```
 
-In case we want to run the pipeline with an NNK library instead of one that was designed with rational design (with a reference) we can also run the code like this:
+If running the pipeline with an NNK library instead of a rationally designed library with a reference, the code can be executed as follows:
 
 ```bash
 ./Bash_scripts/run_pipeline.sh configs/example_config.py -nnk True
 ```
 
-This way Step 2 and 3 of the pipeline will be run according of a design of a NNK library.
+This ensures that Steps 2, 3, and 6 of the pipeline are executed according to the design of an NNK library.
 
 #### Alternative
 
@@ -186,14 +183,14 @@ The pipeline can of cause also be run individually by simply running the individ
 ./Python_Scripts/S3.py (S3_NNK.py)
 ./Python_Scripts/S4.py
 ./Python_Scripts/S5.py
-./Python_Scripts/S6.py
+./Python_Scripts/S6.py (S6_NNK.py)
 ```
 
-#### HPC
+##### Running the Pipeline on an HPC
 
-In case we are working on a HPC with a Slurm queueing system we can use the Slrum scripts in the `Slurm_Scripts`directory. These scripts utulize multiple cores and this way speed up the computing time of the pipeline. Of cause the settings of the Slurm scripts can be changed accoring to the avaivlabe ressources of the HPC.
+If working on an HPC with a Slurm queueing system, the Slurm scripts in the `Slurm_Scripts/` directory can be used to efficiently run the pipeline. These scripts leverage multiple cores to accelerate computation. The Slurm script settings can also be adjusted based on the available resources of the HPC.
 
-For example the complete workflow of the the Example dataset can be queued like this:
+For example, to queue the complete workflow for the Example dataset, use the following command:
 
 ```bash
 sbatch Slurm_Scripts/Example.sh
@@ -219,7 +216,7 @@ This list provides a concise explanation of each step in the pipeline workflow. 
 #### **Step 2: Barcode and Fragment Extraction**
 
 - Extracts barcodes and fragments from sequencing files.  
-- Matches extracted data to the reference, pairs barcodes with fragments, and saves the results to separate files.
+- Matches found fragments to the reference, pairs barcodes with fragments, and saves the results to separate files.
 
 ---
 
@@ -232,17 +229,16 @@ This list provides a concise explanation of each step in the pipeline workflow. 
   - **Chimeric barcodes** (based on a threshold ratio of maximal to total read count)  
   - **Single barcodes**  
 - Sets appropriate modes for each barcode type:  
-  - "Single" for single-read barcodes  
-  - "Def" for clean multi-read barcodes  
-  - "Chimeric" for chimeric barcodes  
+  - **Single** for single-read barcodes  
+  - **Def** for clean multi-read barcodes  
+  - **Chimeric** for chimeric barcodes  
 - Saves results in three CSV files.
 
 ---
 
 #### **Step 4: Sample Barcode Processing**
 
-- Extracts barcodes from provided cell samples.  
-- Reduces barcodes using Starcode and matches them to corresponding fragments.  
+- Extracts barcodes known from the Plasmid Library from provided cell/tissue samples.  
 - Processes a CSV file containing **Sample** and **Group** data.  
 - Saves results in a log table and stores identified fragments in a CSV file.
 
@@ -257,18 +253,18 @@ This list provides a concise explanation of each step in the pipeline workflow. 
 
 #### **Step 6: Final Dataset Processing and Normalization**
 
-- Processes the identified fragments and consolidates them into a single comprehensive dataset.  
+- Processes the identified fragments and merges them into a single comprehensive dataset.  
 - The final dataset includes detailed information for every found fragment across different samples.  
 - Normalizes read counts in the dataset to adjust for the total RNA counts in each group.  
 - Outputs a normalized, ready-to-analyze dataset.
 
 ---
 
-**Note:** A more detailed explaination of the Workflow can be found in `Supplementaries/Workflow.pdf`
+**Note:** A more detailed explaination of the Workflow can be found in `Supplementaries/Workflow.md`
 
 ## Data Visualisation
 
-All the code required for creating data visualizations and performing analysis can be found in the `Plotting_Scripts` directory. This directory contains standalone scripts for generating specific plots, as well as Jupyter notebooks that can be executed to reproduce the visualizations step-by-step. Whether you are interested in exploring individual plots or analyzing trends across datasets, these resources provide a straightforward way to recreate and customize the visualizations.
+All necessary code for data visualization and analysis is located in the `Plotting_Scripts/` directory. This directory includes standalone scripts for generating specific plots, as well as Jupyter notebooks that provide a step-by-step approach to reproducing the visualizations.
 
 ## License
 
@@ -278,7 +274,7 @@ If you use it in your work, please provide proper attribution by referencing thi
 
 ## Acknowledgments
 
-I sincerely thank **rAAVen Therapeutics** for their support, guidance, and the opportunity to contribute to this project. Special thanks to my supervisor at Lund University for their mentorship and encouragement throughout this thesis.
+I sincerely thank everyone at **rAAVen Therapeutics** for their support, guidance, and the opportunity to contribute to this project. Special thanks to my supervisor at Lund University for their mentorship throughout this thesis.
 
 ## Contact Information
 

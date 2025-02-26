@@ -39,7 +39,6 @@ import re
 from datetime import datetime
 import pandas as pd
 import logging
-from Bio import SeqIO
 from concurrent.futures import ThreadPoolExecutor
 # local import
 from config import get_config
