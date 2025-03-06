@@ -154,7 +154,7 @@ def create_full_table(reads_BC: list)-> pd.DataFrame:
     return full_table
 
 
-def analyze_tissue(file_path:str, data_dir:str, db:str, out_dir:str, library_fragments: pd.DataFrame,
+def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir:str, library_fragments: pd.DataFrame,
                     lut_dna: pd.DataFrame, threads:int, bc_len:int, bbduk2_args: list, chunk_size:int) -> dict:
     """
     Analyze a single tissue sample based on its index in the load list.
@@ -219,7 +219,7 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, out_dir:str, library_fra
             f"zcat {out_name_BC} | "
             f"vsearch --usearch_global - "
             f"--db {db} "
-            "--id 0.95 "
+            f"--id {threshold} "
             f"--blast6out {vsearch_out.name} "
             f"--threads {threads} "
             f"--minseqlength {bc_len} "
@@ -360,12 +360,18 @@ def main():
     # get the settings for the barcode extraction
     bbduk2_args_BC = config["bbduk2_args"]
     chunk_size = config["chunk_size"]
+    
+    # set threshold for barcode matching based if starcode was used
+    if config["starcode"]:
+        threshold = 0.95
+    else:
+        threshold = 1
 
     # Analyze each tissue sample
     for row in load_list.iterrows():
         # Extract the file name from the first column
         file_path = row[1]['Sample']
-        log_entry = analyze_tissue(file_path, data_dir, db, output_dir, library_fragments, lut_dna, threads, bc_len, bbduk2_args_BC, chunk_size)
+        log_entry = analyze_tissue(file_path, data_dir, db, threshold, output_dir, library_fragments, lut_dna, threads, bc_len, bbduk2_args_BC, chunk_size)
         if log_entry:
             log_table.append(log_entry)
 

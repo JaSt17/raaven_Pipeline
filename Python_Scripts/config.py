@@ -1,7 +1,7 @@
 """ This file contains the config dictionary that are used to store the configuration parameters for the pipeline. """
 
 # Define the data directory where the input and output files are stored
-data_dir = "raav-60/p005"
+data_dir = "raav-60/p005_test"
 # Define the directory where the logs are stored
 log_dir = data_dir + "/logs/"
 # Define the length of the barcode and fragment sequences in DNA bases
@@ -37,8 +37,8 @@ config_S2 = {
     "out_name": "p005",
     # arguments for the bbduk2 tool to extract the barcode and fragment sequences
     "bbduk2_args_BC" : [
-        "k=20",
-        "hammingdistance=1",
+        "k=16",
+        "hammingdistance=2",
         "overwrite=true",
         "findbestmatch=t",
         "rcomp=f",
@@ -47,12 +47,12 @@ config_S2 = {
         f"minlength={bc_len}",
         f"maxlength={bc_len}",
         "ordered=t",
-        "lliteral=GTACGTCTGAACTTGGGACT",
-        "rliteral=ATAACTTCGTATAATGTATG",
+        "lliteral=TGAACTTGGGACTTCG",
+        "rliteral=ATAACTTCGTATAATG",
     ],
     "bbduk2_args_Frag" : [
-        "k=20",
-        "hammingdistance=1",
+        "k=16",
+        "hammingdistance=2",
         "overwrite=true",
         "findbestmatch=t",
         "maskmiddle=t",
@@ -62,8 +62,8 @@ config_S2 = {
         f"minlength={frag_len}",
         f"maxlength={frag_len}",
         "ordered=t",
-        "lliteral=ACCTCCAGAGAGGCAACGCT",
-        "rliteral=GCCAGACAAGCAGCTACCGC",
+        "lliteral=CCAGAGAGGCAACGCT",
+        "rliteral=GCCAGACAAGCAGCTA",
     ],
     "log_dir": log_dir,
 }
@@ -77,6 +77,8 @@ config_S3 = {
     "single_read": True,
     # Do we want to allow chimeric barcodes
     "chimeric_read": False,
+    # Do we want to use starcode reduction
+    "starcode": False,
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
     "threshold": 0.8,
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue
@@ -92,6 +94,7 @@ config_S4 = {
     "in_name_LUT": config_S1["output_csv"],
     "chunk_size": config_S3["chunk_size"],
     "bc_len": bc_len,
+    "starcode": config_S3["starcode"],
     "db": data_dir + "/barcode_db.fasta",
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": data_dir + "/input/load_list.csv",

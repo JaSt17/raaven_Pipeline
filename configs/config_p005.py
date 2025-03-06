@@ -77,6 +77,8 @@ config_S3 = {
     "single_read": True,
     # Do we want to allow chimeric barcodes
     "chimeric_read": False,
+    # Do we want to use starcode reduction
+    "starcode": False,
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
     "threshold": 0.8,
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue
@@ -92,6 +94,7 @@ config_S4 = {
     "in_name_LUT": config_S1["output_csv"],
     "chunk_size": config_S3["chunk_size"],
     "bc_len": bc_len,
+    "starcode": config_S3["starcode"],
     "db": data_dir + "/barcode_db.fasta",
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": data_dir + "/input/load_list.csv",

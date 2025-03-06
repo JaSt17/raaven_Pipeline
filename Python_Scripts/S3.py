@@ -525,8 +525,9 @@ def main():
     # remove the output file
     os.remove(output_file)
 
-    # Perform Starcode barcode reduction and replace barcodes with reduced versions
-    full_table = starcode_based_reduction_and_replace(full_table, config['barcode_file'], 'BC')
+    # Perform barcode reduction using Starcode clustering if set in config
+    if config["starcode"]:
+        full_table = starcode_based_reduction_and_replace(full_table, config['barcode_file'], 'BC')
 
     # Split reads into single-read and multi-read barcodes
     temp_table_single, temp_table_multi = split_reads_into_single_and_multi_read_barcodes(full_table)

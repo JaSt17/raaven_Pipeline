@@ -533,8 +533,9 @@ def main():
     
     save_unique_fragments_barcodes(config["fragment_file"], config["barcode_file"])
     
-    # Perform barcode reduction using Starcode clustering
-    full_table = starcode_based_reduction_and_replace(full_table, config['barcode_file'], 'BC')
+    # Perform barcode reduction using Starcode clustering if set in config
+    if config["starcode"]:
+        full_table = starcode_based_reduction_and_replace(full_table, config['barcode_file'], 'BC')
     
     # create LUTnr column
     full_table = create_LUTnr_column(full_table)
