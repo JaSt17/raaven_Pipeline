@@ -76,7 +76,7 @@ config_S3 = {
     # Do we want to allwo single read barcodes
     "single_read": True,
     # Do we want to allow chimeric barcodes
-    "chimeric_read": False,
+    "chimeric_read": True,
     # Do we want to use starcode reduction
     "starcode": False,
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
