@@ -19,9 +19,9 @@ conda activate python_pipeline
 
 # change the config file to p007
 cp configs/config_p007.py Python_Scripts/config.py
-#./Python_Scripts/S1.py
+./Python_Scripts/S1.py
 cp configs/config_p007.py Python_Scripts/config.py
-#./Python_Scripts/S2.py
+./Python_Scripts/S2.py
 cp configs/config_p007.py Python_Scripts/config.py
 ./Python_Scripts/S3.py
 cp configs/config_p007.py Python_Scripts/config.py
