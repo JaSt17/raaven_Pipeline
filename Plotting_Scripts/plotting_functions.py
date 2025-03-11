@@ -83,6 +83,12 @@ def plot_venn_diagram(set1, set2, set3, labels=("Set 1", "Set 2", "Set 3"), titl
     plt.show()
     
 
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from matplotlib_venn import venn3
+
 def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, column: str, y_label: str=None, normalize: bool=False) -> plt:
     """
     Plots the Normalized_RNAcount for two groups across the relative length of a gene.
@@ -130,7 +136,7 @@ def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, 
     if normalize:
         y1 = np.log10(y1 + 1)
         y2 = np.log10(y2 + 1)
-        y_label = f'log10 {y_label}'
+        y_label = f'Log₁₀ {y_label}'
 
     # Create the back-to-back histogram
     fig, ax = plt.subplots(figsize=(12, 5))
@@ -158,8 +164,11 @@ def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, 
     
     # Set x-axis ticks to show percentage and range from 0 to 100%
     ax.set_xticks(np.linspace(0, 1, 11))
-    ax.set_xticklabels([f'{int(tick*100)}%' for tick in ax.get_xticks()])
+    ax.set_xticklabels([f'{int(tick*100)}' for tick in ax.get_xticks()])
     ax.set_xlim(0, 1.01)
+    # change font size of x-axis ticks
+    ax.tick_params(axis='x', labelsize=8)
+    ax.tick_params(axis='y', labelsize=8)
 
     # Adjust y-axis to be symmetric
     max_y = max(y1.max(), y2.max())
@@ -264,6 +273,15 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
             theta = angle_filled / 2  # Middle of the filled arc
         x = radius + size / 2     # Mid-radius of the ring
         
+        # if the label starts with a * than set color to black
+        if label.startswith('*'):
+            # remove the * from the label
+            label = label[1:]
+            color = 'black'
+            theta = theta + 0.15
+        else:
+            color = 'white'
+        
         # Determine text rotation for better readability
         theta_deg = np.degrees(theta)
         if theta_deg > 180:
@@ -280,7 +298,7 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
             ha="center",
             va="center",
             fontsize=10,
-            color="white",
+            color=color,
             rotation=text_rotation,
             rotation_mode='anchor'
         )
@@ -388,10 +406,10 @@ def create_grouped_barplot(df, tissue_col, count_col, library_col):
         ax.bar(x + i * (width + spacing), pivot_df[library], width, label=library, color=color)
 
     # Customization
-    ax.set_ylabel(f'Log10({count_col})', fontsize=10)
-    ax.set_title('Number of Fragments per Group', fontsize=12)
+    ax.set_ylabel(f'Absolute Number of Fragments (Log₁₀ Scale)', fontsize=8)
+    ax.set_title('Distribution of Found Fragments Across Tissue Types and Sorted Cell Groups', fontsize=12)
     ax.set_xticks(x + (len(libraries) - 1) * (width + spacing) / 2) 
-    ax.set_xticklabels(pivot_df.index, fontsize=10, rotation=45, ha='right')  # Rotate labels at 45 degrees
+    ax.set_xticklabels(pivot_df.index, fontsize=8, rotation=45, ha='right')  # Rotate labels at 45 degrees
 
     ax.legend(title=library_col, fontsize=10)
 
