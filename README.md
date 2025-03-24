@@ -2,7 +2,11 @@
 
 This Git repository contains all the code and notebooks used to process raw Illumina short-read data into a format suitable for data analysis and machine learning tasks conducted during my Master's thesis project at rAAven Therapeutics.
 
-This pipeline analyzes sequencing data from both the initial plasmid AAV library and tissue samples collected from model organisms injected with that library. This allows for the identification of recombinant AAV variants present in different cell types.
+This pipeline analyzes sequencing data from both the initial plasmid AAV library and tissue samples collected from model organisms injected with that library. This allows for the identification of recombinant AAV variants present in different cell types and tissues.
+
+![Pipeline](Pipeline_Illustration.png)
+
+*Simplified illustration of the pipeline generating a look-up table (LUT) to map barcodes to fragment insertions, enabling variant identification across cell types.*
 
 **Note:** For better organization, each directory contains its own dedicated README file describing its contents and purpose.
 
