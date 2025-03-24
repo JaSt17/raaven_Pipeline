@@ -83,12 +83,6 @@ def plot_venn_diagram(set1, set2, set3, labels=("Set 1", "Set 2", "Set 3"), titl
     plt.show()
     
 
-import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-from matplotlib_venn import venn3
-
 def plot_rna_counts(df: pd.DataFrame, group1: str, group2: str, gene_name: str, column: str, y_label: str=None, normalize: bool=False) -> plt:
     """
     Plots the Normalized_RNAcount for two groups across the relative length of a gene.
@@ -424,11 +418,7 @@ def create_grouped_barplot(df, tissue_col, count_col, library_col):
     return plt
 
 
-
-
-
-
-def plot_amino_acid_heatmap(df, group_name:str=None, structure_name:str=None):
+def plot_amino_acid_heatmap(df, group_name:str=None, structure_name:str=None, number_of_top:int=100):
     """
     Create a heatmap showing the percentage of each amino acid at each position in the peptide sequences.
 
@@ -482,7 +472,9 @@ def plot_amino_acid_heatmap(df, group_name:str=None, structure_name:str=None):
         cmap="coolwarm",  # Changed color scheme to 'coolwarm'
         cbar_kws={'label': 'Percentage (%)', 'shrink': 1.0, 'aspect': 15}  # Adjusted color bar size and thickness
     )
-    plt.title(f'Amino Acid Usage in: {group_name}')
+    # change _ to space in the group name
+    group_name = group_name.replace("_", " ")
+    plt.title(f'Amino Acid Usage in top {number_of_top} {group_name}')
     plt.xlabel('Peptide Position')
     plt.ylabel('Amino Acid')
     plt.yticks(rotation=0)
