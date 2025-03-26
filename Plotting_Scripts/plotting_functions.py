@@ -3,6 +3,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib_venn import venn3
+from matplotlib.colors import TwoSlopeNorm
 
 def plot_top_counts(df: pd.DataFrame, top_n: int, group_col: str=None, y_axis: str="RNAcount", y_label: str=None):
     """
@@ -418,15 +419,15 @@ def create_grouped_barplot(df, tissue_col, count_col, library_col):
     return plt
 
 
-def plot_amino_acid_heatmap(df, group_name:str=None, structure_name:str=None, number_of_top:int=100):
+def plot_amino_acid_heatmap(df, group_name: str = None, structure_name: str = None, number_of_top: int = 100):
     """
-    Create a heatmap showing the percentage of each amino acid at each position in the peptide sequences.
+    Create a heatmap showing the deviation of amino acid frequency from a uniform distribution at each peptide position.
 
     Parameters:
     df : pd.DataFrame
         The input DataFrame containing the peptide sequences.
     group_name : str, optional
-        The name of the group to filter the data. Default is None.  
+        The name of the group to filter the data. Default is None.
     structure_name : str, optional
         The name of the structure to filter the data. Default is None.
 
@@ -437,7 +438,7 @@ def plot_amino_acid_heatmap(df, group_name:str=None, structure_name:str=None, nu
         temp_df = df[df['Group'] == group_name]
     if structure_name is not None:
         temp_df = df[df['Structure'] == structure_name]
-    
+
     # Get only unique peptides
     temp_df = temp_df.drop_duplicates(subset=['Peptide'])
 
@@ -463,21 +464,114 @@ def plot_amino_acid_heatmap(df, group_name:str=None, structure_name:str=None, nu
     total_counts = count_matrix.sum(axis=0)
     percentage_matrix = count_matrix.divide(total_counts, axis=1) * 100
 
-    # Create the heatmap with a smaller and thinner color bar
-    plt.figure(figsize=(12, 8))
+    # Compute deviation from uniform distribution (5%)
+    deviation_matrix = percentage_matrix - 5.0
+
+    # Use TwoSlopeNorm to center 0 in the colormap
+    center = 0
+    vmin = -5
+    vmax = 10
+    divnorm = TwoSlopeNorm(vmin=vmin, vcenter=center, vmax=vmax)
+    # reverse the colormap 
+    cmap = plt.get_cmap('RdBu')
+    cmap = cmap.reversed()
+    
+    # Create the heatmap
+    plt.figure(figsize=(10, 8))
     sns.heatmap(
-        percentage_matrix,
-        annot=True,
-        fmt=".1f",
-        cmap="coolwarm",  # Changed color scheme to 'coolwarm'
-        cbar_kws={'label': 'Percentage (%)', 'shrink': 1.0, 'aspect': 15}  # Adjusted color bar size and thickness
+        deviation_matrix,
+        annot=False,
+        cmap=cmap,
+        norm=divnorm,  # Apply normalization here
+        square=True,
+        linewidths=0.003,
+        linecolor='white',
+        cbar_kws={'label': 'Deviation from Uniform (%)', 'shrink': 1.0, 'aspect': 50}
     )
-    # change _ to space in the group name
-    group_name = group_name.replace("_", " ")
-    plt.title(f'Amino Acid Usage in top {number_of_top} {group_name}')
+
+    if group_name:
+        group_name = group_name.replace("_", " ")
+    plt.title(f'{group_name}\nN={number_of_top}', fontsize=12)
     plt.xlabel('Peptide Position')
     plt.ylabel('Amino Acid')
     plt.yticks(rotation=0)
-    
-    #return the plot
+
+    return plt
+
+
+def plot_aa_deviation_difference(df, group_name_1: str = None, group_name_2: str = None, structure_name: str = None, number_of_top: int = 100):
+    """
+    Create a heatmap comparing the change in amino acid deviation from uniform distribution between two datasets.
+
+    Parameters:
+    df1, df2 : pd.DataFrame
+        Two input DataFrames containing peptide sequences.
+    group_name : str, optional
+        Group filter to apply to both DataFrames.
+    structure_name : str, optional
+        Structure filter to apply to both DataFrames.
+    number_of_top : int
+        Number to show in the plot title for context (e.g., number of sequences).
+
+    Returns:
+    plot : matplotlib.pyplot
+    """
+    def compute_deviation(df, group_name):
+        if group_name is not None:
+            df = df[df['Group'] == group_name]
+
+        df = df.drop_duplicates(subset=['Peptide'])
+        peptides = df['Peptide'].dropna().tolist()
+        max_length = max(len(p) for p in peptides)
+        amino_acids = list('ACDEFGHIKLMNPQRSTVWY')
+        count_matrix = pd.DataFrame(0, index=amino_acids, columns=range(1, max_length + 1))
+
+        for peptide in peptides:
+            for position, aa in enumerate(peptide, start=1):
+                if aa in amino_acids:
+                    count_matrix.at[aa, position] += 1
+
+        total_counts = count_matrix.sum(axis=0)
+        percentage_matrix = count_matrix.divide(total_counts, axis=1) * 100
+        deviation_matrix = percentage_matrix - 5.0
+        return deviation_matrix
+
+    # Compute deviation matrices
+    dev1 = compute_deviation(df, group_name_1)
+    dev2 = compute_deviation(df, group_name_2)
+
+    # Align columns and rows (in case lengths or AAs are mismatched)
+    dev1, dev2 = dev1.align(dev2, join='outer', fill_value=0)
+
+    # Compute difference: how much did the deviation change from df1 to df2
+    delta_matrix = dev2 - dev1
+
+    # Setup color scaling: -2.5 to +5
+    vmin, vmax, center = -2.5, 2.5, 0
+    norm = TwoSlopeNorm(vmin=vmin, vcenter=center, vmax=vmax)
+
+    # Reverse colormap so red = increase, blue = decrease
+    cmap = plt.get_cmap("RdBu").reversed()
+
+    # Plot the difference heatmap
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(
+        delta_matrix,
+        cmap=cmap,
+        norm=norm,
+        square=True,
+        linewidths=0.003,
+        linecolor='white',
+        cbar_kws={'label': 'Change in Deviation (%)', 'shrink': 1.0, 'aspect': 50}
+    )
+
+    if group_name_1:
+        group_name_1 = group_name_1.replace("_", " ")
+    if group_name_2:
+        group_name_2 = group_name_2.replace("_", " ")
+    plt.title(f'Change in AA Deviation\n{group_name_1} vs. {group_name_2}', fontsize=12)
+    plt.xlabel('Peptide Position')
+    plt.ylabel('Amino Acid')
+    plt.yticks(rotation=0)
+
     return plt
