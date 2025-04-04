@@ -6,18 +6,25 @@ This directory contains scripts and Jupyter notebooks used for generating data v
 
 ## Files and Directories Description
 
-### 1. **motifs/**
+### 1. **3D_protein_plot**
 - **Purpose**  
-  Stores the output motif files generated using the [MEME Suite](https://meme-suite.org/meme/), a widely-used suite of tools for discovering statistically significant sequence motifs in sets of biological sequences.
+  Contains the scripts and visualization files used to generate 3D structural illustrations of the VP1 protein and the full AAV capsid. These visualizations are intended to support the interpretation of sequence-based findings by placing them in a structural context.
 
 - **Details**  
-  We used MEME as an exploratory tool to identify recurring patterns or motifs in amino acid sequences that are associated with specific tissue-targeting fragments. By analyzing libraries grouped by tissue type, MEME helped us uncover conserved regions that might be functionally relevant or involved in tissue specificity.
+  This module uses **py3Dmol**, a Python wrapper for interactive 3D molecular visualization in the browser, to highlight the peptide insertion site on the AAV capsid structure. Specifically, it focuses on the VP1 subunit to illustrate the spatial location of experimentally inserted motifs.
 
-- **Access Note**  
-  Due to confidentiality reasons, the contents of the `motifs/` directory are not publicly available.
 ---
 
-### 2. **barcode_fragment_logo.ipynb**  
+### 2. **Library_Analysis**
+- **Purpose**  
+  Contains the scripts used to analyze the composition and overlap of peptide fragments across different libraries.
+
+- **Details**  
+  This directory includes tools for identifying identical between libraries, helping assess library diversity and cross-contamination. It also supports the comparison of multiple extraction and clustering strategies, such as using **Starcode** with or without different parameters to control for **chimeric barcodes**.
+
+---
+
+### 3. **barcode_fragment_logo.ipynb**  
 - **Purpose**  
   Generates sequence logo plots for barcode and fragment sequences from different libraries.
 
@@ -27,13 +34,13 @@ This directory contains scripts and Jupyter notebooks used for generating data v
 
 ---
 
-### 3. **plotting_functions.py**  
+### 4. **plotting_functions.py**  
 - **Purpose**  
   Contains custom plotting functions used across notebooks, especially within `visualisation.ipynb`.
 
 ---
 
-### 4. **visualisation.ipynb**  
+### 5. **visualisation.ipynb**  
 - **Purpose**  
   Main notebook for generating visual summaries (plots and tables) for data analysis.
 
@@ -43,7 +50,7 @@ This directory contains scripts and Jupyter notebooks used for generating data v
 
 ---
 
-### 5. **plots/**  
+### 6. **plots/**  
 - **Purpose**  
   Directory for storing all generated plots and visual outputs.
 

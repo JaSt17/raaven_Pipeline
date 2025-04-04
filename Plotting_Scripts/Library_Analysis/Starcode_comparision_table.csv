@@ -1,0 +1,7 @@
+,p005_no_starcode,p005_starcode,p005_starcode_no_chimeric,p006_no_starcode,p006_starcode,df_p006_starcode_no_chimeric,p007_no_starcode,p007_starcode,p007_starcode_no_chimeric
+Plasmid_Library Count,39722,39684,39696,570823,227490,298108,109945,102941,103902
+DNAse_resistant_AAVs Count,39659,39140,39133,41367,18415,21330,74791,44083,45229
+Infective_AAVs Count,18443,8407,8621,1736,2136,2549,8454,8646,9058
+DNAse_resistant_AAVs in Plasmid_Library,39659 (100.00%),39140 (100.00%),39133 (100.00%),41367 (100.00%),18415 (100.00%),21330 (100.00%),74791 (100.00%),44083 (100.00%),45229 (100.00%)
+Infective_AAVs in Plasmid_Library,18443 (100.00%),8407 (100.00%),8621 (100.00%),1736 (100.00%),2136 (100.00%),2549 (100.00%),8454 (100.00%),8646 (100.00%),9058 (100.00%)
+Infective_AAVs in DNAse_resistant_AAVs,18443 (100.00%),8398 (99.89%),8612 (99.90%),638 (36.75%),684 (32.02%),801 (31.42%),7794 (92.19%),6237 (72.14%),6592 (72.78%)

@@ -1,0 +1,27 @@
+=== Group Metrics Comparison ===
+
+Group: Plasmid_Library
+  p005_starcode Count: 39684
+  p007_starcode Count: 102941
+  Intersection Count: 28476
+
+Group: DNAse_resistant_AAVs
+  p005_starcode Count: 39140
+  p007_starcode Count: 44083
+  Intersection Count: 12451
+
+Group: Infective_AAVs
+  p005_starcode Count: 8407
+  p007_starcode Count: 8646
+  Intersection Count: 630
+
+=== Common Plasmid_Library Analysis ===
+Common Plasmid_Library sequences: 28476
+
+p005_starcode (Common Plasmid_Library sequences):
+  Found in DNAse_resistant_AAVs: 28208 (99.06%)
+  Found in Infective_AAVs: 6310 (22.16%)
+
+p007_starcode (Common Plasmid_Library sequences):
+  Found in DNAse_resistant_AAVs: 12536 (44.02%)
+  Found in Infective_AAVs: 2456 (8.62%)

@@ -1,0 +1,27 @@
+=== Group Metrics Comparison ===
+
+Group: Plasmid_Library
+  p005_starcode_no_chimeric Count: 39696
+  p007_starcode_no_chimeric Count: 103902
+  Intersection Count: 29080
+
+Group: DNAse_resistant_AAVs
+  p005_starcode_no_chimeric Count: 39133
+  p007_starcode_no_chimeric Count: 45229
+  Intersection Count: 12947
+
+Group: Infective_AAVs
+  p005_starcode_no_chimeric Count: 8621
+  p007_starcode_no_chimeric Count: 9058
+  Intersection Count: 693
+
+=== Common Plasmid_Library Analysis ===
+Common Plasmid_Library sequences: 29080
+
+p005_starcode_no_chimeric (Common Plasmid_Library sequences):
+  Found in DNAse_resistant_AAVs: 28789 (99.00%)
+  Found in Infective_AAVs: 6585 (22.64%)
+
+p007_starcode_no_chimeric (Common Plasmid_Library sequences):
+  Found in DNAse_resistant_AAVs: 13038 (44.83%)
+  Found in Infective_AAVs: 2641 (9.08%)
