@@ -401,7 +401,7 @@ def create_grouped_barplot(df, tissue_col, count_col, library_col):
         ax.bar(x + i * (width + spacing), pivot_df[library], width, label=library, color=color)
 
     # Customization
-    ax.set_ylabel(f'Absolute Number of Fragments (Log₁₀ Scale)', fontsize=8)
+    ax.set_ylabel(f'Number of Fragments (Log₁₀ Scale)', fontsize=8)
     ax.set_title('Distribution of Found Fragments Across Tissue Types and Sorted Cell Groups', fontsize=12)
     ax.set_xticks(x + (len(libraries) - 1) * (width + spacing) / 2) 
     ax.set_xticklabels(pivot_df.index, fontsize=8, rotation=45, ha='right')  # Rotate labels at 45 degrees
