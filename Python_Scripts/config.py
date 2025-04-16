@@ -1,7 +1,7 @@
 """ This file contains the config dictionary that are used to store the configuration parameters for the pipeline. """
 
 # Define the data directory where the input and output files are stored
-data_dir = "raav-60/p005"
+data_dir = "Example"
 # Define the directory where the logs are stored
 log_dir = data_dir + "/logs/"
 # Define the length of the barcode and fragment sequences in DNA bases
@@ -29,12 +29,12 @@ config_S1 = {
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_barcode": data_dir + "/fastq_files/p005_R1.fastq.gz",
-    "in_name_fragment": data_dir + "/fastq_files/p005_R2.fastq.gz",
+    "in_name_barcode": data_dir + "/fastq_files/R1.fastq.gz",
+    "in_name_fragment": data_dir + "/fastq_files/R2.fastq.gz",
     "input_file": config_S1["input_file"],
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": data_dir + "/barcode_fragment",
-    "out_name": "p005",
+    "out_name": "Example",
     # arguments for the bbduk2 tool to extract the barcode and fragment sequences
     "bbduk2_args_BC" : [
         "k=20",
@@ -80,7 +80,7 @@ config_S3 = {
     # Do we want to use starcode reduction
     "starcode": True,
     # threshold for the ratio of the most frequent barcode to all found barcodes for chimeric barcode detection
-    "threshold": 1,
+    "threshold": 0.6,
     # the chunk size determains how many sequences are read in at once and can be set to a smaller number if memory is an issue
     "chunk_size": 20000000,
     # output file name for the library barcodes
@@ -95,11 +95,11 @@ config_S4 = {
     "chunk_size": config_S3["chunk_size"],
     "bc_len": bc_len,
     "starcode": config_S3["starcode"],
-    "db": data_dir + "/barcode_db.fasta",
+    "db": data_dir + "/barcode_fragment/unique_barcodes.fasta",
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": data_dir + "/input/load_list.csv",
     # directory containing the fastq files for the samples
-    "sample_directory": "raav-60/sample_fastq",
+    "sample_directory": data_dir + "/sample_fastq",
     # filename for the log file that will be created and show how many barcodes were found in each sample
     "log_file_path": data_dir + "/found_barcode_report.csv",
     # output directory for the found barcodes csv files
