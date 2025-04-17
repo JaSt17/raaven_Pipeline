@@ -310,7 +310,7 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
     radius = 1 
     for i, (_,length) in enumerate(group_items):
         # Generate values for grid lines
-        temp_values = [value for value in values if value <= (length+max_val*0.05)]
+        temp_values = [value for value in values if value <= (length+max_val*0.004)]
         
         # delete all values in temp_values from values
         for value in temp_values:
@@ -322,9 +322,9 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
         # Draw grid lines and labels
         for angle, value in zip(angles, temp_values):
             # Draw the grid line from inner to outer radius of the ring
-            ax.plot([angle, angle], [radius + size, radius + size + 0.05], color='grey', linewidth=0.5, linestyle='--')
+            ax.plot([angle, angle], [radius + size, radius + size + 0.02], color='grey', linewidth=1, linestyle='-')
             # Place the label slightly outside the outer radius
-            label_radius = radius + size + 0.1 
+            label_radius = radius + size + 0.05
             # Calculate position for annotation so it is centered on the grid line
             angle_deg = np.degrees(angle)
             rotation = 360 - angle_deg if angle_deg > 180 else -angle_deg
@@ -339,7 +339,7 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
                 f"{value/max_val*100:.0f}%",
                 ha='center',
                 va='center',
-                fontsize=10,
+                fontsize=8,
                 color='black',
                 rotation=rotation,
                 rotation_mode='anchor'
