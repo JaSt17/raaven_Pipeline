@@ -2,7 +2,9 @@
 
 This Git repository contains all the code and notebooks used to process raw Illumina short-read data into a format suitable for data analysis and machine learning tasks conducted during my Master's thesis project at rAAven Therapeutics.
 
-This pipeline analyzes sequencing data from both the initial plasmid AAV library and tissue samples collected from model organisms injected with that library. This allows for the identification of recombinant AAV variants present in different cell types and tissues.
+The pipeline analyzes sequencing data from both the initial plasmid AAV library and tissue samples collected from model organisms injected with that library. This allows for the identification of recombinant AAV variants present in different cell types and tissues.
+
+It is designed to work with both rationally designed libraries, which are based on a provided reference protein sequence file, and with randomly generated libraries, such as NNK libraries or other codon-randomized designs, making it adaptable to a wide range of AAV library formats.
 
 ![Pipeline](Supplementaries/Pipeline_Illustration.png)
 
@@ -13,23 +15,23 @@ This pipeline analyzes sequencing data from both the initial plasmid AAV library
 ---
 
 ## Table of Contents
-
 - [Data Processing Pipeline for AAV Libraries and Tissue Samples](#data-processing-pipeline-for-aav-libraries-and-tissue-samples)
   - [Table of Contents](#table-of-contents)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+    - [Installing Anaconda](#installing-anaconda)
     - [Setting Up the Conda Environment](#setting-up-the-conda-environment)
     - [Installing BBmap](#installing-bbmap)
   - [Running the Pipeline](#running-the-pipeline)
     - [The Data](#the-data)
       - [Required Files](#required-files)
-        - [Illumina Short-Read FASTQ Files](#illumina-short-read-fastq-files)
+        - [Illumina Read FASTQ Files](#illumina-read-fastq-files)
         - [Additional Files](#additional-files)
         - [Example-Directory](#example-directory)
     - [The Config File](#the-config-file)
     - [Start the Pipeline](#start-the-pipeline)
-      - [Alternative](#alternative)
-        - [Running the Pipeline on an HPC](#running-the-pipeline-on-an-hpc)
+      - [Alternative way to run the pipeline](#alternative-way-to-run-the-pipeline)
+      - [Running the Pipeline on an HPC](#running-the-pipeline-on-an-hpc)
   - [Workflow of the Pipeline](#workflow-of-the-pipeline)
       - [**Step 1: Fragment Generation and Translation**](#step-1-fragment-generation-and-translation)
       - [**Step 2: Barcode and Fragment Extraction**](#step-2-barcode-and-fragment-extraction)
@@ -54,6 +56,21 @@ Before running the tool, ensure the following software and libraries are install
 ---
 
 ## Installation
+
+### Installing Anaconda
+
+If you don't have Anaconda installed, you can download and install it by following these steps:
+
+1. Visit the [official Anaconda website](https://www.anaconda.com/products/distribution).
+2. Download the installer for your operating system (Windows, macOS, or Linux).
+3. Follow the installation instructions provided for your platform.
+4. After installation, you can verify that Anaconda is installed correctly by running:
+
+```bash
+conda --version
+```
+
+If you see a version number 24.1.2, Anaconda is ready to use.
 
 ### Setting Up the Conda Environment
 
@@ -106,24 +123,28 @@ Since proprietary data from rAAven Therapeutics cannot be published, a folder na
 
 #### Required Files
 
-##### Illumina Short-Read FASTQ Files
+##### Illumina Read FASTQ Files
 
-- Sequencing of paired-end reads to identify and match barcodes with their corresponding fragments from the Plasmid Library.
-- Sequencing of barcode reads from the Plasmid Library after DNAse treatment to determine which variants successfully formed capsids.
-- Sequencing of barcode reads from tissue samples to analyze the presence of AAV variants across different cell and tissue types.
+- DNA Sequencing of paired-end reads to identify and match barcodes with their corresponding fragments from the Plasmid Library.
+- RNA Sequencing of barcode reads from the Plasmid Library after DNAse treatment to determine which variants successfully formed capsids.
+- RNA Sequencing of barcode reads from tissue samples to analyze the presence of AAV variants across different cell and tissue types.
 
 ##### Additional Files
 
 1. **Reference Sequences**:
-   - If the library was based on known protein sequences, include a reference sequence file: `reference_seq.fasta`.
+   - If the library was rationally designed which means based on known protein sequences, include a reference sequence file: `reference_seq.fasta`.
 
 2. **Codon Usage File**:
-   - `wSet.csv`: Contains human-optimized codon usage percentages for *Homo sapiens*.
+   - `wSet.csv`: This file contains codon usage frequencies optimized for *Homo sapiens*.
+   It is essential because different organisms prefer different codons to encode the same amino acid. To ensure that the reference protein sequences are optimized for human expression, the pipeline uses this file to replace the original codons with the ones most commonly used in humans.
+
 
 3. **Load List**:
    - `loadlist.csv`: : A reference file that links tissue/sample FASTQ filenames to their respective tissue groups. This mapping is essential in Step 4 of the pipeline to ensure barcodes are extracted from the correct samples.
 
 ##### Example-Directory
+
+Below is an overview of how the files described above are organized and named in the provided example directory. These files serve as a template for how your own input data should be structured.
 
 - **Paired-end reads**:
   - `Example/fastq_files/R1.fastq.gz`
@@ -140,24 +161,13 @@ Since proprietary data from rAAven Therapeutics cannot be published, a folder na
 
 ### The Config File
 
-Before running the pipeline, customize the configuration file. The config file is a Python script containing dictionaries with all necessary parameters for each pipeline step.
+Before running the pipeline, you must customize the configuration file. The config file is a Python script that contains dictionaries defining all the necessary parameters for each step of the pipeline.
 
-Config files are stored in the `configs/` subdirectory.
-This directory contains all configs that were used for the different libraries in our analysis.
+Configuration files are stored in the `configs/` subdirectory. This folder includes all the config files used for different plasmid libraries in our analysis.
 
-├── configs  
-│   ├── config_BRAVE_22aa.py
-│   ├── config_BRAVE.py  
-│   ├── config_Example.py  
-│   ├── config_p005.py  
-│   ├── config_p006.py  
-│   ├── config_p007.py  
-│   ├── config_undetermined_p005.py  
-│   ├── config_undetermined_p006.py  
-│   ├── config_undetermined_p007.py  
-│   ├── README.md  
+Each plasmid library can have different library identifiers, linker sequences, or structural variations. Therefore, it is essential to adapt the configuration file to match your specific library setup.
 
- For the example data, use the provided `configs/config_Example.py` file in this directory.
+For the provided example data, you can use the preconfigured file: `configs/config_Example.py`.
 
 **Note:** Detailed parameter explanations are available in `configs/README.md`.
 
@@ -177,7 +187,7 @@ If running the pipeline with an NNK library instead of a rationally designed lib
 
 This ensures that Steps 2, 3, and 6 of the pipeline are executed according to the design of an NNK library.
 
-#### Alternative
+#### Alternative way to run the pipeline
 
 The pipeline can of cause also be run individually by simply running the individual python scripts
 
@@ -190,7 +200,7 @@ The pipeline can of cause also be run individually by simply running the individ
 ./Python_Scripts/S6.py (S6_NNK.py)
 ```
 
-##### Running the Pipeline on an HPC
+#### Running the Pipeline on an HPC
 
 If working on an HPC with a Slurm queueing system, the Slurm scripts in the `Slurm_Scripts/` directory can be used to efficiently run the pipeline. These scripts leverage multiple cores to accelerate computation. The Slurm script settings can also be adjusted based on the available resources of the HPC.
 
@@ -204,7 +214,7 @@ sbatch Slurm_Scripts/Example.sh
 
 ## Workflow of the Pipeline
 
-This list provides a concise explanation of each step in the pipeline workflow. Each script processes data sequentially to generate, analyze, and organize fragments and barcodes.
+This list provides a concise explanation of each step in the pipeline workflow. 
 
 ---
 
@@ -268,7 +278,7 @@ This list provides a concise explanation of each step in the pipeline workflow. 
 
 ## Data Visualisation
 
-All necessary code for data visualization and analysis is located in the `Plotting_Scripts/` directory. This directory includes standalone scripts for generating specific plots, as well as Jupyter notebooks that provide a step-by-step approach to reproducing the visualizations.
+All necessary code for data visualization and analysis is located in the `Plotting_Scripts/` directory. This directory includes standalone scripts for generating plots, as well as Jupyter notebooks that provide a step-by-step approach to reproducing the visualizations.
 
 ## License
 
@@ -278,7 +288,7 @@ If you use it in your work, please provide proper attribution by referencing thi
 
 ## Acknowledgments
 
-I sincerely thank everyone at **rAAVen Therapeutics** for their support, guidance, and the opportunity to contribute to this project. Special thanks to my supervisor at Lund University for their mentorship throughout this thesis.
+I sincerely thank everyone at **rAAVen Therapeutics** for their support, guidance, and the opportunity to contribute to this project.
 
 ## Contact Information
 

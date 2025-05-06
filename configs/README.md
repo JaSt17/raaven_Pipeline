@@ -1,6 +1,11 @@
 # Detailed Explanation of the Config Script
 
-This config scripts hold **six dictionaries**, one for every step of the pipeline. This document provides detailed information on each parameter and how to set them.
+This directory contains **9 configuration scripts** that were used for the analysis of different sequencing datasets.
+
+Each configuration file corresponds to a specific dataset or library that was analyzed, reflecting differences such as library identifiers, linker sequences, or structural variations in the constructs. In each config file, parameters are organized into dictionaries that define the settings for the individual steps of the pipeline, including read trimming, barcode extraction, alignment, and data filtering.
+
+For the example data provided in this repository, you can start with `configs/config_Example.py`, which is pre-adapted to the example dataset structure.
+
 
 ---
 
@@ -98,8 +103,11 @@ There are two global parameters that **must** be set:
 1. **in_name_LUT, barcode_file, fragment_file**  
    - All set according to the names given in **Config_S1** and **Config_S2**.
 
-2. **single_read, chimeric_read**
-   - Two boolean values to allow single read barcodes and chimeric barcodes in the creation of the Library Look up Table
+2. **single_read, chimeric_read, starcode**
+   - Three boolean options control how barcodes are handled when creating the Library Lookup Table:
+     - Allow **single-read barcodes**: Includes barcodes that appear only once in the dataset.
+     - Allow **chimeric barcodes**: Includes chimeric barcodes that map to multiple fragments.
+     - Use **Starcode clustering**: Groups similar barcode sequences together by clustering barcodes that differ by only a few bases, helping to correct sequencing errors and reduce barcode variability.
 
 3. **threshold**  
    - Minimal ratio of the most frequent barcode to all found barcodes for chimeric barcode detection.
@@ -141,9 +149,7 @@ There are two global parameters that **must** be set:
 
 8. **bbduk2_args**  
    - A list of arguments for the `bbduk2` runs to extract the barcodes.
-   - Below are parameters not yet explained in **Config_S2**:
-     - **trd**: Trims adapters from both the read and its reverse complement.
-     - **skipr2**: Skips processing of Read 2 in paired-end data.
+   - The different parameters were explained in **Config_S2**:
 
 ---
 
@@ -173,3 +179,6 @@ There are two global parameters that **must** be set:
    - Path to the final output file of the pipeline.
 
 ---
+### Accessing Configuration Parameters
+
+The function `get_config` allows the pipeline to easily load configuration settings from different Python scripts. This makes it simple to access the specific parameters needed for each individual step of the analysis, ensuring that the workflow remains flexible and adaptable for different datasets and experimental setups.

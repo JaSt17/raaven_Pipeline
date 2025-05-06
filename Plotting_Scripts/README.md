@@ -1,6 +1,6 @@
 # Plotting Scripts Overview
 
-This directory contains scripts and Jupyter notebooks used for generating data visualizations and plots related to sequence analysis and motif exploration across different tissue types.
+This directory contains scripts and Jupyter notebooks used for generating data visualizations and plots related to sequence analysis and motif exploration of the retrieved data.
 
 ---
 
@@ -54,7 +54,6 @@ This directory contains scripts and Jupyter notebooks used for generating data v
 - **Purpose**  
   Directory for storing all generated plots and visual outputs.
 
-- **Usage Notes**  
-  - Automatically populated when running `barcode_fragment_logo.ipynb` or `visualisation.ipynb`.
+Library-specific plots are always named according to their corresponding library names to make it easier to distinguish between results from different datasets.
 
 ---

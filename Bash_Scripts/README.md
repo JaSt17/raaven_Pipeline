@@ -19,9 +19,6 @@ This directory contains **Bash scripts** that were used for  **intermediate step
 2. **run_pipeline.sh**  
    - **Purpose**  
      Executes the **entire pipeline** for a given configuration script in one go, rather than running each step manually.  
-   - **Why It’s Helpful**  
-     - **Automation**: Saves time by automating the pipeline.  
-     - **Consistency**: Reduces the chance of errors from running each step separately.  
    - **Usage Notes**  
      - Best suited for **smaller datasets** or quick tests.  
      - For **large datasets**, consider using **High Performance Computing (HPC)** with **Slurm** scripts to efficiently utilize computing resources and avoid potential bottlenecks.
