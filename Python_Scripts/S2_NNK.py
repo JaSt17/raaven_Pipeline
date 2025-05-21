@@ -166,6 +166,8 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     paired_barcode_out = os.path.join(out_dir, f"barcode_{out_name}.fastq.gz")
     paired_fragment_out = os.path.join(out_dir, f"fragment_{out_name}.fastq.gz")
+    unpaired_barcode_out = os.path.join(out_dir, f"barcode_{out_name}.unpaired.fastq.gz")
+    unpaired_fragment_out = os.path.join(out_dir, f"fragment_{out_name}.unpaired.fastq.gz")
     
     # output names 
     seqkit_barcode_out = out_name_barcode.replace(".fastq.gz", ".paired.fastq.gz")
@@ -176,10 +178,8 @@ def main():
     # use shutil to move the files to the output directory
     shutil.move(seqkit_barcode_out, paired_barcode_out)
     shutil.move(seqkit_fragment_out, paired_fragment_out)
-    
-    #remove the unpaired files
-    os.remove(seqkit_barcode_unpaired)
-    os.remove(seqkit_fragment_unpaired)
+    shutil.move(seqkit_barcode_unpaired, unpaired_barcode_out)
+    shutil.move(seqkit_fragment_unpaired, unpaired_fragment_out)
 
     logger.info(f"Paired reads saved to: {paired_barcode_out}")
     logger.info(f"Paired fragments saved to: {paired_fragment_out}")
