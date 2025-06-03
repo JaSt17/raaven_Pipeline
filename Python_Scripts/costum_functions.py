@@ -156,3 +156,73 @@ def aatodna(in_aa: str, wSet: pd.DataFrame, species: str = "hsa", opt: bool = Tr
 
     return dna_seq.upper()
 
+import os
+import re
+import pandas as pd
+
+def extract_logging_info_and_write_csv(logs_folder: str, output_csv_path: str):
+    """
+    Extracts metrics from S2.log and S3.log in the specified folder and writes a summary CSV.
+    
+    Args:
+        logs_folder (str): Path to the folder containing S2.log and S3.log.
+        output_csv_path (str): Path to save the output CSV summary.
+    """
+    s2_path = os.path.join(logs_folder, "S2.log")
+    s3_path = os.path.join(logs_folder, "S3.log")
+    data = {}
+
+    # --- Parse S2.log ---
+    with open(s2_path, "r") as f:
+        lines = f.readlines()
+        for i, line in enumerate(lines):
+            if "bbduk2 barcode extraction summary:" in line:
+                if "Input:" in lines[i+1]:
+                    match = re.search(r'(\d+)\s+reads', lines[i+1])
+                    if match:
+                        data["Number of Reads"] = int(match.group(1))
+                if "Result:" in lines[i+5]:
+                    match = re.search(r'Result:.*\t(\d+)\s+reads\s+\(([\d.]+%)\)', lines[i+5])
+                    if match:
+                        data["Reads match Barcode Pattern"] = f"{match.group(1)} ({match.group(2)})"
+            elif "bbduk2 fragment extraction summary:" in line:
+                if "Result:" in lines[i+5]:
+                    match = re.search(r'Result:.*\t(\d+)\s+reads\s+\(([\d.]+%)\)', lines[i+5])
+                    if match:
+                        data["Reads match Fragment Pattern"] = f"{match.group(1)} ({match.group(2)})"
+            elif "Paired reads:" in line:
+                match = re.search(r'Paired reads:\s+(\d+)', line)
+                if match:
+                    data["Paired Reads"] = int(match.group(1))
+
+    # --- Parse S3.log ---
+    with open(s3_path, "r") as f:
+        lines = f.readlines()
+        for line in lines:
+            if "Number of unique fragment reads" in line:
+                match = re.search(r'reads: (\d+)', line)
+                if match:
+                    data["Unique Fragments"] = int(match.group(1))
+            elif "Number of unqiue barcode reads" in line:
+                match = re.search(r'reads: (\d+)', line)
+                if match:
+                    data["Unique Barcodes"] = int(match.group(1))
+            elif "Single read barcodes" in line:
+                match = re.search(r'Single read barcodes\s+(\d+)\s+\(\s*([\d.]+%)\)', line)
+                if match:
+                    data["Single-read barcodes"] = f"{match.group(1)} ({match.group(2)})"
+            elif "Definitve read barcodes" in line:
+                match = re.search(r'Definitve read barcodes\s+(\d+)\s+\(\s*([\d.]+%)\)\s+(\d+)\s+\(\s*([\d.]+%)\)', line)
+                if match:
+                    data["Definitive barcodes (reads)"] = f"{match.group(1)} ({match.group(2)})"
+                    data["Unique Definitive barcodes"] = f"{match.group(3)} ({match.group(4)})"
+            elif "Chimeric read barcodes" in line:
+                match = re.search(r'Chimeric read barcodes\s+(\d+)\s+\(\s*([\d.]+%)\)\s+(\d+)\s+\(\s*([\d.]+%)\)', line)
+                if match:
+                    data["Chimeric Barcodes (reads)"] = f"{match.group(1)} ({match.group(2)})"
+                    data["Unique Chimeric Barcodes"] = f"{match.group(3)} ({match.group(4)})"
+
+    # --- Save as CSV ---
+    df = pd.DataFrame(list(data.items()), columns=["Metric", "Value"])
+    df.to_csv(output_csv_path, index=False)
+    print(f"Summary saved to {output_csv_path}")

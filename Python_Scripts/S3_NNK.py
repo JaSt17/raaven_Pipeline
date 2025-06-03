@@ -46,6 +46,7 @@ import sys
 # local import
 from config import get_config
 from plotting_functions import generate_sequence_logo_from_fasta
+from costum_functions import extract_logging_info_and_write_csv
 
 
 # function to create a global logger
@@ -131,7 +132,6 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file, library_n
     
     # generate logo for the unique fragments
     save_dir = os.path.dirname(out_name_1)
-    logger.info(f"Drawing sequence logos for barcodes and fragments in {save_dir}/plots/")
     generate_sequence_logo_from_fasta(out_name_1, os.path.join(os.path.dirname(save_dir), "plots/unique_fragments_logo.svg"), library_name=library_name)
     
     out_name_2 = "/".join(barcodes_file.split("/")[:-1]) + "/unique_barcodes.fasta"
@@ -596,6 +596,12 @@ def main():
     
     # Print total analysis time
     logger.info(f"Total execution time: {datetime.now() - start_time}")
+    
+    # get the upper directory of the log file
+    save_dir = os.path.dirname(config["log_dir"])
+    save_dir = os.path.dirname(save_dir)
+    
+    extract_logging_info_and_write_csv(config["log_dir"], os.path.join(save_dir,"sequencing_summary.csv"))
 
 if __name__ == "__main__":
     main()
