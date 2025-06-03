@@ -45,6 +45,7 @@ import logging
 import sys
 # local import
 from config import get_config
+from plotting_functions import generate_sequence_logo_from_fasta
 
 
 # function to create a global logger
@@ -97,7 +98,7 @@ def run_command(command: list, description: str, shell=False) -> tuple:
         return stdout, stderr
     
     
-def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
+def save_unique_fragments_barcodes(fragments_file: str, barcodes_file, library_name) -> tuple:
     """
     Save all found unique fragments and barcodes from the library to a FASTA file.
     
@@ -128,6 +129,11 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
     number_of_unique_fragments, _ = run_command([f" echo $(( $(wc -l < {out_name_1}) / 2 ))"], "Extract unique sequences", shell=True)
     logger.info(f"Number of unique fragment reads: {number_of_unique_fragments.strip()}")
     
+    # generate logo for the unique fragments
+    save_dir = os.path.dirname(out_name_1)
+    logger.info(f"Drawing sequence logos for barcodes and fragments in {save_dir}/plots/")
+    generate_sequence_logo_from_fasta(out_name_1, os.path.join(os.path.dirname(save_dir), "plots/unique_fragments_logo.svg"), library_name=library_name)
+    
     out_name_2 = "/".join(barcodes_file.split("/")[:-1]) + "/unique_barcodes.fasta"
     # Build shell command for extracting unique sequences
     command = [
@@ -143,6 +149,9 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file) -> tuple:
     
     number_of_unique_barcodes, _ = run_command([f" echo $(( $(wc -l < {out_name_2}) / 2 ))"], "Extract unique sequences", shell=True)
     logger.info(f"Number of unqiue barcode reads: {number_of_unique_barcodes.strip()}")
+    
+    # generate logo for the unique barcodes
+    generate_sequence_logo_from_fasta(out_name_2, os.path.join(os.path.dirname(save_dir), "plots/unique_barcodes_logo.svg"), library_name=library_name)
 
     return out_name_1, out_name_2
 
@@ -531,7 +540,8 @@ def main():
     full_table = pd.concat([pd.read_pickle(chunk_file) for chunk_file in chunk_files], ignore_index=True)
     del chunk_files
     
-    save_unique_fragments_barcodes(config["fragment_file"], config["barcode_file"])
+    library_name = config["library_name"]
+    save_unique_fragments_barcodes(config["fragment_file"], config["barcode_file"], library_name)
     
     # Perform barcode reduction using Starcode clustering if set in config
     if config["starcode"]:

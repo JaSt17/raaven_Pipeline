@@ -111,7 +111,6 @@ def generate_sequence_logo_from_fasta(input_fasta_path: str, output_logo_path: s
     plt.title(f"{library_name}", fontsize=14)
     plt.xlabel("Position in the Fragment", fontsize=12)
     plt.ylabel("Frequency", fontsize=12)
-    plt.show()
 
     # Step 4: Save plot
     os.makedirs(os.path.dirname(output_logo_path), exist_ok=True)
