@@ -15,7 +15,6 @@ Workflow:
 
 Inputs for the script are:
     - input_file: The path to the FASTA file
-    - wSet: The path to the codon usage table
     - structure_dict: A dictionary with the structure as the key and the length and frequency as the values
     - output_csv: The path to the output CSV file
     - output_name: The path to the output file
@@ -145,12 +144,11 @@ def get_unique_fragments(frag_list: list) -> list:
     return unique_frag_list
 
 
-def generate_fragments(wSet: str, aa_list: dict, structure:str, length: int, frequency:int = 1) -> list:
+def generate_fragments(aa_list: dict, structure:str, length: int, frequency:int = 1) -> list:
     """
     This function generates all possible fragments of a given length from a list of amino acid sequences.
 
     Parameters:
-        wSet (str): The path to the codon usage table
         aa_list (list): A list of dictionaries with the keys ID and Peptide
         structure (str): The structure of the fragments
         length (int): The length of the fragments
@@ -178,7 +176,7 @@ def generate_fragments(wSet: str, aa_list: dict, structure:str, length: int, fre
     frag_list = get_unique_fragments(frag_list)
 
     # Load codon usage table once
-    wSet = load_wSet(wSet)
+    wSet = load_wSet()
 
     # Prepare arguments for multiprocessing
     args_list = [(frag, wSet) for frag in frag_list]
@@ -266,7 +264,7 @@ def main():
     # create a dataframe with all sequences form the aa_list
     ref_hco = pd.DataFrame(aa_list)
     # Load codon usage table once
-    wSet = load_wSet(config["wSet"])
+    wSet = load_wSet()
     # Prepare arguments for multiprocessing
     ref_hco['Sequence'] = ref_hco['Peptide'].apply(lambda x: aatodna(x, wSet))
     # write the reference file to a file
@@ -279,7 +277,7 @@ def main():
     sorted_fragments = []
     for structure, info in config["structure_dict"].items():
         # Generate fragments for the structure with the given length and frequency
-        temp_sorted_fragments = generate_fragments(config["wSet"], aa_list, structure, info["length"], info["freq"])
+        temp_sorted_fragments = generate_fragments(aa_list, structure, info["length"], info["freq"])
         # add overhangs to the fragments
         temp_sorted_fragments = add_overhangs(temp_sorted_fragments, info["overhangs"][0], info["overhangs"][1])
         logger.info(f"Number of unqiue {structure} fragments: {len(temp_sorted_fragments)}")

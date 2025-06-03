@@ -28,18 +28,29 @@ inverted_codon_table = {
             }
 
 
-def load_wSet(file_path: str) -> pd.DataFrame:
+def load_wSet() -> pd.DataFrame:
     """ 
-    Reads the wSet file and returns a pandas DataFrame with the data.
-
-    :param file_path: The path to the wSet file
-    :return: A pandas DataFrame with the data
+    Creates the wSet DataFrame and returns it.
     """
-    try:
-        wSet = pd.read_csv(file_path, index_col=0)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return None
+    # Define header (64 codons)
+    header = ['organism', "aaa","aac","aag","aat","aca","acc","acg","act",
+                "aga","agc","agg","agt","ata","atc","atg","att","caa","cac","cag","cat",
+                "cca","ccc","ccg","cct","cga","cgc","cgg","cgt","cta","ctc","ctg","ctt",
+                "gaa","gac","gag","gat","gca","gcc","gcg","gct","gga","ggc","ggg","ggt",
+                "gta","gtc","gtg","gtt","taa","tac","tag","tat","tca","tcc","tcg","tct",
+                "tga","tgc","tgg","tgt","tta","ttc","ttg","ttt"]
+
+    # Define hsa row with corresponding values
+    hsa = ['hsa', 0.42,0.54,0.58,0.46,0.28,0.36,0.12,0.24,0.2,0.24,0.2,0.15,0.16,
+            0.48,1,0.36,0.25,0.59,0.75,0.41,0.27,0.33,0.11,0.28,0.11,0.19,0.21,
+            0.08,0.07,0.2,0.41,0.13,0.42,0.54,0.58,0.46,0.23,0.4,0.11,0.26,0.25,
+            0.34,0.25,0.16,0.11,0.24,0.47,0.18,0.28,0.57,0.2,0.43,0.15,0.22,0.06,
+            0.18,0.52,0.55,1,0.45,0.07,0.55,0.13,0.45]
+
+    # Create DataFrame and add hsa row
+    wSet = pd.DataFrame(columns=header)
+    wSet.loc[0] = hsa
+
     return wSet
 
 
