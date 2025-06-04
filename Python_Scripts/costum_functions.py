@@ -4,6 +4,7 @@ import pandas as pd
 from Bio.Seq import Seq
 import os
 import re
+from plotting_functions import plot_amino_acid_heatmap, plot_aa_deviation_difference, plot_quantities
 
 inverted_codon_table = {
             'E': ['GAG', 'GAA'],
@@ -228,3 +229,53 @@ def extract_logging_info_and_write_csv(logs_folder: str, output_csv_path: str):
     df = pd.DataFrame(list(data.items()), columns=["Metric", "Value"])
     df.to_csv(output_csv_path, index=False)
     print(f"Summary saved to {output_csv_path}")
+    
+    
+def create_summary_plots(final_summary: pd.DataFrame, plot_dir_path: str, array_size: int):
+    """
+    This function combines all the plotting functions to create a summay funcion.
+    It runs after all output tabels were created and saved to get an overview of the data.
+    """
+    # Create heatmaps for each group
+    # chek if the group exists in the final_summary DataFrame
+    
+    # crete the heatmap directory if it does not exist
+    heatmap_dir = os.path.join(plot_dir_path, "heatmaps")
+    if not os.path.exists(heatmap_dir):
+        os.makedirs(heatmap_dir)
+    
+    if 'Infective_AAVs' in final_summary['Group'].unique():
+        df_infective = final_summary[final_summary['Group'] == "Infective_AAVs"]
+        plot = plot_amino_acid_heatmap(df_infective, "Infective_AAVs", number_of_top=df_infective.shape[0])
+        plot.savefig(f"{plot_dir_path}/heatmaps/Infective_Amino.png", dpi=600, bbox_inches='tight', transparent=True)
+        
+    if 'DNAse_resistant_AAVs' in final_summary['Group'].unique():
+        final_summary['Group'] = final_summary['Group'].replace({'DNAse_resistant_AAVs': 'Packaged AAVs'})
+        df_packaged = final_summary[final_summary['Group'] == "Packaged AAVs"]
+        plot = plot_amino_acid_heatmap(df_packaged, "Packaged AAVs", number_of_top=df_packaged.shape[0])
+        plot.savefig(f"{plot_dir_path}/heatmaps/Packaged_Amino.png", dpi=600, bbox_inches='tight', transparent=True)
+        
+        if 'Infective_AAVs' in final_summary['Group'].unique():
+            plot = plot_aa_deviation_difference(final_summary, "Packaged AAVs", "Infective_AAVs")
+            plot.savefig(f"{plot_dir_path}/heatmaps/Packaged_vs_Infective_Amino.png", dpi=600, bbox_inches='tight', transparent=True)
+    
+    if 'Plasmid_Library' in final_summary['Group'].unique():
+        df_plasmid = final_summary[final_summary['Group'] == "Plasmid_Library"]
+        plot = plot_amino_acid_heatmap(df_plasmid, "Plasmid_Library", number_of_top=df_plasmid.shape[0])
+        plot.savefig(f"{plot_dir_path}/heatmaps/Plasmid_Amino.png", dpi=600, bbox_inches='tight', transparent=True)
+        
+        if 'Packaged AAVs' in final_summary['Group'].unique():
+            plot = plot_aa_deviation_difference(final_summary, "Plasmid_Library", "Packaged AAVs",)
+            plot.savefig(f"{plot_dir_path}/heatmaps/Packaged_vs_Plasmid_Amino.png", dpi=600, bbox_inches='tight', transparent=True)
+        
+        if 'Infective_AAVs' in final_summary['Group'].unique():
+            plot = plot_aa_deviation_difference(final_summary, "Plasmid_Library", "Infective_AAVs", )
+            plot.savefig(f"{plot_dir_path}/heatmaps/Infective_vs_Plasmid_Amino.png", dpi=600, bbox_inches='tight', transparent=True)
+    
+    # Create a summary quantative plot
+    # check if all groups are present in the final_summary DataFrame
+    if {'Plasmid_Library', 'Packaged AAVs', 'Infective_AAVs'}.issubset(final_summary['Group'].unique()):
+        plot = plot_quantities(final_summary,
+                    {'Plasmid_Library':'Plasmid Library', 'Packaged AAVs':'Packaged AAVs', 'Infective_AAVs': 'Infective AAVs'},
+                    {"Array": array_size})
+        plot.savefig(f"{plot_dir_path}/quantitative_summary.png", dpi=600, bbox_inches='tight', transparent=True)

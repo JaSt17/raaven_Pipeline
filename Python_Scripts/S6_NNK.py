@@ -42,6 +42,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 # local import
 from config import get_config
+from costum_functions import create_summary_plots
 
 # function to create a global logger
 def create_logger(path: str, name: str) -> None:
@@ -274,6 +275,12 @@ def main():
     # Save the processed data to a new CSV file
     combined_data.to_csv(config["output_table"], index=False)
     logger.info(f"Saved processed data to {config['output_table']}")
+
+    # Create a summary plot
+    logger.info("Creating summary plots")
+    
+    create_summary_plots(combined_data, config["plot_dir"], config["array_size"])
+    
     logger.info(f"Finished processing in {datetime.now() - start_time}")
     
     
