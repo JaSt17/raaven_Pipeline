@@ -1,12 +1,12 @@
 """ This file contains the config dictionary that are used to store the configuration parameters for the pipeline. """
 
 # Define the data directory where the input and output files are stored
-data_dir = "Example"
+data_dir = "Brave"
 # Define the directory where the logs are stored
 log_dir = data_dir + "/logs/"
 # Define the length of the barcode and fragment sequences in DNA bases
-bc_len = 27
-frag_len = 21
+bc_len = 20
+frag_len = 42
 
 # configuration for Step 1 in the pipeline
 config_S1 = {
@@ -17,10 +17,7 @@ config_S1 = {
     # dictionary containing the information about the different structures with
     # their name as the key and then the length, frequency, and overhangs as the values
     "structure_dict": {
-        "7aa": {"length": 7, "freq": 1,
-                "overhangs": ["AACCTCCAGAGAGGCAACGCT", "GCCAGACAAGCAGCTACCGCA"]}},
-    # Library ID for the library so we can combine multiple libraries in the future
-    "LibID": "p005",
+        "14aa": {"length": 14, "freq": 1}},
     # output file names for the LUT csv and the list of all inserted fragments
     "output_csv": data_dir + "/LUT.csv",
     "output_name": data_dir + "/SortedFragments.txt",
@@ -29,12 +26,12 @@ config_S1 = {
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_barcode": data_dir + "/fastq_files/R1.fastq.gz",
-    "in_name_fragment": data_dir + "/fastq_files/R2.fastq.gz",
+    "in_name_barcode": data_dir + "/fastq_files/DNA_pscAAVlib_1.fastq.gz",
+    "in_name_fragment": data_dir + "/fastq_files/DNA_pscAAVlib_2.fastq.gz",
     "input_file": config_S1["input_file"],
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": data_dir + "/barcode_fragment",
-    "out_name": "Example",
+    "out_name": "DNA_pscAAVlib_1",
     # arguments for the bbduk2 tool to extract the barcode and fragment sequences
     "bbduk2_args_BC" : [
         "k=20",
@@ -47,7 +44,7 @@ config_S2 = {
         f"minlength={bc_len}",
         f"maxlength={bc_len}",
         "ordered=t",
-        "lliteral=GTACGTCTGAACTTGGGACT",
+        "lliteral=GCCTAGCGGCCGCTTTACTT",
         "rliteral=ATAACTTCGTATAATGTATG",
     ],
     "bbduk2_args_Frag" : [
@@ -95,18 +92,18 @@ config_S4 = {
     "chunk_size": config_S3["chunk_size"],
     "bc_len": bc_len,
     "starcode": config_S3["starcode"],
-    "db": data_dir + "/barcode_fragment/unique_barcodes.fasta",
+    "db": data_dir + "/barcode_db.fasta",
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": data_dir + "/input/load_list.csv",
     # directory containing the fastq files for the samples
-    "sample_directory": data_dir + "/sample_fastq",
+    "sample_directory": data_dir + "/fastq_files",
     # filename for the log file that will be created and show how many barcodes were found in each sample
     "log_file_path": data_dir + "/found_barcode_report.csv",
     # output directory for the found barcodes csv files
     "output_dir": data_dir + "/found_barcodes",
     # arguments for the bbduk2 tool to extract the barcodes from the samples
-    "bbduk2_args" : [
-        "k=20",
+    "bbduk2_args" : [        
+        "k=10",
         "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
@@ -117,8 +114,8 @@ config_S4 = {
         f"minlength={bc_len}",
         f"maxlength={bc_len}",
         "ordered=t",
-        "lliteral=GTACGTCTGAACTTGGGACT",
-        "rliteral=ATAACTTCGTATAATGTATG",
+        "lliteral=CGCTTTACTT",
+        "rliteral=ATAACTTCGT",
     ],
     "log_dir": log_dir,
 }
@@ -143,7 +140,9 @@ config_S6 = {
     # dictionary containing the information about the different subsets that should be created
     # the key is the name of the subset and the value is a list of the fragments that should be included
     "subsets": {
-        "Infective_AAVs": ['exclude','DNAse_resistant_AAVs','Plasmid_Library'],
+        "Infective_AAVs": ['exclude','DNA_AAVlib_DNAse_30cpc', 'DNA_AAVlib_DNAse_3cpc','Plasmid_Library', 'DNA_pscAAVlib_Prep2'],
+        "DNAse_resistant_AAVs": ['include', 'DNA_AAVlib_DNAse_30cpc','DNA_AAVlib_DNAse_3cpc'],
+        "Transported_AAVs": ['contains_include', "mRNA_30cpc_SN", "mRNA_30cpc_Th", "mRNA_30cpc_Ctx", "mRNA_3cpc_SN", "mRNA_3cpc_Th", "mRNA_3cpc_Ctx"],
     },
     # output file name for the final fragments summary
     "output_table": data_dir + "/final_fragments_summary.csv",

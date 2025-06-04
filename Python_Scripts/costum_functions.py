@@ -2,6 +2,8 @@
 import random
 import pandas as pd
 from Bio.Seq import Seq
+import os
+import re
 
 inverted_codon_table = {
             'E': ['GAG', 'GAA'],
@@ -50,6 +52,9 @@ def load_wSet() -> pd.DataFrame:
     # Create DataFrame and add hsa row
     wSet = pd.DataFrame(columns=header)
     wSet.loc[0] = hsa
+    
+    # set the index to the organism name
+    wSet.set_index('organism', inplace=True)
 
     return wSet
 
@@ -156,9 +161,6 @@ def aatodna(in_aa: str, wSet: pd.DataFrame, species: str = "hsa", opt: bool = Tr
 
     return dna_seq.upper()
 
-import os
-import re
-import pandas as pd
 
 def extract_logging_info_and_write_csv(logs_folder: str, output_csv_path: str):
     """

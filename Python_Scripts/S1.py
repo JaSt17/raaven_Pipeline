@@ -30,7 +30,6 @@ from datetime import datetime
 from Bio import SeqIO
 import pandas as pd
 from Bio.Seq import translate
-from multiprocessing import Pool, cpu_count
 import logging
 # local import
 from costum_functions import aatodna, load_wSet
@@ -144,7 +143,7 @@ def get_unique_fragments(frag_list: list) -> list:
     return unique_frag_list
 
 
-def generate_fragments(aa_list: dict, structure:str, length: int, frequency:int = 1) -> list:
+def generate_fragments(aa_list: dict, structure: str, length: int, frequency: int = 1) -> list:
     """
     This function generates all possible fragments of a given length from a list of amino acid sequences.
 
@@ -155,69 +154,31 @@ def generate_fragments(aa_list: dict, structure:str, length: int, frequency:int 
         frequency (int): The frequency at which to generate the fragments
         
     Returns:
-        list: A list of dictionaries with the keys ID, Peptide, AAstart, AAstop
+        list: A list of dictionaries with the keys ID, Peptide, AAstart, AAstop, Sequence
     """
-
     frag_list = []
 
-    # Use multiprocessing multiple fragments at once
-    with Pool(cpu_count()) as p:
-        # Map the function across all entries in aa_list
-        results = p.starmap(make_all_frags, [(k, aa_list, structure, length, frequency) for k in range(len(aa_list))])
-    
-    # Collect the results
-    for result in results:
-        frag_list.extend(result)
+    # Generate fragments sequentially
+    for k in range(len(aa_list)):
+        frag_list.extend(make_all_frags(k, aa_list, structure, length, frequency))
 
     # Filter out fragments containing 'X' (unknown amino acid)
-    frag_list = [frag for frag in frag_list if not any(c in frag["Peptide"] for c in "X")]
+    frag_list = [frag for frag in frag_list if 'X' not in frag["Peptide"]]
 
-    # get unique fragments for each structure
+    # Get unique fragments for each structure
     frag_list = get_unique_fragments(frag_list)
 
-    # Load codon usage table once
+    # Load codon usage table
     wSet = load_wSet()
 
-    # Prepare arguments for multiprocessing
-    args_list = [(frag, wSet) for frag in frag_list]
+    # Convert AA sequences to DNA sequences (human codon optimized)
+    for frag in frag_list:
+        frag["Sequence"] = aatodna(frag["Peptide"], wSet)
 
-    # Convert AA sequences to DNA sequences using multiprocessing and the 'aatodna' function for human codon optimization
-    with Pool(cpu_count()) as p:
-        frag_list = p.map(aatodna_parallel, args_list)
-    
     # Sort the fragments by the DNA sequence
     sorted_fragments = sorted(frag_list, key=lambda x: x["Sequence"])
-    
+
     return sorted_fragments
-
-
-def aatodna_parallel(args: list) -> dict:
-    """
-    Wrapper function to convert an amino acid fragment to a DNA fragment using multiprocessing.
-    Transform the amino acid sequence to a DNA sequence optimized for human codon usage.
-    """
-    frag, wSet = args
-    # Convert AA to DNA
-    frag["Sequence"] = aatodna(frag["Peptide"], wSet)
-    return frag
-
-
-# Function to add overhangs to the fragments
-def add_overhangs(fragments: list, five_prime: str, three_prime: str):
-    """
-    This function adds overhangs to the DNA fragments.
-    
-    Parameters:
-        fragments (list): A list of dictionaries with the keys ID, Peptide, AAstart, AAstop, and Sequence
-        five_prime (str): The 5' overhang sequence
-        three_prime (str): The 3' overhang sequence
-        
-    Returns:
-        list: A list of dictionaries with the keys ID, Peptide, AAstart, AAstop, and Sequence
-    """
-    for frag in fragments:
-        frag["Sequence"] = f"{five_prime.lower()}{frag['Sequence']}{three_prime.lower()}"
-    return fragments
 
 
 def create_LUTnr(df: pd.DataFrame) -> pd.DataFrame:
@@ -278,15 +239,12 @@ def main():
     for structure, info in config["structure_dict"].items():
         # Generate fragments for the structure with the given length and frequency
         temp_sorted_fragments = generate_fragments(aa_list, structure, info["length"], info["freq"])
-        # add overhangs to the fragments
-        temp_sorted_fragments = add_overhangs(temp_sorted_fragments, info["overhangs"][0], info["overhangs"][1])
         logger.info(f"Number of unqiue {structure} fragments: {len(temp_sorted_fragments)}")
         sorted_fragments.extend(temp_sorted_fragments)
     
     # get all fragments
     all_fragments = [frag['Peptide'] for frag in sorted_fragments]
-    logger.info(f"Number of unique Amino Acid fragments (without overhangs): {len(set(set(all_fragments)))}")
-    logger.info(f"Number of unique Amino Acid fragments (with overhangs): {len(all_fragments)}")
+    logger.info(f"Number of created unique Amino Acid fragments: {len(set(set(all_fragments)))}")
     
     # Create a Dataframe with the fragments and sort them by 'Structure', and 'AAstart'
     df = pd.DataFrame(sorted_fragments)

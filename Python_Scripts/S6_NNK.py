@@ -268,6 +268,9 @@ def main():
     # Combine information of identical fragments in a DataFrame
     combined_data = combine_information_of_identical_fragments(combined_data, key_cols)
     
+    # Sort the combined data by Group RNAcount
+    combined_data.sort_values(by=['Group', 'RNAcount'], ascending=[True, False], inplace=True)
+    
     # Save the processed data to a new CSV file
     combined_data.to_csv(config["output_table"], index=False)
     logger.info(f"Saved processed data to {config['output_table']}")
