@@ -207,6 +207,15 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir
         log_entry['BC_reads'] = int(match.group(1))
     else:
         log_entry['BC_reads'] = 0
+        
+    # Extract the the number of unique barcodes found
+    stdout, _ = run_command([f"zcat {out_name_BC} | awk 'NR % 4 == 2' | sort | uniq -c | sort -nr "], "Count unique barcodes", shell=True)
+    # covert the stdout to an table with count and barcode
+    unique_barcodes = pd.DataFrame([line.split() for line in stdout.strip().split('\n')], columns=['Count', 'BC'])
+    # save the table as a csv file
+    unique_barcodes.to_csv(os.path.join(out_dir, f"unique_barcodes_{log_entry['Name']}.csv"), index=False)
+    logger.info(f"Number of unique barcodes found: {unique_barcodes.shape[0]}")
+    log_entry['unique_BC'] = int(unique_barcodes.shape[0])
 
     # Run vsearch to align extracted barcodes to the reference
     # ========================================================
@@ -233,7 +242,7 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir
             logger.info(f"Number of found barcode reads that match to the reference: {info}")
             # extract the first number from the match
             info = re.search(r"(\d+)", info).group(0)
-            log_entry['BC_matched'] = int(info)
+            log_entry['matched_BC_reads'] = int(info)
 
         # Use awk to extract the matching refernce barcode reads from the db
         awk_command = [f"awk '{{print $2}}' {vsearch_out.name} > {keep_barcodes.name}"]
@@ -276,7 +285,7 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir
         
         # Save the number of unique barcodes
         all_BCs = barcode_table['BC'].nunique()
-        log_entry['unique_BCs'] = all_BCs
+        log_entry['matched_unique_BC'] = all_BCs
         
         # Matching barcodes with information form the LUT and adding RNAcount
         # ============================
@@ -299,21 +308,23 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir
         foundFrags.to_csv(output_filename, index=False)
         
         logger.info(
-                f"Finished processing {file_path} found: "
-                f"{log_entry['BC_reads']} barcode reads; "
-                f"{log_entry['BC_matched']} barcode reads that match to the reference; "
-                f"{log_entry['unique_BCs']} unique barcodes; ")
+            f"Finished processing {file_path} found: "
+            f"{log_entry['BC_reads']} barcode reads; "
+            f"{log_entry['unique_BC']} unique barcodes; "
+            f"{log_entry['matched_BC_reads']} matched barcode reads; "
+            f"{log_entry['matched_unique_BC']} matched unique barcodes; ")
         
         return log_entry
     
     except Exception as e:
-        log_entry['unique_BCs'] = 0
-        log_entry['BC_matched'] = 0
+        log_entry['matched_unique_BC'] = 0
+        log_entry['matched_BC_reads'] = 0
         logger.info(
             f"Finished processing {file_path} found: "
             f"{log_entry['BC_reads']} barcode reads; "
-            f"{log_entry['BC_matched']} barcode reads that match to the reference; "
-            f"{log_entry['unique_BCs']} unique barcodes; ")
+            f"{log_entry['unique_BC']} unique barcodes; "
+            f"{log_entry['matched_BC_reads']} matched barcode reads; "
+            f"{log_entry['matched_unique_BC']} matched unique barcodes; ")
         return log_entry
 
 

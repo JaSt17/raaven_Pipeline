@@ -117,10 +117,11 @@ def main():
     
     # Plot the Barcode and Fragment read logos
     # get the out_dir without the last part of the path
-    save_dir = os.path.dirname(out_dir)
-    logger.info(f"Drawing sequence logos for barcodes and fragments in {save_dir}/plots/")
-    generate_sequence_logo_from_fastq(in_name_barcode, os.path.join(save_dir, f"plots/barcode_reads.svg"), library_name=out_name)
-    generate_sequence_logo_from_fastq(in_name_fragment, os.path.join(save_dir, f"plots/fragment_reads.svg"), library_name=out_name)
+    if config["draw_sequence_logos"]:
+        save_dir = os.path.dirname(out_dir)
+        logger.info(f"Drawing sequence logos for barcodes and fragments in {save_dir}/plots/")
+        generate_sequence_logo_from_fastq(in_name_barcode, os.path.join(save_dir, f"plots/barcode_reads.svg"), library_name=out_name)
+        generate_sequence_logo_from_fastq(in_name_fragment, os.path.join(save_dir, f"plots/fragment_reads.svg"), library_name=out_name)
     
     os.makedirs(out_dir, exist_ok=True)
     out_name_barcode = os.path.join(out_dir, f"barcode_{out_name}.fastq.gz")
