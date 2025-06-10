@@ -1,22 +1,22 @@
 #------------------------------------------------------------------------------------
 # Define the data & save directory where the input and output files are stored
-data_dir = "Projects/Bluejay/Seq_Data"
-save_dir = "Projects/Bluejay/Libraries"
+data_dir = "Projects/Brave/Seq_Data"
+save_dir = "Projects/Brave/Libraries"
 # Name of the library and run
-library_name = "p034"
+library_name = "brave_14"
 run = "Plasmid_run_1"
 # Define the length of the barcode and fragment sequences in DNA bases
-bc_len = 27
-frag_len = 21
+bc_len = 20
+frag_len = 42
 
 # Define the number of possible fragments that can be created from the library
-num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
+num_possible_frag = 42000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "CTATCGAGTG" # Unique !!!
+barcode_left_literal = "CGCTTTACTT" # Unique !!!
 barcode_right_literal = "ATAACTTCGT"
-fragment_left_literal = "TGCCCAAGCT"
-fragment_right_literal = "GCCGCACAGG"
+fragment_left_literal = "AGGCAACGCT"
+fragment_right_literal = "GCCAGACAAG"
 
 # Settings for Libary read usage:
 # Should single read barcodes be used?
@@ -36,7 +36,7 @@ config_S1 = {
     # dictionary containing the information about the different structures with
     # their name as the key and then the length, frequency
     "structure_dict": {
-        "7aa": {"length": 7, "freq": 1}},
+        "7aa": {"length": 14, "freq": 1}},
     # Library ID for the library so we can combine multiple libraries in the future
     "LibID": library_name,
     # output file names for the LUT csv and the list of all inserted fragments
@@ -50,6 +50,7 @@ config_S2 = {
     "in_name_barcode": data_dir + f"/{run}/{library_name}_R1.fastq.gz",
     "in_name_fragment": data_dir + f"/{run}/{library_name}_R2.fastq.gz",
     "input_file": config_S1["input_file"],
+    "draw_sequence_logos": True,  # Whether to draw sequence logos for the barcodes and fragments
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": save_dir + f"/{library_name}/{run}/barcode_fragment",
     "out_name": library_name,
@@ -62,8 +63,8 @@ config_S2 = {
         "rcomp=f",
         "minavgquality=0",
         "maxns=0",
-        f"minlength={bc_len}",
-        f"maxlength={bc_len}",
+        f"minlength={bc_len-2}",
+        f"maxlength={bc_len+2}",
         "ordered=t",
         f"lliteral={barcode_left_literal}",
         f"rliteral={barcode_right_literal}",
@@ -133,8 +134,8 @@ config_S4 = {
         "rcomp=f",
         "minavgquality=0",
         "maxns=0",
-        f"minlength={bc_len}",
-        f"maxlength={bc_len}",
+        f"minlength={bc_len-2}",
+        f"maxlength={bc_len+2}",
         "ordered=t",
         f"lliteral={barcode_left_literal}",
         f"rliteral={barcode_right_literal}",

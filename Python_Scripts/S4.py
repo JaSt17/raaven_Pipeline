@@ -326,6 +326,70 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir
             f"{log_entry['matched_BC_reads']} matched barcode reads; "
             f"{log_entry['matched_unique_BC']} matched unique barcodes; ")
         return log_entry
+    
+def create_summary_csv(directory):
+    """
+    Create a summary CSV from all unique barcode files in the specified directory.
+    
+    Parameters:
+    - directory: str, path to the directory containing the unique barcode CSV files.
+    
+    Returns:
+    - None, saves the summary CSV to the specified directory.
+    """
+    
+    # Ensure the directory exists
+    if not os.path.exists(directory):
+            raise FileNotFoundError(f"The directory {directory} does not exist.")
+        
+    # List to hold data from all files
+    all_barcodes = []
+
+    # Loop through all relevant CSV files
+    for filename in os.listdir(directory):
+        if filename.startswith('unique_barcodes') and filename.endswith('.csv'):
+            file_path = os.path.join(directory, filename)
+            df = pd.read_csv(file_path)
+
+            # Extract sample name from filename
+            sample_name = filename.split('unique_barcodes_')[1].split('.csv')[0]
+
+            # Filter for Count > 1000
+            df = df[df['Count'] > 100].copy()
+
+            # Add sample name column
+            df['Sample'] = sample_name
+
+            all_barcodes.append(df)
+
+    # Concatenate all sample DataFrames
+    all_barcodes_df = pd.concat(all_barcodes, ignore_index=True)
+
+    # --- Pivot the data to create one column per sample ---
+    pivot_df = all_barcodes_df.pivot_table(
+        index='BC',
+        columns='Sample',
+        values='Count',
+        aggfunc='sum',
+        fill_value=0
+    )
+
+    # --- Add a total 'Count' column (sum across samples) ---
+    pivot_df['Count'] = pivot_df.sum(axis=1)
+
+    # --- Add 'Samples_Found_In' column: number of samples with a count > 0 ---
+    sample_columns = [col for col in pivot_df.columns if col != 'Count']
+    pivot_df['Samples_Found_In'] = pivot_df[sample_columns].gt(0).sum(axis=1)
+
+    # Reorder columns: Count, Samples_Found_In, then sample columns
+    cols = ['Count', 'Samples_Found_In'] + sample_columns
+    pivot_df = pivot_df[cols]
+
+    # Sort by total Count descending
+    pivot_df = pivot_df.sort_values(by=['Samples_Found_In','Count'], ascending=[False, False])
+
+    # Save to CSV
+    pivot_df.to_csv(f'{directory}.csv')
 
 
 def main():
@@ -390,6 +454,9 @@ def main():
     log_df = pd.DataFrame(log_table)
     # Save the log table
     log_df.to_csv(config["log_file_path"], index=False)
+    
+    # Create a summary CSV from all unique barcode files in the output directory
+    create_summary_csv(config["output_dir"])
 
     logger.info(f"Total execution time: {datetime.now() - start_time}")
 
