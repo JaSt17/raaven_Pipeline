@@ -1,9 +1,0 @@
-16:29:46 - Loading data from Example/found_barcodes
-16:29:46 - Getting reference sequence lengths
-16:29:46 - Creating Subsets
-16:29:46 - Normalizing read counts
-16:29:46 - Combining fragment information
-16:29:47 - Cutting overhangs of the sequences based on the structure of the fragment
-16:29:47 - No overhangs and backbone sequence were provided. Skipping cutting overhangs.
-16:29:47 - Saved processed data to Example/final_fragments_summary.csv
-16:29:47 - Finished processing in 0:00:00.514406
