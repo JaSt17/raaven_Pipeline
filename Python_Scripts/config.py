@@ -3,14 +3,14 @@
 data_dir = "Projects/Brave/Seq_Data"
 save_dir = "Projects/Brave/Libraries"
 # Name of the library and run
-library_name = "brave_14"
+library_name = "brave_22"
 run = "Plasmid_run_1"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 20
-frag_len = 42
+frag_len = 66
 
 # Define the number of possible fragments that can be created from the library
-num_possible_frag = 42000  # This is an arbitrary number, adjust as needed
+num_possible_frag = 16000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
 barcode_left_literal = "CGCTTTACTT" # Unique !!!

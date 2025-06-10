@@ -177,121 +177,80 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir
     
     # create the logname from the file_path
     log_entry['Name'] = os.path.basename(file_path).replace('.fastq.gz', '')
-    
     path = os.path.join(data_dir, file_path)
-    
     logger.info(f"Processing {file_path}")
+    
+    # Check if the output file already exists
+    out_file = os.path.join(out_dir, f"unique_barcodes_{log_entry['Name']}.csv")
+    if os.path.isfile(out_file):
+        logger.info(f"Output file {out_file} already exists.")
+        unique_barcodes = pd.read_csv(out_file)
+        if not os.path.isfile(db):
+            logger.error(f"Database file {db} does not exist.")
+            sys.exit(1)
+        # read in all barcode form the db.fasta
+        barcode_dict = SeqIO.to_dict(SeqIO.parse(db, "fasta"))
+            # create a DataFrame from the barcode_db
+        barcode_db = pd.DataFrame({
+            'BC': [str(record.seq) for record in barcode_dict.values()],
+        })
 
-    # Extraction of barcodes first
-    # ============================
-
-    # Create a temporary file for the barcode outputs
-    out_name_BC = tempfile.NamedTemporaryFile(prefix="BC_", suffix=".fastq.gz", delete=False).name
-
-    # Run the bbduk2 command to extract barcodes first
-    bbduk2_command = ["bbmap/bbduk2.sh"] + bbduk2_args + [
-        f"threads={threads}",
-        f"in={path}",
-        f"out={out_name_BC}",
-    ]
-    _, stderr = run_command(bbduk2_command, f"bbduk2 barcode extraction for {path}")
-
-    # Extract summary from the barcode extraction
-    summary = extract_summary(stderr)
-    if summary:
-        logger.info(f"bbduk2 extraction summary:\n{summary}")
-
-    # Save the Barcode extraction result in the log entry
-    match = re.search(r"Result:\s*(\d+)", stderr)
-    if match:
-        log_entry['BC_reads'] = int(match.group(1))
     else:
-        log_entry['BC_reads'] = 0
-        
-    # Extract the the number of unique barcodes found
-    stdout, _ = run_command([f"zcat {out_name_BC} | awk 'NR % 4 == 2' | sort | uniq -c | sort -nr "], "Count unique barcodes", shell=True)
-    # covert the stdout to an table with count and barcode
-    unique_barcodes = pd.DataFrame([line.split() for line in stdout.strip().split('\n')], columns=['Count', 'BC'])
-    # save the table as a csv file
-    unique_barcodes.to_csv(os.path.join(out_dir, f"unique_barcodes_{log_entry['Name']}.csv"), index=False)
-    logger.info(f"Number of unique barcodes found: {unique_barcodes.shape[0]}")
-    log_entry['unique_BC'] = int(unique_barcodes.shape[0])
-
-    # Run vsearch to align extracted barcodes to the reference
-    # ========================================================
-
-    with tempfile.NamedTemporaryFile(delete=True, mode='w+', suffix='.txt') as vsearch_out, \
-        tempfile.NamedTemporaryFile(delete=True, mode='w+', suffix='.txt') as keep_barcodes:
-
-        # Run vsearch and store the output in a temporary file allowing for 1 mismatch
-        vsearch_command = [
-            f"zcat {out_name_BC} | "
-            f"vsearch --usearch_global - "
-            f"--db {db} "
-            f"--id {threshold} "
-            f"--blast6out {vsearch_out.name} "
-            f"--threads {threads} "
-            f"--minseqlength {bc_len} "
-            f"--mincols {bc_len} "
-        ]
-        _, stderr = run_command(vsearch_command, "vsearch", shell=True)
-
-        match = re.search(r"(\d+ of \d+ \(\d+\.\d+%\))", stderr)
-        if match:
-            info = match.group(0)
-            logger.info(f"Number of found barcode reads that match to the reference: {info}")
-            # extract the first number from the match
-            info = re.search(r"(\d+)", info).group(0)
-            log_entry['matched_BC_reads'] = int(info)
-
-        # Use awk to extract the matching refernce barcode reads from the db
-        awk_command = [f"awk '{{print $2}}' {vsearch_out.name} > {keep_barcodes.name}"]
-        _, stderr = run_command(awk_command, "awk", shell=True)
-
-        # Use seqkit to extract the matching barcode reads from the reference db
-        seqkit_command = [
-            f"seqkit grep -D -f {keep_barcodes.name} {db} "
-            f"-o filtered_barcodes.fasta.gz -j {threads}"
-        ]
-        _, stderr = run_command(seqkit_command, "seqkit grep", shell=True)
-
-        # Move the filtered barcode reads to the output directory
-        shutil.move("filtered_barcodes.fasta.gz", out_name_BC)
-
-    # Chunked reading of barcodes
-    # ============================
-    # temp h5 output file_name
-    output_file = os.path.join(out_dir, f"barcodes.h5")
-    write_mode = 'w'
-    
-    for bc_chunk in load_barcodes_chunked(out_name_BC, chunk_size):
-        # Create a full table of all found fragments with their corresponding barcodes and matching LUT data
-        chunk_table = create_full_table(bc_chunk)
-        
-        # Save the full table to an h5 file
-        chunk_table.to_hdf(output_file, key='data', mode=write_mode, format='table', append=(write_mode == 'a'))
-
-        # After the first write, change mode to 'append'
-        write_mode = 'a'
-        # Explicitly free memory
-        del bc_chunk, chunk_table
-        gc.collect()
-    
-    # read in the full table
-    try:
-        barcode_table = pd.read_hdf(output_file, key='data')
-        # remove the h5 file
-        os.remove(output_file)
-        
-        # Save the number of unique barcodes
-        all_BCs = barcode_table['BC'].nunique()
-        log_entry['matched_unique_BC'] = all_BCs
-        
-        # Matching barcodes with information form the LUT and adding RNAcount
+        # Extraction of barcodes first
         # ============================
-        # Reorganize the barcode_table to have BC and RNAcount
-        BCcount = barcode_table['BC'].value_counts().reset_index()
-        BCcount.columns = ['BC', 'RNAcount']
+        # Create a temporary file for the barcode outputs
+        out_name_BC = tempfile.NamedTemporaryFile(prefix="BC_", suffix=".fastq.gz", delete=False).name
+
+        # Run the bbduk2 command to extract barcodes first
+        bbduk2_command = ["bbmap/bbduk2.sh"] + bbduk2_args + [
+            f"threads={threads}",
+            f"in={path}",
+            f"out={out_name_BC}",
+        ]
+        _, stderr = run_command(bbduk2_command, f"bbduk2 barcode extraction for {path}")
+
+        # Extract summary from the barcode extraction
+        summary = extract_summary(stderr)
+        if summary:
+            logger.info(f"bbduk2 extraction summary:\n{summary}")
+
+        # Save the Barcode extraction result in the log entry
+        match = re.search(r"Result:\s*(\d+)", stderr)
+        if match:
+            log_entry['BC_reads'] = int(match.group(1))
+        else:
+            log_entry['BC_reads'] = 0
+            
+        # Extract the the number of unique barcodes found
+        stdout, _ = run_command([f"zcat {out_name_BC} | awk 'NR % 4 == 2' | sort | uniq -c | sort -nr "], "Count unique barcodes", shell=True)
+        # covert the stdout to an table with count and barcode
+        unique_barcodes = pd.DataFrame([line.split() for line in stdout.strip().split('\n')], columns=['Count', 'BC'])
+        # save all found unique barcodes in a csv file with their counts
+        unique_barcodes.to_csv(os.path.join(out_dir, f"unique_barcodes_{log_entry['Name']}.csv"), index=False)
+        logger.info(f"Number of unique barcodes found: {unique_barcodes.shape[0]}")
+        log_entry['unique_BC'] = int(unique_barcodes.shape[0])
+        
+        # match the barcodes with the reference barcodes from the plasmid database
+        if not os.path.isfile(db):
+            logger.error(f"Database file {db} does not exist.")
+            sys.exit(1)
+        # read in all barcode form the db.fasta
+        barcode_dict = SeqIO.to_dict(SeqIO.parse(db, "fasta"))
+            # create a DataFrame from the barcode_db
+        barcode_db = pd.DataFrame({
+            'BC': [str(record.seq) for record in barcode_dict.values()],
+        })
+
+    try:
+        # only keep the barcodes that are in the db
+        log_entry['BC_reads'] = int(unique_barcodes['Count'].sum())
+        log_entry['unique_BC'] = int(unique_barcodes.shape[0])
+        BCcount = unique_barcodes.merge(barcode_db, on='BC', how='inner')
+        log_entry['matched_BC_reads'] = int(BCcount['Count'].sum())
+        log_entry['matched_unique_BC'] = int(BCcount.shape[0])
+        #rename the columns to 'BC' and 'Count'
+        BCcount.rename(columns={'BC': 'BC', 'Count': 'RNAcount'}, inplace=True)
+            
         # Extract only BC that are in BCcount
         foundFrags = library_fragments.merge(BCcount, on='BC', how='inner')
         if lut_dna is not None:
@@ -299,33 +258,27 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir
             foundFrags = foundFrags.merge(lut_dna, on=['LUTnr','Peptide'], how='inner')
             # Rename the 'Reads' coulmn to 'Sequence'
             foundFrags.rename(columns={'Reads': 'Sequence'}, inplace=True)
-        
+            
         # Save the found fragments
         # ============================
         foundFrags.sort_values(by='RNAcount', ascending=False, inplace=True)
         output_filename = os.path.join(out_dir, f"found.{log_entry['Name']}.csv")
-        
+            
         foundFrags.to_csv(output_filename, index=False)
-        
+            
         logger.info(
             f"Finished processing {file_path} found: "
             f"{log_entry['BC_reads']} barcode reads; "
             f"{log_entry['unique_BC']} unique barcodes; "
             f"{log_entry['matched_BC_reads']} matched barcode reads; "
             f"{log_entry['matched_unique_BC']} matched unique barcodes; ")
-        
+            
         return log_entry
     
     except Exception as e:
-        log_entry['matched_unique_BC'] = 0
-        log_entry['matched_BC_reads'] = 0
-        logger.info(
-            f"Finished processing {file_path} found: "
-            f"{log_entry['BC_reads']} barcode reads; "
-            f"{log_entry['unique_BC']} unique barcodes; "
-            f"{log_entry['matched_BC_reads']} matched barcode reads; "
-            f"{log_entry['matched_unique_BC']} matched unique barcodes; ")
-        return log_entry
+        print(f"Error processing {file_path}: {e}")
+        logger.error(f"Error processing {file_path}: {e}")
+        exit(1)
     
 def create_summary_csv(directory):
     """
