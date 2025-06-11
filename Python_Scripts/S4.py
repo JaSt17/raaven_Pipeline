@@ -213,13 +213,6 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir
         summary = extract_summary(stderr)
         if summary:
             logger.info(f"bbduk2 extraction summary:\n{summary}")
-
-        # Save the Barcode extraction result in the log entry
-        match = re.search(r"Result:\s*(\d+)", stderr)
-        if match:
-            log_entry['BC_reads'] = int(match.group(1))
-        else:
-            log_entry['BC_reads'] = 0
             
         # Extract the the number of unique barcodes found
         stdout, _ = run_command([f"zcat {out_name_BC} | awk 'NR % 4 == 2' | sort | uniq -c | sort -nr "], "Count unique barcodes", shell=True)
@@ -227,8 +220,8 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir
         unique_barcodes = pd.DataFrame([line.split() for line in stdout.strip().split('\n')], columns=['Count', 'BC'])
         # save all found unique barcodes in a csv file with their counts
         unique_barcodes.to_csv(os.path.join(out_dir, f"unique_barcodes_{log_entry['Name']}.csv"), index=False)
+        unique_barcodes['Count'] = unique_barcodes['Count'].astype(int)
         logger.info(f"Number of unique barcodes found: {unique_barcodes.shape[0]}")
-        log_entry['unique_BC'] = int(unique_barcodes.shape[0])
         
         # match the barcodes with the reference barcodes from the plasmid database
         if not os.path.isfile(db):

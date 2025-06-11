@@ -212,7 +212,7 @@ def create_LUTnr(df: pd.DataFrame) -> pd.DataFrame:
 # Main script
 def main():
     start_time = datetime.now()
-
+    # load the config file
     config = get_config("S1")
     
     # Create a logger
@@ -222,7 +222,6 @@ def main():
     aa_list = read_fasta(config["input_file"])
     
     # write a human codon optimized reference file
-    # create a dataframe with all sequences form the aa_list
     ref_hco = pd.DataFrame(aa_list)
     # Load codon usage table once
     wSet = load_wSet()
@@ -258,19 +257,19 @@ def main():
         f.write("Sequence\n")
         for seq in df["Sequence"]:
             f.write(seq + "\n")
-            
-    LUT = create_LUTnr(df)
     
+    # Create a lookup table (LUT) from the DataFrame
+    LUT = create_LUTnr(df)
     # if there is a LibID add it to the LUT
     try:
         LUT["LibID"] = config["LibID"]
     except KeyError:
         pass
-    
     # Write the LUT to a file
     LUT.to_csv(config["output_csv"], index=False)
     
     logger.info(f"Total execution time: {datetime.now() - start_time}")
+
 
 if __name__ == "__main__":
     main()

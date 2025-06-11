@@ -9,10 +9,22 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm
 
 def generate_sequence_logo_from_fastq(input_fastq_gz_path: str, output_logo_path: str, library_name: str = ""):
+    """
+    Generates a sequence logo from a gzipped FASTQ file and saves it as an image.
+
+    This function processes a `.fastq.gz` file by first extracting it (if necessary),
+    parsing the sequences, computing base frequencies per position, normalizing these
+    to probabilities, and visualizing the result as a sequence logo using Logomaker.
+
+    Parameters:
+        input_fastq_gz_path (str): Path to the input `.fastq.gz` file containing sequencing reads.
+        output_logo_path (str): Path where the resulting logo image will be saved (e.g., `.png` or `.svg`).
+        library_name (str, optional): Optional title to display on the sequence logo plot. Defaults to an empty string.
+    """
     # Determine corresponding .fastq path
     input_fastq_path = input_fastq_gz_path.replace(".fastq.gz", ".fastq")
 
-    # Step 1: Check if .fastq exists; if not, extract it
+    # Check if .fastq exists; if not, extract it
     if not os.path.isfile(input_fastq_path):
         subprocess.run(["gunzip", "-k", input_fastq_gz_path], check=True)
 
@@ -20,14 +32,14 @@ def generate_sequence_logo_from_fastq(input_fastq_gz_path: str, output_logo_path
     num_sequences = 0
     read_length = None  # to determine figsize later
 
-    # Step 2: Parse sequences and count base frequencies per position
+    # Parse sequences and count base frequencies per position
     with open(input_fastq_path, "r") as handle:
         for record in SeqIO.parse(handle, "fastq"):
             seq = str(record.seq)
 
             if read_length is None:
                 read_length = len(seq)  # set read length based on first sequence
-
+            # Count base frequencies at each position
             for pos, base in enumerate(seq):
                 if pos not in base_counts:
                     base_counts[pos] = {'A': 0, 'C': 0, 'G': 0, 'T': 0, 'N': 0}
@@ -37,7 +49,7 @@ def generate_sequence_logo_from_fastq(input_fastq_gz_path: str, output_logo_path
 
             num_sequences += 1
 
-    # Step 3: Normalize base counts to probabilities
+    # Normalize base counts to probabilities
     sorted_positions = sorted(base_counts.keys())
     bases = ['A', 'C', 'G', 'T', 'N']
     prob_matrix = []
@@ -49,10 +61,10 @@ def generate_sequence_logo_from_fastq(input_fastq_gz_path: str, output_logo_path
 
     probability_df = pd.DataFrame(prob_matrix, columns=bases)
 
-    # Step 4: Generate logo with dynamic figsize
+    # Generate logo with dynamic figsize
     if read_length is None:
         return
-
+    # The figuresize is set to be half the read length in width and a fixed height
     logo = logomaker.Logo(probability_df, figsize=(read_length*0.5, 5))
     logo.style_glyphs(color_scheme='colorblind_safe')
     logo.style_xticks(anchor=0, spacing=1)
@@ -60,28 +72,40 @@ def generate_sequence_logo_from_fastq(input_fastq_gz_path: str, output_logo_path
     plt.title(f"{library_name}", fontsize=14)
     plt.xlabel("Position in the Fragment", fontsize=12)
     plt.ylabel("Frequency", fontsize=12)
-
     logo.ax.patch.set_alpha(0.0)
     logo.fig.patch.set_alpha(0.0)
 
-    # Step 5: Save plot
+    # Save plot
     os.makedirs(os.path.dirname(output_logo_path), exist_ok=True)
     plt.savefig(output_logo_path, transparent=True)
     plt.close()
 
+
 def generate_sequence_logo_from_fasta(input_fasta_path: str, output_logo_path: str, library_name: str = ""):
+    """
+    Generates a sequence logo from a FASTA file and saves it as an image.
+
+    This function reads nucleotide sequences from a FASTA file, computes base frequencies 
+    (A, C, G, T, N) at each position across all sequences, normalizes these frequencies 
+    to probabilities, and visualizes them as a sequence logo using Logomaker.
+
+    Parameters:
+        input_fasta_path (str): Path to the input `.fasta` file containing nucleotide sequences.
+        output_logo_path (str): Path to save the resulting logo image (e.g., `.png`, `.svg`).
+        library_name (str, optional): Optional title for the sequence logo plot. Defaults to an empty string.
+    """
     base_counts = {}
     num_sequences = 0
     read_length = None  # to determine figsize later
 
-    # Step 1: Parse sequences and count base frequencies per position
+    # Parse sequences and count base frequencies per position
     with open(input_fasta_path, "r") as handle:
         for record in SeqIO.parse(handle, "fasta"):
             seq = str(record.seq)
 
             if read_length is None:
                 read_length = len(seq)  # set read length based on first sequence
-
+            # Count base frequencies at each position
             for pos, base in enumerate(seq):
                 if pos not in base_counts:
                     base_counts[pos] = {'A': 0, 'C': 0, 'G': 0, 'T': 0, 'N': 0}
@@ -91,7 +115,7 @@ def generate_sequence_logo_from_fasta(input_fasta_path: str, output_logo_path: s
 
             num_sequences += 1
 
-    # Step 2: Normalize base counts to probabilities
+    # Normalize base counts to probabilities
     sorted_positions = sorted(base_counts.keys())
     bases = ['A', 'C', 'G', 'T', 'N']
     prob_matrix = []
@@ -103,7 +127,7 @@ def generate_sequence_logo_from_fasta(input_fasta_path: str, output_logo_path: s
 
     probability_df = pd.DataFrame(prob_matrix, columns=bases)
 
-    # Step 3: Generate logo with dynamic figsize
+    # Generate logo with dynamic figsize
     if read_length is None:
         return
 
@@ -115,10 +139,11 @@ def generate_sequence_logo_from_fasta(input_fasta_path: str, output_logo_path: s
     plt.xlabel("Position in the Fragment", fontsize=12)
     plt.ylabel("Frequency", fontsize=12)
 
-    # Step 4: Save plot
+    # ave plot
     os.makedirs(os.path.dirname(output_logo_path), exist_ok=True)
     plt.savefig(output_logo_path, transparent=True)
     plt.close()
+    
     
 def plot_amino_acid_heatmap(df, group_name: str = None, structure_name: str = None, number_of_top: int = 100):
     """
@@ -276,6 +301,7 @@ def plot_aa_deviation_difference(df, group_name_1: str = None, group_name_2: str
     plt.yticks(rotation=0)
 
     return plt
+
 
 def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: int = 10000):
     """

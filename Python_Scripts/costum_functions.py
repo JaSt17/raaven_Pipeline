@@ -6,6 +6,7 @@ import os
 import re
 from plotting_functions import plot_amino_acid_heatmap, plot_aa_deviation_difference, plot_quantities
 
+# Define the inverted codon table for codon optimization
 inverted_codon_table = {
             'E': ['GAG', 'GAA'],
             'S': ['TCG', 'AGT', 'TCT', 'AGC', 'TCA', 'TCC'],
@@ -108,7 +109,6 @@ def gene_codon(seq: str, wSet: pd.DataFrame, organism: str = "hsa", max_opt: boo
         optimized_seq.append(optimal_codon)
 
     return "".join(optimized_seq)
-
 
 
 def aatodna(in_aa: str, wSet: pd.DataFrame, species: str = "hsa", opt: bool = True, max_opt=True) -> str:

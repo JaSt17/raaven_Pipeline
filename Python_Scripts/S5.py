@@ -66,7 +66,7 @@ def main():
     if config["in_name_LUT"] is None:
         config["in_name_LUT"] = "No_file"
     
-    # Load the input files and see if there is a reference file
+    # try to load the input files
     try:
         library_barcodes = pd.read_csv(config["input_table"], dtype={7: str})
         fragments_pos = pd.read_csv(config["in_name_LUT"], dtype={0: str})
@@ -92,10 +92,8 @@ def main():
     
     # Drop the 'Sequence' column from lut_dna
     fragments_pos.drop(columns=['Sequence'], inplace=True)
-
     # merge library_barcodes with the LUT 
     library_barcodes = pd.merge(library_barcodes, fragments_pos, on=["LUTnr","Peptide"], how="inner")
-    
     # Rename the 'Reads' coulmn to 'Sequence'
     library_barcodes.rename(columns={"Reads": "Sequence"}, inplace=True)
     

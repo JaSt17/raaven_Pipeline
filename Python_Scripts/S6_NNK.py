@@ -8,7 +8,6 @@ including in the diffrent samples. The script also normalizes the read counts in
 Workflow:
     - Combined all output data from the specified directory into one DataFrame
     - Add the library fragments to the combined data
-    - add the reference sequence lengths to the combined data
     - Normalize the read counts in the DataFrame to adjust for difference in read depth 
     - Combine information of identical fragments in each group in a DataFrame and aggregate the data to get the following infomration
         - tCount: sum of tCount
@@ -18,7 +17,6 @@ Workflow:
         - RNAcount: sum of RNAcounts
         - Normalized_RNAcount: sum of Normalized_RNAcounts
         - BC_adjusted_count: log2 of BC_count * Normalized_RNAcount
-    - Finally, cut the overhangs of the sequences based on the structure of the fragment (if necessary) and save the processed data to a new CSV file.
     
 Input:
     - Directory containing CSV files with fragment information

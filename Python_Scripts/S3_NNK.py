@@ -2,8 +2,8 @@
 """
 Author: Jaro Steindorff
 
-This script creates a full table of all fragments with their corresponding barcodes from a NNK library.
-It then reduces the barcodes using the Starcode algorithm. And replaces the barcodes with the Starcode-reduced versions.
+This script creates a full table of all fragments with their corresponding barcodes from library without a reference.
+It can reduce the barcodes using the Starcode algorithm. And replaces the barcodes with the Starcode-reduced versions.
 Finally it devides the barcodes into single-read and multi-read barcodes and splits the multi-read barcodes into clean and chimeric barcodes.
 Saves all found barcodes to 3 different CSV files:
     - Definitiv barcodes
@@ -115,7 +115,7 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file, library_n
     num_threads = multiprocessing.cpu_count()
     
     out_name_1 = "/".join(fragments_file.split("/")[:-1]) + "/unique_fragments.fasta"
-    # Build shell command for extracting unique sequences
+    # Build shell command for extracting unique fragments
     command = [
         f"zcat {fragments_file} | "
         "awk 'NR % 4 == 2' | "
@@ -124,18 +124,16 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file, library_n
         "awk '{print \">\" NR \"\\n\" $0}' > "
         f"{out_name_1}"
     ]
-    # Execute shell command
+    # Execute shell command to extract unique fragments
     run_command(command, "Extract unique sequences", shell=True)
-    
     number_of_unique_fragments, _ = run_command([f" echo $(( $(wc -l < {out_name_1}) / 2 ))"], "Extract unique sequences", shell=True)
     logger.info(f"Number of unique fragment reads: {number_of_unique_fragments.strip()}")
-    
     # generate logo for the unique fragments
     save_dir = os.path.dirname(out_name_1)
     generate_sequence_logo_from_fasta(out_name_1, os.path.join(os.path.dirname(save_dir), "plots/unique_fragments_logo.svg"), library_name=library_name)
     
     out_name_2 = "/".join(barcodes_file.split("/")[:-1]) + "/unique_barcodes.fasta"
-    # Build shell command for extracting unique sequences
+    # Build shell command for extracting unique barcodes
     command = [
         f"zcat {barcodes_file} | "
         "awk 'NR % 4 == 2' | "
@@ -146,10 +144,8 @@ def save_unique_fragments_barcodes(fragments_file: str, barcodes_file, library_n
     ]
     # Execute shell command
     run_command(command, "Extract unique sequences", shell=True)
-    
     number_of_unique_barcodes, _ = run_command([f" echo $(( $(wc -l < {out_name_2}) / 2 ))"], "Extract unique sequences", shell=True)
     logger.info(f"Number of unqiue barcode reads: {number_of_unique_barcodes.strip()}")
-    
     # generate logo for the unique barcodes
     generate_sequence_logo_from_fasta(out_name_2, os.path.join(os.path.dirname(save_dir), "plots/unique_barcodes_logo.svg"), library_name=library_name)
 
@@ -201,13 +197,13 @@ def create_full_table(reads_frag: list, reads_BC: list)-> pd.DataFrame:
 
 def create_LUTnr_column(full_table: pd.DataFrame) -> pd.DataFrame:
     """
-    Create a LUTnr column for the full table.
+    Create a LUTnr colum and a translated Peptide column.
 
     Parameters:
         full_table (pd.DataFrame): DataFrame containing the full table with fragments and barcodes
         
     Returns:
-        pd.DataFrame: DataFrame containing the full table with the LUTnr column
+        pd.DataFrame: DataFrame containing the full table with the LUTnr column and translated Peptide column
     """
 
     # Ensure 'Reads' column exists
@@ -247,12 +243,13 @@ def starcode_based_reduction_and_replace(full_table: pd.DataFrame, input_file_na
     logger.info("Running Starcode clustering")
     # get the number of threads
     num_threads = multiprocessing.cpu_count()
+    # create a temporary file for the Starcode output
     starcode_output = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".txt")
     starcode_cmd = f"gunzip -c {input_file_name} | starcode -t {num_threads-1} --print-clusters -d 1 -r5 -q -o {starcode_output.name}"
     subprocess.run(starcode_cmd, shell=True, check=True)
 
     starcode_column = f"sc{columns_name}"
-    # Read Starcode output
+    # Read Starcode output into a DataFrame
     starcode_df = pd.read_csv(starcode_output.name, sep='\t', header=None, names=[starcode_column, 'count', 'seq_list'])
     starcode_df['seq_list'] = starcode_df['seq_list'].str.split(',')
     number_of_clusters = len(starcode_df)
@@ -289,9 +286,8 @@ def split_reads_into_single_and_multi_read_barcodes(full_table: pd.DataFrame)-> 
     single_read_barcodes = barcode_counts[barcode_counts == 1].index
     # get multi read barcodes table
     multi_read_barcodes = barcode_counts[barcode_counts > 1].index
-    
+    # log the number of single and multi read barcodes
     total_number_of_barcodes = len(barcode_counts)
-
     logger.info(f"Number of single-read barcodes: {len(single_read_barcodes)} ({len(single_read_barcodes)/total_number_of_barcodes*100:.2f}%)")
     logger.info(f"Number of multi-read barcodes: {len(multi_read_barcodes)} ({len(multi_read_barcodes)/total_number_of_barcodes*100:.2f}%)")
 
@@ -319,7 +315,7 @@ def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataF
     """
     logger.info("Splitting multi-read barcodes into clean and chimeric")
 
-    # Group by BC and LUTnr to compute statistics and collect reads and peptides for every single pair
+    # Group by BC and LUTnr
     temp_table_multi_grouped = temp_table_multi.groupby(['BC', 'LUTnr']).agg({
         'Reads': lambda x: list(x),  # Collect all reads in a list
         'Reads': 'count',           # Count the number of reads
@@ -342,7 +338,6 @@ def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataF
         'Reads': lambda x: list(x),
         'Peptide': lambda x: list(x)
     }).reset_index()
-
     chimeric_reads = temp_table_multi[temp_table_multi['BC'].isin(chimeric_barcodes)].groupby(['BC', 'LUTnr']).agg({
         'Reads': lambda x: list(x),
         'Peptide': lambda x: list(x)
@@ -351,19 +346,19 @@ def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataF
     # Ensure the `Reads` and `Peptide` columns are unique lists for clean and chimeric barcodes
     clean_reads['Reads'] = clean_reads['Reads'].apply(lambda x: x[0])
     clean_reads['Peptide'] = clean_reads['Peptide'].apply(lambda x: x[0])
-
     chimeric_reads['Reads'] = chimeric_reads['Reads'].apply(lambda x: x[0])
     chimeric_reads['Peptide'] = chimeric_reads['Peptide'].apply(lambda x: x[0])
     
     # remove the 'Peptide' column from the tables before merging
     temp_table_multi_clean.drop(columns=['Peptide'], inplace=True)
     temp_table_multi_chimeric.drop(columns=['Peptide'], inplace=True)
-
+    # merge the clean and chimeric reads back to their respective tables
     temp_table_multi_clean = pd.merge(temp_table_multi_clean, clean_reads, on=['BC', 'LUTnr'])
     temp_table_multi_chimeric = pd.merge(temp_table_multi_chimeric, chimeric_reads, on=['BC', 'LUTnr'])
 
-    # Set additional metadata for clean barcodes
-    temp_table_multi_clean['mCount'] = temp_table_multi_clean['tCount']  # Maximum count is total count for clean
+    # Set the maximum read count (mCount) to the total read count (tCount) for clean barcodes
+    temp_table_multi_clean['mCount'] = temp_table_multi_clean['tCount']
+    # set the Mode for clean barcodes to 'Def'
     temp_table_multi_clean['Mode'] = 'Def'
 
     return temp_table_multi_clean, temp_table_multi_chimeric
@@ -371,7 +366,7 @@ def split_multi_read_barcodes_into_clean_and_chimeric(temp_table_multi: pd.DataF
 
 def get_valid_chimeric_barcodes(temp_table_multi_chimeric: pd.DataFrame, threshold: float) -> pd.DataFrame:
     """
-    Identifies valid chimeric barcodes by determining the consensus alignment.
+    Identifies valid chimeric barcodes.
     The function retains barcodes with the highest read counts per LUTnr and filters out those
     that do not meet the specified ratio threshold.
 
@@ -454,7 +449,6 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimer
     logger.info("=" * 100)
     logger.info(f"{'Category':<50}{'Reads':>25}{'Barcodes':>25}")
     logger.info("=" * 100)
-
     # Print Rows
     logger.info(f"{'Single read barcodes':<50}"
                 f"{num_reads_single:>15} ({num_reads_single/total_reads*100:>6.2f}%)"
@@ -475,7 +469,6 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimer
     logger.info(f"{'Total counts':<50}"
                 f"{total_reads:>15} ({total_reads/total_reads*100:>6.2f}%)"
                 f"{total_barcodes:>15} ({total_barcodes/total_barcodes*100:>6.2f}%)")
-                
     # Print Footer
     logger.info("=" * 100)
 
@@ -488,14 +481,12 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimer
 
 def write_def_barcodes(Def_barcodes: pd.DataFrame, out_name: str)-> None:
     """
-    Write the definitiv barcodes to a CSV file.
+    Write the definitiv barcodes to a CSV file. 
+    This will create a FASTA file with the all valid barcods which will be used for further analysis.
     
     Parameters:
         Def_barcodes (pd.DataFrame): DataFrame containing the definitiv barcodes
         out_name (str): Path to the output file
-        
-    Returns:
-        None
     """
     # split out_name to get the path
     out_path = "/".join(out_name.split("/")[:-1])
@@ -580,28 +571,26 @@ def main():
     logger.info(f"Definitiv barcodes saved to {config['out_name']}")
     chimeric_barcode_table.to_csv(config['out_name'].replace(".csv", "_chimeric.csv"), index=False)
     logger.info(f"Chimeric barcodes saved to {config['out_name'].replace('.csv', '_chimeric.csv')}")
-    
     allowed = "Definitiv, Chimeric_Def"
     if config["single_read"]:
         allowed = "Single, " + allowed
     if config["chimeric_read"]:
         allowed += ", Chimeric"
-        
     logger.info(f"Included barcodes: {allowed} in the final output")
     final_barcodes_table.to_csv(config['out_name'], index=False)
     logger.info(f"Final barcodes saved to {config['out_name']}")
     
     # write the definitiv barcodes to a fasta file
     write_def_barcodes(final_barcodes_table, config['out_name'])
+
+    # create a extraction summary CSV file
+    save_dir = os.path.dirname(config["log_dir"])
+    save_dir = os.path.dirname(save_dir)
+    extract_logging_info_and_write_csv(config["log_dir"], os.path.join(save_dir,"sequencing_summary.csv"))
     
     # Print total analysis time
     logger.info(f"Total execution time: {datetime.now() - start_time}")
-    
-    # get the upper directory of the log file
-    save_dir = os.path.dirname(config["log_dir"])
-    save_dir = os.path.dirname(save_dir)
-    
-    extract_logging_info_and_write_csv(config["log_dir"], os.path.join(save_dir,"sequencing_summary.csv"))
+
 
 if __name__ == "__main__":
     main()

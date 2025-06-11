@@ -2,7 +2,7 @@
 """
 Author: Jaro Steindorff
 
-This script extracts barcodes and fragments from sequencing files of random NNK libaries, pairs them, and saves them in separate files.
+This script extracts barcodes and fragments from sequencing files of libaries without a reference, pairs them, and saves them in separate files.
 
 Workflow:
     - Use bbduk2.sh to extract barcodes from the given barcode sequencing file
@@ -116,13 +116,13 @@ def main():
     threads = os.cpu_count()
     
     # Plot the Barcode and Fragment read logos
-    # get the out_dir without the last part of the path
     if config["draw_sequence_logos"]:
         save_dir = os.path.dirname(out_dir)
         logger.info(f"Drawing sequence logos for barcodes and fragments in {save_dir}/plots/")
         generate_sequence_logo_from_fastq(in_name_barcode, os.path.join(save_dir, f"plots/barcode_reads.svg"), library_name=out_name)
         generate_sequence_logo_from_fastq(in_name_fragment, os.path.join(save_dir, f"plots/fragment_reads.svg"), library_name=out_name)
     
+    # BBDuk extraction for barcodes
     os.makedirs(out_dir, exist_ok=True)
     out_name_barcode = os.path.join(out_dir, f"barcode_{out_name}.fastq.gz")
     bbduk2_args_BC = config["bbduk2_args_BC"] + [
@@ -131,8 +131,7 @@ def main():
         f"out={out_name_barcode}",
     ]
     _, stderr = run_command(["bbmap/bbduk2.sh"] + bbduk2_args_BC, "bbduk2 barcode extraction")
-    
-    # Extract summary from the barcodes extraction
+    # Extract summary from the barcodes extraction and log it
     summary = extract_summary(stderr)
     if summary:
         logger.info(f"bbduk2 barcode extraction summary:\n{summary}")
@@ -145,15 +144,13 @@ def main():
         f"out={out_name_fragment}",
     ]
     _, stderr = run_command(["bbmap/bbduk2.sh"] + bbduk2_args_Frag, "bbduk2 fragment extraction")
-    
-    # Extract summary from the fragments extraction
+    # Extract summary from the fragments extraction and log it
     summary = extract_summary(stderr)
     if summary:
         logger.info(f"bbduk2 fragment extraction summary:\n{summary}")
 
     # Use seqkit pair
     seqkit_command = [f"seqkit pair -1 {out_name_barcode} -2 {out_name_fragment} -u -j {threads}"]
-
     _, stderr = run_command(seqkit_command, "seqkit pair", shell=True)
     
     # Regular expressions
