@@ -3,12 +3,8 @@
 __pycache__/
 install_packages.sh
 bbmap/
-Brave_test/
 old/
-Brave/
-Brave_22aa/
 raav-60/
-raav-72/
 Sample_data/
 test/
 tops/
@@ -19,3 +15,4 @@ files/
 bluejay/
 goose/
 Projects
+Master_Thesis_Jaro/
