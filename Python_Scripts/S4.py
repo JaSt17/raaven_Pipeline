@@ -451,13 +451,14 @@ def main():
     log_table = []
     # get the settings for the barcode extraction
     bbduk2_args_BC = config["bbduk2_args"]
-    chunk_size = config["chunk_size"]
 
     # Analyze each tissue sample
     for row in load_list.iterrows():
         # Extract the file name from the first column
         file_path = row[1]['Sample']
-        log_entry = analyze_tissue(file_path, data_dir, db, config["starcode"], output_dir, library_fragments, lut_dna, threads, bc_len, bbduk2_args_BC, chunk_size)
+        log_entry = analyze_tissue(file_path, data_dir, db, config["starcode"],
+                                    output_dir, library_fragments, lut_dna, threads,
+                                    bbduk2_args_BC)
         if log_entry:
             log_table.append(log_entry)
 

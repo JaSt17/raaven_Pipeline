@@ -1,22 +1,22 @@
 #------------------------------------------------------------------------------------
 # Define the data & save directory where the input and output files are stored
-data_dir = "Projects/Kingfischer/Seq_Data"
-save_dir = "Projects/Kingfischer/Libraries"
+data_dir = "Projects/Bluejay/Seq_Data"
+save_dir = "Projects/Bluejay/Libraries"
 # Name of the library and run
-library_name = "p006"
+library_name = "p030"
 run = "Plasmid_run_1"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 27
 frag_len = 21
 
 # Define the number of possible fragments that can be created from the library
-num_possible_frag = 300000  # This is an arbitrary number, adjust as needed
+num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "TATCTCGTGG" # Unique !!!
+barcode_left_literal = "TCATTCAGCA" # Unique !!!
 barcode_right_literal = "ATAACTTCGT"
-fragment_left_literal = "AGGCAACGCT"
-fragment_right_literal = "GCCAGACAAG"
+fragment_left_literal = "TGCCCAAGCT"
+fragment_right_literal = "GCCGCACAGG"
 
 # Settings for Libary read usage:
 # Should single read barcodes be used?
@@ -63,8 +63,8 @@ config_S2 = {
         "rcomp=f",
         "minavgquality=0",
         "maxns=0",
-        f"minlength={bc_len-2}",
-        f"maxlength={bc_len+2}",
+        f"minlength={bc_len}",
+        f"maxlength={bc_len}",
         "ordered=t",
         f"lliteral={barcode_left_literal}",
         f"rliteral={barcode_right_literal}",
@@ -134,8 +134,8 @@ config_S4 = {
         "rcomp=f",
         "minavgquality=0",
         "maxns=0",
-        f"minlength={bc_len-2}",
-        f"maxlength={bc_len+2}",
+        f"minlength={bc_len}",
+        f"maxlength={bc_len}",
         "ordered=t",
         f"lliteral={barcode_left_literal}",
         f"rliteral={barcode_right_literal}",

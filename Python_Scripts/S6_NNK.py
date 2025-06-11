@@ -230,7 +230,32 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
 
     return combined_data
 
-    
+
+def cut_linkers(df: pd.DataFrame, linker_length:int) -> pd.DataFrame:
+
+    """
+    Cut the linker from the sequences in the DataFrame.
+
+    Parameters:
+        df (pd.DataFrame): The input DataFrame containing sequences.
+        linker_length (int): The length of the linker to be cut from the sequences.
+
+    Returns:
+        pd.DataFrame: The DataFrame with sequences cut at the specified linker length.
+    """
+    columns = df.columns.tolist()
+    df['LLinker'] = df['Sequence'].str[:linker_length]
+    df['RLinker'] = df['Sequence'].str[-linker_length:]
+    df['Sequence'] = df['Sequence'].str[linker_length:-linker_length]
+    # put the columns in the right order
+    # insert LLinker left to Sequence
+    columns.insert(columns.index('Sequence'), 'LLinker')
+    # insert RLinker right to Sequence
+    columns.insert(columns.index('Sequence') + 1, 'RLinker')
+    df = df[columns]
+    return df
+
+
 def main():
     start_time = datetime.now()
     # Load configuration
@@ -269,6 +294,11 @@ def main():
     
     # Sort the combined data by Group RNAcount
     combined_data.sort_values(by=['Group', 'RNAcount'], ascending=[True, False], inplace=True)
+    
+    # Cut the linkers from the sequences in the DataFrame
+    if config["linker_length"] > 0:
+        logger.info("Cutting linkers from sequences")
+        combined_data = cut_linkers(combined_data, config["linker_length"])
     
     # Save the processed data to a new CSV file
     combined_data.to_csv(config["output_table"], index=False)
