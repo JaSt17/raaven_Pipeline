@@ -3,17 +3,17 @@
 data_dir = "Projects/Kingfischer/Seq_Data"
 save_dir = "Projects/Kingfischer/Libraries"
 # Name of the library and run
-library_name = "p007"
+library_name = "p006"
 run = "Plasmid_run_1"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 27
 frag_len = 21
 
 # Define the number of possible fragments that can be created from the library
-num_possible_frag = 120000  # This is an arbitrary number, adjust as needed
+num_possible_frag = 300000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "TATCGCAAGA" # Unique !!!
+barcode_left_literal = "TATCTCGTGG" # Unique !!!
 barcode_right_literal = "ATAACTTCGT"
 fragment_left_literal = "AGGCAACGCT"
 fragment_right_literal = "GCCAGACAAG"
