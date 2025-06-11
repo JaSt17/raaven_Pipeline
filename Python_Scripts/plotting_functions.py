@@ -475,3 +475,75 @@ def plot_quantities(df: pd.DataFrame, groups: dict, max_value: dict, step_size: 
     
     # return the plot
     return plt
+
+
+def plot_barcode_pie_chart(
+    library_name,
+    single_read_count, 
+    unique_definitive_count, 
+    unique_chimeric_count, 
+    output_path='barcode_pie_chart.png'
+):
+    # Define labels and colors
+    barcode_metrics = [
+        "Single-read barcodes",
+        "Unique Definitive barcodes",
+        "Unique Chimeric Barcodes"
+    ]
+
+    color_map = {
+        "Single-read barcodes": "#AFCBFF",
+        "Unique Definitive barcodes": "#26547C",
+        "Unique Chimeric Barcodes": "#7EAEDC"
+    }
+
+    counts = [
+        single_read_count,
+        unique_definitive_count,
+        unique_chimeric_count
+    ]
+    
+    total = sum(counts)
+    if total == 0:
+        print("All counts are zero. No pie chart will be generated.")
+        return
+
+    percentages = [(c / total) * 100 for c in counts]
+    colors = [color_map[label] for label in barcode_metrics]
+
+    fig, ax = plt.subplots(figsize=(6, 6))
+    wedges, _ = ax.pie(
+        percentages,
+        colors=colors,
+        startangle=90,
+        labels=None,
+        wedgeprops={'edgecolor': 'white'}
+    )
+
+    # Annotate each wedge
+    for i, wedge in enumerate(wedges):
+        angle = (wedge.theta2 + wedge.theta1) / 2.0
+        angle_rad = np.deg2rad(angle)
+        pct = percentages[i]
+        val = counts[i]
+
+        label_text = f"{pct:.1f}%\n{val:,}"
+        r = 0.5 if pct > 10 else 1.18
+        color = 'white' if pct > 10 else 'black'
+
+        x = r * np.cos(angle_rad)
+        y = r * np.sin(angle_rad)
+
+        ax.text(x, y, label_text, ha='center', va='center', fontsize=9, color=color)
+
+    # Add legend
+    handles = [plt.Line2D([0], [0], marker='o', color='w', label=label,
+                            markerfacecolor=color_map[label], markersize=10)
+                for label in barcode_metrics]
+    
+    ax.legend(handles=handles, title="Barcode Type", loc='center left', bbox_to_anchor=(1, 0.5))
+    ax.set_title(f"Composition of Barcodes in {library_name}", fontsize=10)
+
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=600, bbox_inches='tight')
+    plt.close()

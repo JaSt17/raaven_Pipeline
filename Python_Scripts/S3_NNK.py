@@ -45,7 +45,7 @@ import logging
 import sys
 # local import
 from config import get_config
-from plotting_functions import generate_sequence_logo_from_fasta
+from plotting_functions import generate_sequence_logo_from_fasta, plot_barcode_pie_chart
 from costum_functions import extract_logging_info_and_write_csv
 
 
@@ -414,7 +414,7 @@ def get_valid_chimeric_barcodes(temp_table_multi_chimeric: pd.DataFrame, thresho
     return temp_table_multi_chimeric
 
 
-def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimeric: pd.DataFrame, temp_table_single: pd.DataFrame, threshold:float)-> pd.DataFrame:
+def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimeric: pd.DataFrame, temp_table_single: pd.DataFrame, threshold:float, library_name:str, output_path:str)-> pd.DataFrame:
     """
     Combine the multi-read and single-read tables into the final output table.
     
@@ -475,6 +475,9 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimer
     Def_barcodes = temp_table_multi_final[temp_table_multi_final['Mode'] == 'Def']
     # Add the Chimeric_Def barcodes to the Def_barcodes table
     Def_barcodes = pd.concat([Def_barcodes, temp_table_multi_final[temp_table_multi_final['Mode'] == 'Chimeric_Def']], ignore_index=True)
+    
+    save_dir = output_path.replace("intermediate_files/library_barcodes.csv", "plots/barcode_pie_chart.png")
+    plot_barcode_pie_chart(library_name, num_unique_single, num_unique_clean + num_cleaned_chimeric, num_unique_chimeric, save_dir)
     
     return Def_barcodes, Chimeric_barcodes, temp_table_single
 
@@ -552,7 +555,8 @@ def main():
     temp_table_multi_chimeric = get_valid_chimeric_barcodes(temp_table_multi_chimeric, config["threshold"])
 
     # Combine all tables into final output
-    def_barcodes_table, chimeric_barcode_table, single_barcode_table = combine_tables(temp_table_multi_clean, temp_table_multi_chimeric, temp_table_single, config["threshold"])
+    def_barcodes_table, chimeric_barcode_table, single_barcode_table = combine_tables(temp_table_multi_clean, temp_table_multi_chimeric,
+                                                                                        temp_table_single, config["threshold"], config["library_name"], config["out_name"])
     del temp_table_multi_clean, temp_table_multi_chimeric, temp_table_single
     
     # Add the single barcodes to the final table or chimeric barcodes
