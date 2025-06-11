@@ -275,14 +275,18 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, starcode:bool, out_dir:s
         summary = extract_summary(stderr)
         if summary:
             logger.info(f"bbduk2 extraction summary:\n{summary}")
+        total_reads = int(re.search(r"Input:\s+(\d+)", summary).group(1))
+        per_mil_scale = total_reads / 1_000_000
             
         # Extract the the number of unique barcodes found
         stdout, _ = run_command([f"zcat {out_name_BC} | awk 'NR % 4 == 2' | sort | uniq -c | sort -nr "], "Count unique barcodes", shell=True)
         # covert the stdout to an table with count and barcode
         unique_barcodes = pd.DataFrame([line.split() for line in stdout.strip().split('\n')], columns=['Count', 'BC'])
+        # scale the counts to per million reads
+        unique_barcodes['Count'] = unique_barcodes['Count'].astype(int)
+        unique_barcodes['Count_per_mil_reads'] = unique_barcodes['Count'].astype(int) / per_mil_scale
         # save all found unique barcodes in a csv file with their counts
         unique_barcodes.to_csv(os.path.join(out_dir, f"unique_barcodes_{log_entry['Name']}.csv"), index=False)
-        unique_barcodes['Count'] = unique_barcodes['Count'].astype(int)
         logger.info(f"Number of unique barcodes found: {unique_barcodes.shape[0]}")
         
         # match the barcodes with the reference barcodes from the plasmid database
@@ -313,7 +317,7 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, starcode:bool, out_dir:s
         log_entry['matched_unique_BC'] = int(BCcount.shape[0])
         
         #rename the columns to 'BC' and 'Count'
-        BCcount.rename(columns={'BC': 'BC', 'Count': 'RNAcount'}, inplace=True)
+        BCcount.rename(columns={'BC': 'BC', 'Count': 'RNAcount', 'Count_per_mil_reads': 'RNAcount_per_mil_reads'}, inplace=True)
             
         # Extract only BC that are in BCcount
         foundFrags = library_fragments.merge(BCcount, on='BC', how='inner')
