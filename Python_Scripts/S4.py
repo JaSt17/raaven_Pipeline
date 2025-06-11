@@ -31,13 +31,12 @@ import sys
 import subprocess
 import tempfile
 import re
-import shutil
 import logging
 from datetime import datetime
 import pandas as pd
 import multiprocessing
+from pathlib import Path
 import gzip
-import gc
 from Bio import SeqIO
 from itertools import islice
 # local import
@@ -154,8 +153,71 @@ def create_full_table(reads_BC: list)-> pd.DataFrame:
     return full_table
 
 
-def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir:str, library_fragments: pd.DataFrame,
-                    lut_dna: pd.DataFrame, threads:int, bc_len:int, bbduk2_args: list, chunk_size:int) -> dict:
+def write_fasta(df, path, id_col='BC', seq_col='BC'):
+    """    Write a DataFrame to a FASTA file.
+    Parameters:
+        df (pd.DataFrame): DataFrame containing the sequences
+        path (str): Path to save the FASTA file
+        id_col (str): Column name for sequence IDs
+        seq_col (str): Column name for sequences
+    """
+    with open(path, 'w') as f:
+        for i, row in df.iterrows():
+            f.write(f'>{row[id_col]}\n{row[seq_col]}\n')
+
+
+def parse_blast6(blast_path):
+    """ Parse a BLAST6 output file into a DataFrame.
+    Parameters:
+        blast_path (str): Path to the BLAST6 output file
+    """
+    cols = [
+        'query_BC', 'matched_BC', 'pident', 'length',
+        'mismatch', 'gapopen', 'qstart', 'qend',
+        'sstart', 'send', 'evalue', 'bitscore'
+    ]
+    df = pd.read_csv(blast_path, sep='\t', names=cols)
+    return df
+
+def starcode_merge(unique_barcodes, barcode_db, threshold=0.95):
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmpdir = Path(tmpdir)
+
+        # Paths
+        query_fasta = tmpdir / 'queries.fasta'
+        db_fasta = tmpdir / 'database.fasta'
+        blast_out = tmpdir / 'matches.b6'
+
+        # Write FASTA files
+        write_fasta(unique_barcodes, query_fasta)
+        write_fasta(barcode_db, db_fasta)
+        
+        # get the number of threads
+        threads = os.cpu_count()
+
+        # Run vsearch
+        cmd = [
+            'vsearch',
+            '--usearch_global', str(query_fasta),
+            '--db', str(db_fasta),
+            '--id', str(threshold),
+            '--blast6out', str(blast_out),
+            '--threads', f'{threads}',
+        ]
+        subprocess.run(cmd, check=True)
+
+        # Parse results
+        result_df = parse_blast6(blast_out)
+        # rename 'matched_BC' to 'BC' for consistency
+        result_df.rename(columns={'matched_BC': 'BC'}, inplace=True)
+        
+        found_barcodes = unique_barcodes.merge(result_df, on='BC', how='inner')
+        
+        return found_barcodes
+
+
+def analyze_tissue(file_path:str, data_dir:str, db:str, starcode:bool, out_dir:str, library_fragments: pd.DataFrame,
+                    lut_dna: pd.DataFrame, threads:int, bbduk2_args: list,) -> dict:
     """
     Analyze a single tissue sample based on its index in the load list.
 
@@ -235,12 +297,21 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir
         })
 
     try:
-        # only keep the barcodes that are in the db
+        # extract information about barcodes found in the sampes
         log_entry['BC_reads'] = int(unique_barcodes['Count'].sum())
         log_entry['unique_BC'] = int(unique_barcodes.shape[0])
-        BCcount = unique_barcodes.merge(barcode_db, on='BC', how='inner')
+        
+        # Merge the found barcodes with the barcode database
+        if starcode:
+            # Use starcode to merge similar barcodes
+            BCcount = starcode_merge(unique_barcodes, barcode_db)
+        else:
+            BCcount = unique_barcodes.merge(barcode_db, on='BC', how='inner')
+            
+        # extract information about matched barcodes
         log_entry['matched_BC_reads'] = int(BCcount['Count'].sum())
         log_entry['matched_unique_BC'] = int(BCcount.shape[0])
+        
         #rename the columns to 'BC' and 'Count'
         BCcount.rename(columns={'BC': 'BC', 'Count': 'RNAcount'}, inplace=True)
             
@@ -256,9 +327,9 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, threshold:float, out_dir
         # ============================
         foundFrags.sort_values(by='RNAcount', ascending=False, inplace=True)
         output_filename = os.path.join(out_dir, f"found.{log_entry['Name']}.csv")
-            
         foundFrags.to_csv(output_filename, index=False)
-            
+        
+        # Log the information for each sample
         logger.info(
             f"Finished processing {file_path} found: "
             f"{log_entry['BC_reads']} barcode reads; "
@@ -381,18 +452,12 @@ def main():
     # get the settings for the barcode extraction
     bbduk2_args_BC = config["bbduk2_args"]
     chunk_size = config["chunk_size"]
-    
-    # set threshold for barcode matching based if starcode was used
-    if config["starcode"]:
-        threshold = 0.95
-    else:
-        threshold = 1
 
     # Analyze each tissue sample
     for row in load_list.iterrows():
         # Extract the file name from the first column
         file_path = row[1]['Sample']
-        log_entry = analyze_tissue(file_path, data_dir, db, threshold, output_dir, library_fragments, lut_dna, threads, bc_len, bbduk2_args_BC, chunk_size)
+        log_entry = analyze_tissue(file_path, data_dir, db, config["starcode"], output_dir, library_fragments, lut_dna, threads, bc_len, bbduk2_args_BC, chunk_size)
         if log_entry:
             log_table.append(log_entry)
 
