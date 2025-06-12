@@ -285,8 +285,6 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, starcode:bool, out_dir:s
         # scale the counts to per million reads
         unique_barcodes['Count'] = unique_barcodes['Count'].astype(int)
         unique_barcodes['Count_per_mil_reads'] = unique_barcodes['Count'].astype(int) / per_mil_scale
-        # save all found unique barcodes in a csv file with their counts
-        unique_barcodes.to_csv(os.path.join(out_dir, f"unique_barcodes_{log_entry['Name']}.csv"), index=False)
         logger.info(f"Number of unique barcodes found: {unique_barcodes.shape[0]}")
         
         # match the barcodes with the reference barcodes from the plasmid database
@@ -315,6 +313,13 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, starcode:bool, out_dir:s
         # extract information about matched barcodes
         log_entry['matched_BC_reads'] = int(BCcount['Count'].sum())
         log_entry['matched_unique_BC'] = int(BCcount.shape[0])
+        
+        # create a new column in the unique_barcodes DataFrame that holds a boolean value if the barcode is in the BCcount DataFrame
+        unique_barcodes['Found_in_Lib'] = unique_barcodes['BC'].isin(BCcount['BC'])
+        # save the unique_barcodes DataFrame with the Found_in_Lib column
+        # change the column order to have 'BC', 'Count', 'Count_per_mil_reads', 'Found_in_Lib'
+        unique_barcodes = unique_barcodes[['BC', 'Count', 'Count_per_mil_reads', 'Found_in_Lib']]
+        unique_barcodes.to_csv(os.path.join(out_dir, f"unique_barcodes_{log_entry['Name']}.csv"), index=False)     
         
         #rename the columns to 'BC' and 'Count'
         BCcount.rename(columns={'BC': 'BC', 'Count': 'RNAcount', 'Count_per_mil_reads': 'RNAcount_per_mil_reads'}, inplace=True)
@@ -375,8 +380,8 @@ def create_summary_csv(directory):
             # Extract sample name from filename
             sample_name = filename.split('unique_barcodes_')[1].split('.csv')[0]
 
-            # Filter for Count > 1000
-            df = df[df['Count'] > 100].copy()
+            # Filter for Count per million > 10
+            df = df[df['Count_per_mil_reads'] > 10].copy()
 
             # Add sample name column
             df['Sample'] = sample_name
@@ -390,8 +395,8 @@ def create_summary_csv(directory):
     pivot_df = all_barcodes_df.pivot_table(
         index='BC',
         columns='Sample',
-        values='Count',
-        aggfunc='sum',
+        values=['Count', 'Count_per_mil_reads'],
+        aggfunc={'Count': 'sum', 'Count_per_mil_reads': 'mean'},
         fill_value=0
     )
 

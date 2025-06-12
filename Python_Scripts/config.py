@@ -1,11 +1,10 @@
 #------------------------------------------------------------------------------------
 # Define the data & save directory where the input and output files are stored
-data_dir = "Projects/Bluejay/Seq_Data"
-save_dir = "Projects/Bluejay/Libraries"
+data_dir = "Projects/Goose/Seq_Data"
+save_dir = "Projects/Goose/Libraries"
 # Name of the library and run
-library_name = "p034"
-run = "Plasmid_run_1"
-# Define the length of the barcode and fragment sequences in DNA bases
+library_name = "p030"
+run = "Plasmid_run_2"
 bc_len = 27
 frag_len = 27
 linker_length = 3  # Lenght of the Linker left and right to the fragment sequence
@@ -14,7 +13,7 @@ linker_length = 3  # Lenght of the Linker left and right to the fragment sequenc
 num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "CTATCGAGTG" # Unique !!!
+barcode_left_literal = "TCATTCAGCA" # Unique !!!
 barcode_right_literal = "ATAACTTCGT"
 fragment_left_literal = "GAGTGCCCAA"
 fragment_right_literal = "GCACAGGCGC"
@@ -159,8 +158,8 @@ config_S6 = {
     "input_dir": config_S4["output_dir"],
     "sample_inputs": config_S4["sample_inputs"],
     "library_fragments": config_S5["output_table"],
-    "linker_length": linker_length,
     "plot_dir": save_dir + f"/{library_name}/{run}/plots",
+    "linker_length": linker_length,  # Length of the Linker left and right to the fragment sequence
     "array_size": num_possible_frag,  # size of the array for the summary plots
     # group name for the library
     "library_name": "Plasmid_Library",
