@@ -353,69 +353,77 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, starcode:bool, out_dir:s
         logger.error(f"Error processing {file_path}: {e}")
         exit(1)
     
+    
+import os
+import pandas as pd
+
 def create_summary_csv(directory):
     """
     Create a summary CSV from all unique barcode files in the specified directory.
-    
-    Parameters:
-    - directory: str, path to the directory containing the unique barcode CSV files.
-    
-    Returns:
-    - None, saves the summary CSV to the specified directory.
+    Outputs Count_per_mil_reads per sample, with mean CPM, sample count, and Found_in_Lib flag.
     """
-    
-    # Ensure the directory exists
+
     if not os.path.exists(directory):
-            raise FileNotFoundError(f"The directory {directory} does not exist.")
+        raise FileNotFoundError(f"The directory {directory} does not exist.")
         
-    # List to hold data from all files
     all_barcodes = []
 
-    # Loop through all relevant CSV files
     for filename in os.listdir(directory):
         if filename.startswith('unique_barcodes') and filename.endswith('.csv'):
             file_path = os.path.join(directory, filename)
             df = pd.read_csv(file_path)
 
-            # Extract sample name from filename
             sample_name = filename.split('unique_barcodes_')[1].split('.csv')[0]
 
-            # Filter for Count per million > 10
-            df = df[df['Count_per_mil_reads'] > 10].copy()
-
-            # Add sample name column
+            df = df[df['Count_per_mil_reads'] > 1].copy()
             df['Sample'] = sample_name
 
             all_barcodes.append(df)
 
-    # Concatenate all sample DataFrames
+    if not all_barcodes:
+        raise ValueError("No matching barcode files found or all were filtered out.")
+
+    # Combine all data
     all_barcodes_df = pd.concat(all_barcodes, ignore_index=True)
 
-    # --- Pivot the data to create one column per sample ---
-    pivot_df = all_barcodes_df.pivot_table(
+    # Save Found_in_Lib info before pivoting
+    found_in_lib_df = all_barcodes_df[['BC', 'Found_in_Lib']].drop_duplicates().set_index('BC')
+
+    # Pivot to get per-sample Count_per_mil_reads
+    cpm_df = all_barcodes_df.pivot_table(
         index='BC',
         columns='Sample',
-        values=['Count', 'Count_per_mil_reads'],
-        aggfunc={'Count': 'sum', 'Count_per_mil_reads': 'mean'},
+        values='Count_per_mil_reads',
+        aggfunc='mean',
         fill_value=0
     )
 
-    # --- Add a total 'Count' column (sum across samples) ---
-    pivot_df['Count'] = pivot_df.sum(axis=1)
+    # Round and convert per-sample values to integers
+    cpm_df = cpm_df.round(0).astype(int)
 
-    # --- Add 'Samples_Found_In' column: number of samples with a count > 0 ---
-    sample_columns = [col for col in pivot_df.columns if col != 'Count']
-    pivot_df['Samples_Found_In'] = pivot_df[sample_columns].gt(0).sum(axis=1)
+    # List sample columns (before adding summary stats)
+    sample_columns = cpm_df.columns.tolist()
 
-    # Reorder columns: Count, Samples_Found_In, then sample columns
-    cols = ['Count', 'Samples_Found_In'] + sample_columns
-    pivot_df = pivot_df[cols]
+    # Compute mean Count_per_mil_reads
+    cpm_df['Count_per_mil_reads_mean'] = cpm_df[sample_columns].mean(axis=1).round(0).astype(int)
 
-    # Sort by total Count descending
-    pivot_df = pivot_df.sort_values(by=['Samples_Found_In','Count'], ascending=[False, False])
+    # Compute max Count_per_mil_reads
+    cpm_df['Max_per_mil_reads'] = cpm_df[sample_columns].max(axis=1)
 
-    # Save to CSV
-    pivot_df.to_csv(f'{directory}.csv')
+    # Compute Samples_Found_In = number of samples with non-zero CPM
+    cpm_df['Samples_Found_In'] = cpm_df[sample_columns].gt(0).sum(axis=1)
+
+    # Merge Found_in_Lib
+    cpm_df = cpm_df.merge(found_in_lib_df, how='left', left_index=True, right_index=True)
+
+    # Reorder columns
+    ordered_cols = ['Found_in_Lib', 'Count_per_mil_reads_mean', 'Max_per_mil_reads', 'Samples_Found_In'] + sorted(sample_columns)
+    cpm_df = cpm_df[ordered_cols]
+
+    # Sort rows by Samples_Found_In and CPM meanh
+    cpm_df = cpm_df.sort_values(by=['Samples_Found_In', 'Max_per_mil_reads'], ascending=[False, False])
+    # --- Save to CSV ---
+    cpm_df.to_csv(f'{directory}.csv')
 
 
 def main():
