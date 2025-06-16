@@ -1,23 +1,23 @@
 #------------------------------------------------------------------------------------
 # Define the data & save directory where the input and output files are stored
-data_dir = "Projects/Bluejay/Seq_Data"
-save_dir = "Projects/Bluejay/Libraries"
+data_dir = "Projects/Brave/Seq_Data"
+save_dir = "Projects/Brave/Libraries"
 # Name of the library and run
-library_name = "p035"
+library_name = "brave_14"
 run = "Plasmid_run_1"
 # Define the length of the barcode and fragment sequences in DNA bases
-bc_len = 27
-frag_len = 27
-linker_length = 3  # Lenght of the Linker left and right to the fragment sequence
+bc_len = 20
+frag_len = 42
+linker_length = 0  # Length of the Linker left and right to the fragment sequence
 
 # Define the number of possible fragments that can be created from the library
-num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
+num_possible_frag = 44813  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "ATCATCTCGT" # Unique !!!
+barcode_left_literal = "CGCTTTACTT" # Unique !!!
 barcode_right_literal = "ATAACTTCGT"
-fragment_left_literal = "GAGTGCCCAA"
-fragment_right_literal = "GCACAGGCGC"
+fragment_left_literal = "AGGCAACGCT"
+fragment_right_literal = "GCCAGACAAG"
 
 # Settings for Libary read usage:
 # Should single read barcodes be used?
@@ -37,12 +37,11 @@ config_S1 = {
     # dictionary containing the information about the different structures with
     # their name as the key and then the length, frequency
     "structure_dict": {
-        "7aa": {"length": 7, "freq": 1}},
+        "7aa": {"length": 14, "freq": 1}},
     # Library ID for the library so we can combine multiple libraries in the future
     "LibID": library_name,
     # output file names for the LUT csv and the list of all inserted fragments
     "output_csv": save_dir + f"/{library_name}/{run}/intermediate_files/LUT.csv",
-    "output_name": save_dir + f"/{library_name}/{run}/intermediate_files/SortedFragments.txt",
     "log_dir": save_dir + f"/{library_name}/{run}/logs/",
 }
 
@@ -64,8 +63,8 @@ config_S2 = {
         "rcomp=f",
         "minavgquality=0",
         "maxns=0",
-        f"minlength={bc_len}",
-        f"maxlength={bc_len}",
+        f"minlength={bc_len-2}",
+        f"maxlength={bc_len+2}",
         "ordered=t",
         f"lliteral={barcode_left_literal}",
         f"rliteral={barcode_right_literal}",
@@ -135,8 +134,8 @@ config_S4 = {
         "rcomp=f",
         "minavgquality=0",
         "maxns=0",
-        f"minlength={bc_len}",
-        f"maxlength={bc_len}",
+        f"minlength={bc_len-2}",
+        f"maxlength={bc_len+2}",
         "ordered=t",
         f"lliteral={barcode_left_literal}",
         f"rliteral={barcode_right_literal}",
@@ -156,6 +155,7 @@ config_S5 = {
 config_S6 = {
     # input file names are extracted from the previous step
     "original_seq_file": config_S1["input_file"],
+    "LUT_file": config_S1["output_csv"],
     "input_dir": config_S4["output_dir"],
     "sample_inputs": config_S4["sample_inputs"],
     "library_fragments": config_S5["output_table"],
@@ -167,7 +167,9 @@ config_S6 = {
     # dictionary containing the information about the different subsets that should be created
     # the key is the name of the subset and the value is a list of the fragments that should be included
     "subsets": {
-        "Infective_AAVs": ['exclude','DNAse_resistant_AAVs','Plasmid_Library'],
+        "Infective_AAVs": ['exclude','DNA_AAVlib_DNAse_30cpc', 'DNA_AAVlib_DNAse_3cpc','Plasmid_Library', 'DNA_pscAAVlib_Prep2'],
+        "DNAse_resistant_AAVs": ['include', 'DNA_AAVlib_DNAse_30cpc','DNA_AAVlib_DNAse_3cpc'],
+        "Transported_AAVs": ['contains_include', "mRNA_30cpc_SN", "mRNA_30cpc_Th", "mRNA_30cpc_Ctx", "mRNA_3cpc_SN", "mRNA_3cpc_Th", "mRNA_3cpc_Ctx"],
     },
     # output file name for the final fragments summary
     "output_table": save_dir + f"/{library_name}/{run}/final_fragments_summary.csv",

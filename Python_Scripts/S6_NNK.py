@@ -230,6 +230,26 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
 
     return combined_data
 
+def match_to_LUT(df: pd.DataFrame, LUT: pd.DataFrame) -> pd.DataFrame:
+    """
+    Match the DataFrame to the LUT DataFrame based on the 'Sequence' column.
+
+    Parameters:
+        df (pd.DataFrame): The input DataFrame containing sequences.
+        LUT (pd.DataFrame): The lookup table DataFrame with 'Sequence' and 'LUTnr' columns.
+
+    Returns:
+        pd.DataFrame: The DataFrame with matched LUT numbers added.
+    """
+    # merge the DataFrame with the LUT DataFrame on the 'Sequence' column
+    merged_df = df.merge(LUT[['Sequence', 'LibID']], on='Sequence', how='left')
+    # set the 'in_reference' column to True if the 'LibID' column is not null
+    merged_df['in_reference'] = merged_df['LibID'].notnull()
+    # keep all columns except 'LibID'
+    merged_df.drop(columns=['LibID'], inplace=True)
+    
+    return merged_df
+
 
 def cut_linkers(df: pd.DataFrame, linker_length:int) -> pd.DataFrame:
 
@@ -299,6 +319,16 @@ def main():
     if config["linker_length"] > 0:
         logger.info("Cutting linkers from sequences")
         combined_data = cut_linkers(combined_data, config["linker_length"])
+        
+    # check if the LUT file exists
+    if os.path.exists(config["LUT_file"]):
+        logger.info("Found LUT file, matching to found Fragments to the LUT")
+        # Load the LUT DataFrame
+        LUT = pd.read_csv(config["LUT_file"])
+        # Match the DataFrame to the LUT DataFrame based on the 'Sequence' column
+        combined_data = match_to_LUT(combined_data, LUT)
+    else:
+        logger.info("No LUT file found, skipping matching to LUT")
     
     # Save the processed data to a new CSV file
     combined_data.to_csv(config["output_table"], index=False)

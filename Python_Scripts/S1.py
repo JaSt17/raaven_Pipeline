@@ -17,7 +17,6 @@ Inputs for the script are:
     - input_file: The path to the FASTA file
     - structure_dict: A dictionary with the structure as the key and the length and frequency as the values
     - output_csv: The path to the output CSV file
-    - output_name: The path to the output file
 
 Output of the script is:
     - A CSV file containing a lookup table with the columns LUTnr, ID, Peptide, AAstart, AAstop, and Sequence
@@ -250,13 +249,6 @@ def main():
     keys = ["Structure","AAstart"]
     # sort the dataframe by the keys
     df = df.sort_values(by=keys)
-    
-    # Write the all fragments to a file
-    with open(config["output_name"], "w") as f:
-        # write all Sequences in the df to the file
-        f.write("Sequence\n")
-        for seq in df["Sequence"]:
-            f.write(seq + "\n")
     
     # Create a lookup table (LUT) from the DataFrame
     LUT = create_LUTnr(df)
