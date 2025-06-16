@@ -237,7 +237,7 @@ def create_summary_plots(final_summary: pd.DataFrame, plot_dir_path: str, array_
     It runs after all output tabels were created and saved to get an overview of the data.
     """
     # Check if the datafrmae has the coulmn "in_reference"
-    if 'in_reference':
+    if 'in_reference' in final_summary.columns:
         # If the column is present, filter the DataFrame to only include rows where 'in_reference' is True
         ref_final_summary = final_summary[final_summary['in_reference'] == True]
         prefixlist = ["All_variants", "In_reference_variants"]
