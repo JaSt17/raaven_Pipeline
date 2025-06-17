@@ -3,7 +3,7 @@
 data_dir = "Projects/Kingfischer/Seq_Data"
 save_dir = "Projects/Kingfischer/Libraries"
 # Name of the library and run
-library_name = "p006"
+library_name = "p007"
 run = "Plasmid_run_1"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 27
@@ -11,10 +11,10 @@ frag_len = 27
 linker_length = 3  # Length of the Linker left and right to the fragment sequence
 
 # Define the number of possible fragments that can be created from the library
-num_possible_frag = 300000  # This is an arbitrary number, adjust as needed
+num_possible_frag = 117126  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "TATCTCGTGG" # Unique !!!
+barcode_left_literal = "TATCGCAAGA" # Unique !!!
 barcode_right_literal = "ATAACTTCGT"
 fragment_left_literal = "GAGAGGCAACG"
 fragment_right_literal = "AGACAAGCAG"
@@ -42,7 +42,6 @@ config_S1 = {
     "LibID": library_name,
     # output file names for the LUT csv and the list of all inserted fragments
     "output_csv": save_dir + f"/{library_name}/{run}/intermediate_files/LUT.csv",
-    "output_name": save_dir + f"/{library_name}/{run}/intermediate_files/SortedFragments.txt",
     "log_dir": save_dir + f"/{library_name}/{run}/logs/",
 }
 
@@ -147,7 +146,7 @@ config_S4 = {
 config_S5 = {
     # input file names are extracted from the previous step
     "input_table": config_S3["out_name"],
-    "in_name_LUT": config_S1["output_csv"],
+    "in_name_LUT": None,
     # output file name for the library barcodes with their information form the LUT
     "output_table": save_dir + f"/{library_name}/{run}/intermediate_files/pos_library_barcodes.csv",
     "log_dir": save_dir + f"/{library_name}/{run}/logs/",
@@ -156,8 +155,8 @@ config_S5 = {
 config_S6 = {
     # input file names are extracted from the previous step
     "original_seq_file": config_S1["input_file"],
-    "input_dir": config_S4["output_dir"],
     "LUT_file": config_S1["output_csv"],
+    "input_dir": config_S4["output_dir"],
     "sample_inputs": config_S4["sample_inputs"],
     "library_fragments": config_S5["output_table"],
     "plot_dir": save_dir + f"/{library_name}/{run}/plots",

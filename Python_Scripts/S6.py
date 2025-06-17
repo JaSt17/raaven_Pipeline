@@ -8,7 +8,6 @@ including in the diffrent samples. The script also normalizes the read counts in
 Workflow:
     - Combined all output data from the specified directory into one DataFrame
     - Add the library fragments to the combined data
-    - add the reference sequence lengths to the combined data
     - Normalize the read counts in the DataFrame to adjust for difference in read depth 
     - Combine information of identical fragments in each group in a DataFrame and aggregate the data to get the following infomration
         - tCount: sum of tCount
@@ -18,7 +17,6 @@ Workflow:
         - RNAcount: sum of RNAcounts
         - Normalized_RNAcount: sum of Normalized_RNAcounts
         - BC_adjusted_count: log2 of BC_count * Normalized_RNAcount
-    - Finally, cut the overhangs of the sequences based on the structure of the fragment (if necessary) and save the processed data to a new CSV file.
     
 Input:
     - Directory containing CSV files with fragment information
@@ -39,10 +37,10 @@ import re
 from datetime import datetime
 import pandas as pd
 import logging
-from Bio import SeqIO
 from concurrent.futures import ThreadPoolExecutor
 # local import
 from config import get_config
+from costum_functions import create_summary_plots
 
 # function to create a global logger
 def create_logger(path: str, name: str) -> None:
@@ -87,12 +85,10 @@ def load_combined_data(dir_path: str, sample_inputs_path: str) -> pd.DataFrame:
     # Use glob to get all CSV files in the directory
     csv_files = glob.glob(os.path.join(dir_path, '*.csv'))
     
-    # Check if any CSV files were found
     if not csv_files:
         logger.info("No CSV files found in the directory.")
         return pd.DataFrame()
 
-    # Define a function to read a CSV file
     def read_file(file_path):
         file_name = os.path.basename(file_path)
         # Robust group name extraction using regex
@@ -134,30 +130,6 @@ def load_combined_data(dir_path: str, sample_inputs_path: str) -> pd.DataFrame:
     
     return combined_data
     
-    
-def get_ref_sequence_length_df(file_path:str) -> pd.DataFrame:
-    """
-    Reads a FASTA file containing reference sequences and returns a DataFrame with sequence ids and lengths.
-    Args:
-        file_path (str): path to the file containing the reference sequences
-
-    Returns:
-        pd.DataFrame: DataFrame with the reference sequence ids and lengths
-    """
-    
-    # read in file with original sequences
-    seqs_original = list(SeqIO.parse(file_path, "fasta"))
-    # translate sequences to amino acids
-    seq = [str(seq_record.seq).strip() for seq_record in seqs_original]
-    # get sequence ids
-    ids = [seq_record.description for seq_record in seqs_original]
-    
-    # create a DataFrame with sreference sequence ids and lengths
-    ref_seq_len_df = pd.DataFrame({"Origion_seq": ids,
-                                    "seqlength": [len(s) for s in seq]})
-    
-    return ref_seq_len_df
-
 
 def create_subsets(df: pd.DataFrame, subsets: dict) -> pd.DataFrame:
     """
@@ -235,10 +207,11 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
     
     # Define aggregation functions
     aggregations = {
+        'mCount': 'sum',
+        'Reads': 'first',
         'BC': lambda x: ','.join(pd.unique(x)),
         'RNAcount': 'sum',
         'RNAcount_ratio': 'sum',
-        'seqlength': 'max',
     }
     
     # Perform groupby aggregation
@@ -251,40 +224,58 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
 
     # Barcode adjusted count ratio
     combined_data['BC_adjusted_count_ratio'] = combined_data['RNAcount_ratio'] + combined_data['BC_ratio'] / 2
-
-    # Vectorized computation for AAwidth and AAseqlength
-    combined_data['AAwidth'] = (combined_data['width'] // 3).astype(int)
-    combined_data['AAseqlength'] = (combined_data['seqlength'] // 3).astype(int)
-
-    # Compute AA_pos and AA_rel_pos
-    combined_data['AA_pos'] = (combined_data['AAstart'] + combined_data['AAwidth'] / 2).astype(int)
-    combined_data['AA_rel_pos'] = combined_data['AA_pos'] / combined_data['AAseqlength']
+    
+    # Rename Reads to Sequence
+    combined_data.rename(columns={'Reads': 'Sequence'}, inplace=True)
 
     return combined_data
 
-
-def cut_overhangs_vectorized(df: pd.DataFrame, backbone_seq: list, trim_dict: dict) -> pd.DataFrame:
-    """ 
-    This function cuts the backbone sequence and the overhangs of the sequences based on the structure of the fragment.
-    
-    Args:
-        df (pd.DataFrame): The input DataFrame containing the 'structure' and 'Sequence' columns.
-        backbone_seq (list): A list containing the backbone sequence.
-        trim_dict (dict): A dictionary with structure names as keys and lists of start and end positions as values.
-        
-    Returns:
-        pd.DataFrame: The DataFrame with the overhangs of the sequences cut based on the structure of the fragment.
+def match_to_LUT(df: pd.DataFrame, LUT: pd.DataFrame) -> pd.DataFrame:
     """
-    # Remove the backbone sequence from the sequences
-    df['Sequence'] = df['Sequence'].str.replace(backbone_seq[0], '', regex=False)
-    df['Sequence'] = df['Sequence'].str.replace(backbone_seq[1], '', regex=False)
-    # Cut the overhangs of the sequences based on the structure of the fragment
-    for key, value in trim_dict.items():
-        df.loc[df['Structure'] == key, 'Sequence'] = df.loc[df['Structure'] == key, 'Sequence'].str.slice(value[0], value[1])
+    Match the DataFrame to the LUT DataFrame based on the 'Sequence' column.
 
+    Parameters:
+        df (pd.DataFrame): The input DataFrame containing sequences.
+        LUT (pd.DataFrame): The lookup table DataFrame with 'Sequence' and 'LUTnr' columns.
+
+    Returns:
+        pd.DataFrame: The DataFrame with matched LUT numbers added.
+    """
+    # merge the DataFrame with the LUT DataFrame on the 'Sequence' column
+    merged_df = df.merge(LUT[['Sequence', 'LibID']], on='Sequence', how='left')
+    # set the 'in_reference' column to True if the 'LibID' column is not null
+    merged_df['in_reference'] = merged_df['LibID'].notnull()
+    # keep all columns except 'LibID'
+    merged_df.drop(columns=['LibID'], inplace=True)
+    
+    return merged_df
+
+
+def cut_linkers(df: pd.DataFrame, linker_length:int) -> pd.DataFrame:
+
+    """
+    Cut the linker from the sequences in the DataFrame.
+
+    Parameters:
+        df (pd.DataFrame): The input DataFrame containing sequences.
+        linker_length (int): The length of the linker to be cut from the sequences.
+
+    Returns:
+        pd.DataFrame: The DataFrame with sequences cut at the specified linker length.
+    """
+    columns = df.columns.tolist()
+    df['LLinker'] = df['Sequence'].str[:linker_length]
+    df['RLinker'] = df['Sequence'].str[-linker_length:]
+    df['Sequence'] = df['Sequence'].str[linker_length:-linker_length]
+    # put the columns in the right order
+    # insert LLinker left to Sequence
+    columns.insert(columns.index('Sequence'), 'LLinker')
+    # insert RLinker right to Sequence
+    columns.insert(columns.index('Sequence') + 1, 'RLinker')
+    df = df[columns]
     return df
 
-    
+
 def main():
     start_time = datetime.now()
     # Load configuration
@@ -307,12 +298,6 @@ def main():
     # Add the library fragments to the combined data
     combined_data = pd.concat([library_fragments, combined_data], ignore_index=True)
     
-    # Get the reference sequence lengths
-    logger.info("Getting reference sequence lengths")
-    ref_seq_len_df = get_ref_sequence_length_df(config["original_seq_file"])
-    # add the reference sequence lengths to the combined data with the reference_name as the key
-    combined_data = pd.merge(combined_data, ref_seq_len_df, how="left", on="Origion_seq")
-    
     logger.info("Creating Subsets")
     # Create subsets based on the specified conditions
     combined_data = create_subsets(combined_data, config["subsets"])
@@ -323,21 +308,37 @@ def main():
     
     logger.info("Combining fragment information")
     # Define the key columns for the groupby operation
-    key_cols = ["Group", "Origion_seq", "LUTnr", "AAstart", "AAend", "Structure", "Peptide", "start", "end", "width", "Sequence"]
+    key_cols = ["Group", "LUTnr", "Peptide"]
     # Combine information of identical fragments in a DataFrame
     combined_data = combine_information_of_identical_fragments(combined_data, key_cols)
     
-    logger.info("Cutting overhangs of the sequences based on the structure of the fragment")
+    # Sort the combined data by Group RNAcount
+    combined_data.sort_values(by=['Group', 'RNAcount'], ascending=[True, False], inplace=True)
     
-    # Cut the overhangs of the sequences based on the structure of the fragment
-    try:
-        combined_data = cut_overhangs_vectorized(combined_data, config["backbone_seq"], config["trim_dict"])
-    except Exception as e:
-        logger.info("No overhangs and backbone sequence were provided. Skipping cutting overhangs.")
+    # Cut the linkers from the sequences in the DataFrame
+    if config["linker_length"] > 0:
+        logger.info("Cutting linkers from sequences")
+        combined_data = cut_linkers(combined_data, config["linker_length"])
+        
+    # check if the LUT file exists
+    if os.path.exists(config["LUT_file"]):
+        logger.info("Found LUT file, matching to found Fragments to the LUT")
+        # Load the LUT DataFrame
+        LUT = pd.read_csv(config["LUT_file"])
+        # Match the DataFrame to the LUT DataFrame based on the 'Sequence' column
+        combined_data = match_to_LUT(combined_data, LUT)
+    else:
+        logger.info("No LUT file found, skipping matching to LUT")
     
     # Save the processed data to a new CSV file
     combined_data.to_csv(config["output_table"], index=False)
     logger.info(f"Saved processed data to {config['output_table']}")
+
+    # Create a summary plot
+    logger.info("Creating summary plots")
+    
+    create_summary_plots(combined_data, config["plot_dir"], config["array_size"])
+    
     logger.info(f"Finished processing in {datetime.now() - start_time}")
     
     
