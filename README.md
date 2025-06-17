@@ -27,10 +27,8 @@ It is designed to work with both rationally designed libraries, which are based 
       - [Required Files](#required-files)
         - [Illumina Read FASTQ Files](#illumina-read-fastq-files)
         - [Additional Files](#additional-files)
-        - [Example-Directory](#example-directory)
     - [The Config File](#the-config-file)
     - [Start the Pipeline](#start-the-pipeline)
-      - [Alternative way to run the pipeline](#alternative-way-to-run-the-pipeline)
       - [Running the Pipeline on an HPC](#running-the-pipeline-on-an-hpc)
   - [Workflow of the Pipeline](#workflow-of-the-pipeline)
       - [**Step 1: Fragment Generation and Translation**](#step-1-fragment-generation-and-translation)
@@ -119,7 +117,7 @@ The version used in our pipeline is 39.08
 
 ### The Data
 
-Since proprietary data from rAAven Therapeutics cannot be published, a folder named `Example/` is provided with small example files for demonstration purposes.
+Proprietary data from rAAven Therapeutics cannot be published.
 
 #### Required Files
 
@@ -134,81 +132,33 @@ Since proprietary data from rAAven Therapeutics cannot be published, a folder na
 1. **Reference Sequences**:
    - If the library was rationally designed which means based on known protein sequences, include a reference sequence file: `reference_seq.fasta`.
 
-2. **Codon Usage File**:
-   - `wSet.csv`: This file contains codon usage frequencies optimized for *Homo sapiens*.
-   It is essential because different organisms prefer different codons to encode the same amino acid. To ensure that the reference protein sequences are optimized for human expression, the pipeline uses this file to replace the original codons with the ones most commonly used in humans.
-
-
-3. **Load List**:
-   - `loadlist.csv`: : A reference file that links tissue/sample FASTQ filenames to their respective tissue groups. This mapping is essential in Step 4 of the pipeline to ensure barcodes are extracted from the correct samples.
-
-##### Example-Directory
-
-Below is an overview of how the files described above are organized and named in the provided example directory. These files serve as a template for how your own input data should be structured.
-
-- **Paired-end reads**:
-  - `Example/fastq_files/R1.fastq.gz`
-  - `Example/fastq_files/R2.fastq.gz`
-- **AAV capsid and tissue reads**:
-  - `Example/sample_fastq/AAV23_R1.fastq.gz`
-  - `Example/sample_fastq/Tissue1.fastq.gz`
-  - `Example/sample_fastq/Tissue2.fastq.gz`
-
-- **Additional Files**:
-  - `Example/input/load_list.csv`
-  - `Example/input/reference_seq.fasta`
-  - `Example/input/wSet.csv`
+2. **Annotation**:
+   - `annotation.csv`: A reference file that links tissue/sample FASTQ filenames to their respective tissue groups. This mapping is essential in Step 4 of the pipeline to ensure barcodes are extracted from the correct samples.
 
 ### The Config File
 
 Before running the pipeline, you must customize the configuration file. The config file is a Python script that contains dictionaries defining all the necessary parameters for each step of the pipeline.
 
-Configuration files are stored in the `configs/` subdirectory. This folder includes all the config files used for different plasmid libraries in our analysis.
-
 Each plasmid library can have different library identifiers, linker sequences, or structural variations. Therefore, it is essential to adapt the configuration file to match your specific library setup.
 
-For the provided example data, you can use the preconfigured file: `configs/config_Example.py`.
-
-**Note:** Detailed parameter explanations are available in `configs/README.md`.
+**Note:** Detailed parameter explanations are available in `Config_Explaination.md`.
 
 ### Start the Pipeline
 
-After configuring the settings file and ensuring all parameters are correctly defined, the pipeline can be initiated. The most straightforward method to execute it is by running the run_pipeline.sh script as follows:
-
-```bash
-./Bash_scripts/run_pipeline.sh configs/example_config.py
-```
-
-If running the pipeline with an NNK library instead of a rationally designed library with a reference, the code can be executed as follows:
-
-```bash
-./Bash_scripts/run_pipeline.sh configs/example_config.py -nnk True
-```
-
-This ensures that Steps 2, 3, and 6 of the pipeline are executed according to the design of an NNK library.
-
-#### Alternative way to run the pipeline
-
-The pipeline can of cause also be run individually by simply running the individual python scripts
+After configuring the settings file and ensuring all parameters are correctly defined, the pipeline can be initiated. The pipeline be run individually by simply running the individual python scripts
 
 ```bash
 ./Python_Scripts/S1.py
-./Python_Scripts/S2.py (S2_NNK.py)
-./Python_Scripts/S3.py (S3_NNK.py)
+./Python_Scripts/S2.py 
+./Python_Scripts/S3.py 
 ./Python_Scripts/S4.py
 ./Python_Scripts/S5.py
-./Python_Scripts/S6.py (S6_NNK.py)
+./Python_Scripts/S6.py
 ```
 
 #### Running the Pipeline on an HPC
 
 If working on an HPC with a Slurm queueing system, the Slurm scripts in the `Slurm_Scripts/` directory can be used to efficiently run the pipeline. These scripts leverage multiple cores to accelerate computation. The Slurm script settings can also be adjusted based on the available resources of the HPC.
-
-For example, to queue the complete workflow for the Example dataset, use the following command:
-
-```bash
-sbatch Slurm_Scripts/Example.sh
-```
 
 ---
 
@@ -230,14 +180,12 @@ This list provides a concise explanation of each step in the pipeline workflow.
 #### **Step 2: Barcode and Fragment Extraction**
 
 - Extracts barcodes and fragments from sequencing files.  
-- Matches found fragments to the reference, pairs barcodes with fragments, and saves the results to separate files.
+- Pairs barcodes with fragments, and saves the results to separate files.
 
 ---
 
 #### **Step 3: Barcode Reduction and Classification**
 
-- Reduces barcodes using the Starcode algorithm.  
-- Replaces original barcodes with Starcode-reduced versions.  
 - Classifies barcodes into:
   - **Definitive barcodes**  
   - **Chimeric barcodes** (based on a threshold ratio of maximal to total read count)  
@@ -252,8 +200,9 @@ This list provides a concise explanation of each step in the pipeline workflow.
 
 #### **Step 4: Sample Barcode Processing**
 
-- Extracts barcodes known from the Plasmid Library from provided cell/tissue samples.  
+- Extracts barcodes from provided cell/tissue samples.  
 - Processes a CSV file containing **Sample** and **Group** data.  
+- Normalizes read counts to per million reads for easier comparison
 - Saves results in a log table and stores identified fragments in a CSV file.
 
 ---
@@ -269,16 +218,13 @@ This list provides a concise explanation of each step in the pipeline workflow.
 
 - Processes the identified fragments and merges them into a single comprehensive dataset.  
 - The final dataset includes detailed information for every found fragment across different samples.  
-- Normalizes read counts in the dataset to adjust for the total RNA counts in each group.  
-- Outputs a normalized, ready-to-analyze dataset.
+- Outputs a ready-to-analyze dataset.
 
 ---
 
-**Note:** A more detailed explaination of the Workflow can be found in `Supplementaries/Workflow.md`
-
 ## Data Visualisation
 
-All necessary code for data visualization and analysis is located in the `Plotting_Scripts/` directory. This directory includes standalone scripts for generating plots, as well as Jupyter notebooks that provide a step-by-step approach to reproducing the visualizations.
+All necessary code for data visualization and analysis is located in the `Python_Scripts/plotting_functions` script. All plots are automatically created when runnign the pipeline.
 
 ## License
 
