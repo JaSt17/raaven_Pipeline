@@ -1,23 +1,23 @@
 #------------------------------------------------------------------------------------
 # Define the data & save directory where the input and output files are stored
-data_dir = "Projects/Kingfischer/Seq_Data"
-save_dir = "Projects/Kingfischer/Libraries"
+data_dir = "Projects/Bluejay/Seq_Data"
+save_dir = "Projects/Bluejay/Libraries"
 # Name of the library and run
-library_name = "p007"
-run = "Plasmid_run_1"
+library_name = "p037"
+run = "Plasmid_run_2"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 27
 frag_len = 27
 linker_length = 3  # Length of the Linker left and right to the fragment sequence
 
 # Define the number of possible fragments that can be created from the library
-num_possible_frag = 117126  # This is an arbitrary number, adjust as needed
+num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "TATCGCAAGA" # Unique !!!
+barcode_left_literal = "GCTCCTTTGA" # Unique !!!
 barcode_right_literal = "ATAACTTCGT"
-fragment_left_literal = "GAGAGGCAACG"
-fragment_right_literal = "AGACAAGCAG"
+fragment_left_literal = "GAGTGCCCAA"
+fragment_right_literal = "GCACAGGCGC"
 
 # Settings for Libary read usage:
 # Should single read barcodes be used?
@@ -42,6 +42,7 @@ config_S1 = {
     "LibID": library_name,
     # output file names for the LUT csv and the list of all inserted fragments
     "output_csv": save_dir + f"/{library_name}/{run}/intermediate_files/LUT.csv",
+    "output_name": save_dir + f"/{library_name}/{run}/intermediate_files/SortedFragments.txt",
     "log_dir": save_dir + f"/{library_name}/{run}/logs/",
 }
 
@@ -63,8 +64,8 @@ config_S2 = {
         "rcomp=f",
         "minavgquality=0",
         "maxns=0",
-        f"minlength={bc_len-2}",
-        f"maxlength={bc_len+2}",
+        f"minlength={bc_len}",
+        f"maxlength={bc_len}",
         "ordered=t",
         f"lliteral={barcode_left_literal}",
         f"rliteral={barcode_right_literal}",
@@ -117,7 +118,7 @@ config_S4 = {
     "starcode": config_S3["starcode"],
     "db": save_dir + f"/{library_name}/{run}/intermediate_files/barcode_db.fasta",
     # input csv file containing the file names of all samples that should be used for barcode extraction
-    "sample_inputs": data_dir + f"/Samples/annotation_{library_name}.csv",
+    "sample_inputs": data_dir + "/Samples/annotation.csv",
     # directory containing the fastq files for the samples
     "sample_directory": data_dir + "/Samples",
     # filename for the log file that will be created and show how many barcodes were found in each sample
@@ -134,8 +135,8 @@ config_S4 = {
         "rcomp=f",
         "minavgquality=0",
         "maxns=0",
-        f"minlength={bc_len-2}",
-        f"maxlength={bc_len+2}",
+        f"minlength={bc_len}",
+        f"maxlength={bc_len}",
         "ordered=t",
         f"lliteral={barcode_left_literal}",
         f"rliteral={barcode_right_literal}",
@@ -146,7 +147,7 @@ config_S4 = {
 config_S5 = {
     # input file names are extracted from the previous step
     "input_table": config_S3["out_name"],
-    "in_name_LUT": None,
+    "in_name_LUT": config_S1["output_csv"],
     # output file name for the library barcodes with their information form the LUT
     "output_table": save_dir + f"/{library_name}/{run}/intermediate_files/pos_library_barcodes.csv",
     "log_dir": save_dir + f"/{library_name}/{run}/logs/",
@@ -159,8 +160,8 @@ config_S6 = {
     "input_dir": config_S4["output_dir"],
     "sample_inputs": config_S4["sample_inputs"],
     "library_fragments": config_S5["output_table"],
+    "linker_length": linker_length,
     "plot_dir": save_dir + f"/{library_name}/{run}/plots",
-    "linker_length": linker_length,  # Length of the Linker left and right to the fragment sequence
     "array_size": num_possible_frag,  # size of the array for the summary plots
     # group name for the library
     "library_name": "Plasmid_Library",
