@@ -128,23 +128,31 @@ final_fragments_summary_file = os.path.join(input_dir, "final_fragments_summary.
 if os.path.exists(final_fragments_summary_file):
     df = pd.read_csv(final_fragments_summary_file)
     # --- Prepare Data ---
-    df = df[["Group", "Peptide", "LLinker", "Sequence", "RLinker", "RNAcount", "RNAcount_ratio", "BC_count", "BC",]]
+    df = df[["Group", "Peptide", "LLinker", "Sequence", "RLinker", "RNAcount", "RNAcount_ratio", "BC_count", "BC", "in_subsets"]]
     df.rename(columns={
         "BC": "Barcode(s)",
         "RNAcount": "Reads per Million Reads",
         "RNAcount_ratio": "Abundance in Group",
         "BC_count": "Barcode Count",
-        "BC_adjusted_count_ratio": "BC Count Scaled Abundance"
+        "in_subsets": "Fraction of groups represented in subsets"
     }, inplace=True)
 
     st.subheader("Summary of Found Fragments")
     st.write("""
-    This section provides a summary of all fragments that were detected by matching barcodes found in the samples to the library barcodes.
+    This section provides a summary of all fragments that were detected by matching barcodes found in the samples to the library barcodes.\n
+    You can take a closer look at the fragments by selecting them from the table below.\n
+    If *1* Frament is selected, you will see the details of the fragment acrross all groups.\n
+    If *2* Fragments are selected, you will see a comparison of the two fragments across all groups.\n
     """)
+        # Properly exclude the selected group
+    options = [group for group in df["Group"].unique() if group != "Plasmid_Library"]
+    
     selected_groups = st.multiselect(
             "Select Group(s):",
-            options=df["Group"].unique(),
-            default=df["Group"].unique()
+            options=options,
+            default=options,
+            key="group_selection",
+            help="Select one or more groups which should be displayed in the table below."
         )
 
     # --- Apply Filters ---
@@ -162,7 +170,7 @@ if os.path.exists(final_fragments_summary_file):
     gridOptions = gb.build()
 
     # --- Render Grid and Capture Selection ---
-    response = AgGrid(
+    final_fragments = AgGrid(
         filtered_df,
         gridOptions=gridOptions,
         height=700,
@@ -170,15 +178,16 @@ if os.path.exists(final_fragments_summary_file):
         update_mode=GridUpdateMode.SELECTION_CHANGED,
         allow_unsafe_jscode=True
     )
+    
     # --- Handle selection logic ---
-    selected_rows = response.get("selected_rows", [])
-    if response["selected_rows"] is not None:
+    selected_rows = final_fragments.get("selected_rows", [])
+    if final_fragments["selected_rows"] is not None:
         if len(selected_rows) > 2:
             st.warning("⚠️ You can only select up to 2 rows. Only the first 2 will be used.")
             selected_rows = selected_rows[:2]
         # if only one row is selected, update the session state with the selected peptide
         if len(selected_rows) == 1:
-            new_peptide = response['selected_rows']['Peptide'][0]
+            new_peptide = final_fragments['selected_rows']['Peptide'][0]
             if st.session_state.selected_peptide != new_peptide:
                 st.session_state.selected_peptide = new_peptide
                 matching_df = df[df["Peptide"] == st.session_state.selected_peptide]
@@ -212,3 +221,63 @@ if os.path.exists(final_fragments_summary_file):
                 else None, axis=1)
             with st.expander(f"🔍 Comparison of Peptides: {peptide1} vs {peptide2}", expanded=True):
                 st.dataframe(comparison_df, use_container_width=True)
+    
+    st.subheader("Comparison of Fragments Across Groups")
+    st.write("""
+    Here we can compare the effectiveness of fragments across different groups.\n
+    You can select a group to compare against other groups. The first group will be shown in the first column, while the other groups will be shown in the following columns.\n
+    The comparison is based on the reads per million reads for each fragment in the selected groups.\n
+    """)
+    
+    # Split the page into two columns
+    col1, col2 = st.columns(2)
+
+    with col1:
+        # i want all groups to be selecteable which ahve atleas 1 value < 1.0 in the 'in_subsets' column
+        df = df[df['Fraction of groups represented in subsets'] < 1.0]
+        options = df["Group"].unique()
+        first_group = st.selectbox(
+            "Select a Group to compare:",
+            options=options,
+            index=0,
+            help="Select a group which you want to compare to the performance of other groups "
+        )
+
+    # Properly exclude the selected group
+    options = [group for group in df["Group"].unique() if group != first_group]
+
+    with col2:
+        compare_groups = st.multiselect(
+            "Select Group(s):",
+            options=options,
+            default=None,
+            key="compare_group_selection",
+            help="Select one or more groups to compare to the chosen group."
+        )
+
+    compare_button = st.button("Compare", use_container_width=True)
+    
+    # if compare button is clicked, show the comparison plot
+    if compare_button and first_group and compare_groups:
+        # Filter the DataFrame for the selected groups
+        display_fragments = df[df["Group"]== first_group]
+        # keep only the columns that are relevant for the comparison
+        display_fragments = display_fragments[["Peptide", "Reads per Million Reads", "Fraction of groups represented in subsets"]]
+        # renmae the Reads per Million Reads column to the first group name
+        display_fragments = display_fragments.rename(columns={"Reads per Million Reads": first_group,
+                                                            "Fraction of groups represented in subsets": f"Fraction in {first_group}"})
+        # iterate over the compare groups and add the data to the display_fragments DataFrame
+        for group in compare_groups:
+            group_data = df[df["Group"] == group][["Peptide", "Reads per Million Reads", "Fraction of groups represented in subsets"]]
+            group_data = group_data.rename(columns={"Reads per Million Reads": group,
+                                                    "Fraction of groups represented in subsets": f"Fraction in {group}"})
+            display_fragments = pd.merge(display_fragments, group_data, on="Peptide", how="left")
+        
+        # sort the DataFrame by the first group
+        display_fragments = display_fragments.sort_values(by=first_group, ascending=False)
+            
+        # display the comparison DataFrame
+        st.subheader(f"Comparison of {first_group} with {', '.join(compare_groups)}")
+        st.write("This section provides a comparison of the reads per million reads for the selected groups.\n"
+                    "The first group is shown in the first column, while the other groups are shown in the following columns.")
+        st.dataframe(display_fragments, use_container_width=True)

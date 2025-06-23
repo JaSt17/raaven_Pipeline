@@ -210,12 +210,14 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
         'mCount': 'sum',
         'Reads': 'first',
         'BC': lambda x: ','.join(pd.unique(x)),
-        'RNAcount': 'sum',
-        'RNAcount_ratio': 'sum',
+        'RNAcount': 'mean',
+        'RNAcount_ratio': 'mean',
     }
     
     # Perform groupby aggregation
     combined_data = df.groupby(key_cols).agg(aggregations).reset_index()
+    # convert the RNAcount to Integer
+    combined_data['RNAcount'] = combined_data['RNAcount'].astype('int32')
     
     # Compute the BC_count and BC_ratio
     combined_data['BC_count'] = combined_data['BC'].str.count(',') + 1
@@ -276,6 +278,68 @@ def cut_linkers(df: pd.DataFrame, linker_length:int) -> pd.DataFrame:
     return df
 
 
+def subset_counts(df: pd.DataFrame, subsets: dict) -> pd.DataFrame:
+    """
+    For each subset, compute how many of the matching groups each peptide appears in,
+    normalized by the number of those groups. The result is stored in the 'in_subsets' column.
+    
+    Args:
+        df (pd.DataFrame): The original DataFrame with 'Group' and 'Peptide' columns.
+        subsets (dict): Dictionary with keys as subset names and values as a list of condition.
+                        The first item in the list is the condition type:
+                            - 'include' (exact match)
+                            - 'exclude' (exact mismatch)
+                            - 'contains_include' (substring match)
+                            - 'contains_exclude' (substring mismatch)
+    
+    Returns:
+        pd.DataFrame: The updated DataFrame with subset rows modified with 'in_subsets' counts.
+    """
+    df['in_subsets'] = 1.0  # Initialize 'in_subsets' column
+    for subset_name, conditions in subsets.items():
+        condition_type = conditions[0]
+        condition_values = conditions[1:]
+
+        # Filter rows based on condition
+        if condition_type == 'include':
+            mask = df['Group'].isin(condition_values)
+        elif condition_type == 'exclude':
+            mask = ~df['Group'].isin(condition_values)
+        elif condition_type == 'contains_include':
+            mask = df['Group'].str.contains(condition_values[0], na=False)
+        elif condition_type == 'contains_exclude':
+            mask = ~df['Group'].str.contains(condition_values[0], na=False)
+        else:
+            raise ValueError(f"Invalid condition: {condition_type}")
+
+
+        temp_df = df[mask].copy()
+        number_of_groups = temp_df['Group'].nunique()
+        # Skip processing if no groups matched
+        if number_of_groups == 0:
+            continue
+
+        # Count peptides across unique (Group, Peptide) combinations
+        peptide_counts = (
+            temp_df[['Group', 'Peptide']]
+            .drop_duplicates()
+            .groupby('Peptide')
+            .size()
+            .reset_index(name='in_subsets')
+        )
+        # Normalize counts
+        peptide_counts['in_subsets'] = (peptide_counts['in_subsets'] / number_of_groups).round(2)
+        # Apply to the subset group and keep only the 'in_subsets' column from the counts
+        new_df = df[df['Group'] == subset_name].merge(peptide_counts, on='Peptide', how='inner')
+        # Replace old 'in_subsets' column if it exists
+        new_df.drop(columns='in_subsets_x',inplace=True)
+        new_df.rename(columns={'in_subsets_y': 'in_subsets'}, inplace=True)
+        # Remove existing rows for the subset and append updated version
+        df = pd.concat([df[df['Group'] != subset_name], new_df], ignore_index=True)
+
+    return df
+
+
 def main():
     start_time = datetime.now()
     # Load configuration
@@ -330,10 +394,14 @@ def main():
     else:
         logger.info("No LUT file found, skipping matching to LUT")
     
+    logger.info("Qunatifying fragments in subsets")
+    # Create subsets based on the specified conditions
+    combined_data = subset_counts(combined_data, config["subsets"])
+    
     # Save the processed data to a new CSV file
     combined_data.to_csv(config["output_table"], index=False)
     logger.info(f"Saved processed data to {config['output_table']}")
-
+    
     # Create a summary plot
     logger.info("Creating summary plots")
     

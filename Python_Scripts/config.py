@@ -3,18 +3,18 @@
 data_dir = "Projects/Bluejay/Seq_Data"
 save_dir = "Projects/Bluejay/Libraries"
 # Name of the library and run
-library_name = "p037"
-run = "Plasmid_run_2"
+library_name = "p034"
+run = "Plasmid_run_1"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 27
 frag_len = 27
-linker_length = 3  # Length of the Linker left and right to the fragment sequence
+linker_length = 3  # Lenght of the Linker left and right to the fragment sequence
 
 # Define the number of possible fragments that can be created from the library
 num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "GCTCCTTTGA" # Unique !!!
+barcode_left_literal = "CTATCGAGTG" # Unique !!!
 barcode_right_literal = "ATAACTTCGT"
 fragment_left_literal = "GAGTGCCCAA"
 fragment_right_literal = "GCACAGGCGC"
@@ -169,6 +169,18 @@ config_S6 = {
     # the key is the name of the subset and the value is a list of the fragments that should be included
     "subsets": {
         "Infective_AAVs": ['exclude','DNAse_resistant_AAVs','Plasmid_Library'],
+        "CD_1": ['contains_include','CD_1'],
+        "CC_1": ['contains_include','CC_1'],
+        "Pons_1": ['contains_include','Pons_1'],
+        "HippoC_1": ['contains_include','HippoC_1'],
+        "Tha_1": ['contains_include','Tha_1'],
+        "Amyg_1": ['contains_include','Amyg_1'],
+        "GP_1": ['contains_include','GP_1'],
+        "Sub_N_1": ['contains_include','Sub_N_1'],
+        "HypT_1": ['contains_include','HypT_1'],
+        "C/P_1": ['contains_include','C/P_1'],
+        "MC_1": ['contains_include','MC_1'],
+        "TC_1": ['contains_include','TC_1'],
     },
     # output file name for the final fragments summary
     "output_table": save_dir + f"/{library_name}/{run}/final_fragments_summary.csv",
