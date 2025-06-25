@@ -340,6 +340,20 @@ def subset_counts(df: pd.DataFrame, subsets: dict) -> pd.DataFrame:
     return df
 
 
+def rank_in_groups(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rank the fragments in each group based on their RNA count.
+
+    Parameters:
+        df (pd.DataFrame): The input DataFrame containing fragment information.
+
+    Returns:
+        pd.DataFrame: The DataFrame with an additional 'Rank' column indicating the rank of each fragment within its group.
+    """
+    df['Rank_in_Group'] = df.groupby('Group')['RNAcount_ratio'].rank(method='min', ascending=False).astype('int32')
+    return df
+
+
 def main():
     start_time = datetime.now()
     # Load configuration
@@ -394,9 +408,13 @@ def main():
     else:
         logger.info("No LUT file found, skipping matching to LUT")
     
-    logger.info("Qunatifying fragments in subsets")
+    logger.info("Quantifying fragments in subsets")
     # Create subsets based on the specified conditions
     combined_data = subset_counts(combined_data, config["subsets"])
+    
+    # Rank the fragments in each group based on their RNA count
+    logger.info("Ranking fragments in groups")
+    combined_data = rank_in_groups(combined_data)
     
     # Save the processed data to a new CSV file
     combined_data.to_csv(config["output_table"], index=False)
