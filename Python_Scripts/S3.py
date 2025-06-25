@@ -590,8 +590,12 @@ def main():
     # create a extraction summary CSV file
     save_dir = os.path.dirname(config["log_dir"])
     save_dir = os.path.dirname(save_dir)
-    extract_logging_info_and_write_csv(config["log_dir"], os.path.join(save_dir,"sequencing_summary.csv"))
-    
+    if config["threshold"] < 1.0:
+        with_threshold = True
+    else:
+        with_threshold = False
+    extract_logging_info_and_write_csv(config["log_dir"], os.path.join(save_dir,"sequencing_summary.csv"), with_threshold)
+
     # Print total analysis time
     logger.info(f"Total execution time: {datetime.now() - start_time}")
 

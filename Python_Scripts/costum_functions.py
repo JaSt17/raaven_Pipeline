@@ -163,7 +163,7 @@ def aatodna(in_aa: str, wSet: pd.DataFrame, species: str = "hsa", opt: bool = Tr
     return dna_seq.upper()
 
 
-def extract_logging_info_and_write_csv(logs_folder: str, output_csv_path: str):
+def extract_logging_info_and_write_csv(logs_folder: str, output_csv_path: str, threshold=False):
     """
     Extracts metrics from S2.log and S3.log in the specified folder and writes a summary CSV.
     
@@ -219,6 +219,12 @@ def extract_logging_info_and_write_csv(logs_folder: str, output_csv_path: str):
                 if match:
                     data["Definitive barcodes (reads)"] = f"{match.group(1)} ({match.group(2)})"
                     data["Unique Definitive barcodes"] = f"{match.group(3)} ({match.group(4)})"
+            elif "Chimeric_Def barcodes" in line:
+                if threshold:
+                    match = re.search(r'Chimeric_Def barcodes \(ratio>(\d.\d)\)\s+(\d+)\s+\(\s*([\d.]+%)\)\s+(\d+)\s+\(\s*([\d.]+%)\)', line)
+                    if match:
+                        data[f"Chimeric_Def Barcodes (reads) (ratio>{match.group(1)})"] = f"{match.group(2)} ({match.group(3)})"
+                        data[f"Unique Chimeric_Def Barcodes (ratio>{match.group(1)})"] = f"{match.group(4)} ({match.group(5)})"
             elif "Chimeric read barcodes" in line:
                 match = re.search(r'Chimeric read barcodes\s+(\d+)\s+\(\s*([\d.]+%)\)\s+(\d+)\s+\(\s*([\d.]+%)\)', line)
                 if match:
