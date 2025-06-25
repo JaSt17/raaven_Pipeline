@@ -36,7 +36,7 @@ with st.expander("Library Sequencing Summary", expanded=False):
         col1, col2 = st.columns(2)
         with col1:
             st.subheader("Sequencing Summary")
-            st.dataframe(df, height=420, use_container_width=True)
+            st.table(df)
         with col2:
             pie_chart = os.path.join(input_dir, "plots/barcode_pie_chart.png")
             if os.path.exists(pie_chart):
@@ -59,7 +59,22 @@ with st.expander("Library Sequencing Summary", expanded=False):
         col1, col2 = st.columns(2)
         col1.image(unique_barcodes_logo_file, caption="Unique Barcodes Logo", use_container_width=True)
         col2.image(unique_fragments_logo_file, caption="Unique Fragments Logo", use_container_width=True)
-
+        
+    annotation_file = os.path.join(input_dir, "intermediate_files/library_barcodes.csv")
+    if os.path.exists(annotation_file):
+        df = pd.read_csv(annotation_file)
+        df = df[["BC", "Reads", "Peptide", "mCount"]]
+        df = df.rename(columns={
+            "BC": "Barcode",
+            "Reads": "Fragment Reads",
+            "Peptide": "Peptide Sequence",
+            "mCount": "num of appears in library"
+        })
+        df = df.sort_values(by="num of appears in library", ascending=False)
+        df = df.head(100)  # Show top 100 barcodes
+        st.subheader("Top 100 most Abundant Barcodes/Fragments in Library")
+        st.dataframe(df, use_container_width=True)
+        
 # ---------- Section: Found Sample Barcodes Summary ----------
 with st.expander("Sample Barcodes Summary", expanded=False):
     report_file = os.path.join(input_dir, "found_barcode_report.csv")
@@ -85,9 +100,20 @@ with st.expander("Sample Barcodes Summary", expanded=False):
         if selected_rows is not None:
             selected_sample = selected_rows["Sample Name"][0]
             if selected_sample:
-                filename = os.path.join(input_dir, f"found_barcodes/found.{selected_sample}.csv")
-                if os.path.exists(filename):
-                    found_df = pd.read_csv(filename)
+                filename1 = os.path.join(input_dir, f"found_barcodes/found.{selected_sample}.csv")
+                filename2 = os.path.join(input_dir, f"found_barcodes/unique_barcodes_{selected_sample}.csv")
+                if os.path.exists(filename2):
+                    found_df = pd.read_csv(filename2)
+                    found_df = found_df.rename(columns={
+                        "BC": "Barcode",
+                        "Count": "Raw read count",
+                        "RNAcount_per_mil_reads": "RNA count per mil reads",
+                        "Found_in_Lib": "Found in Library Sequencing"
+                    })
+                    st.subheader(f"All found Barcodes in {selected_sample}")
+                    st.dataframe(found_df, use_container_width=True)
+                if os.path.exists(filename1):
+                    found_df = pd.read_csv(filename1)
                     found_df = found_df[["BC", "Reads", "Peptide", "RNAcount", "RNAcount_per_mil_reads"]]
                     found_df = found_df.rename(columns={
                         "BC": "Barcode",
@@ -95,7 +121,7 @@ with st.expander("Sample Barcodes Summary", expanded=False):
                         "RNAcount": "Raw RNA count",
                         "RNAcount_per_mil_reads": "RNA count per mil reads"
                     })
-                    st.subheader(f"Details for Sample: {selected_sample}")
+                    st.subheader(f"All identified Barcodes in {selected_sample}")
                     st.dataframe(found_df, use_container_width=True)
                 else:
                     st.warning(f"No barcode file found for sample: {selected_sample}")
@@ -104,6 +130,7 @@ with st.expander("Sample Barcodes Summary", expanded=False):
 
 # ---------- Section: All Found Barcodes ----------
 with st.expander("Top List Barcodes", expanded=False):
+    st.write("This section provides a summary of all barcodes found in the samples. It includes all barcodes with a mean read count per million reads greater than 1.\n")
     found_barcodes_file = os.path.join(input_dir, "found_barcodes.csv")
     if os.path.exists(found_barcodes_file):
         df = pd.read_csv(found_barcodes_file)
@@ -116,9 +143,10 @@ with st.expander("Top List Barcodes", expanded=False):
             "Max_per_mil_reads": "Max Reads per Million Reads in a Sample",
             "Samples_Found_In": f"Samples Found in ... out of {num_samples}"
         }, inplace=True)
-
-        st.write("This section summarizes barcodes found across all samples.")
-
+        # get the number of all barcodes in the dataframe and the number of barcodes found in the library
+        num_barcodes = len(df)
+        num_barcodes_in_lib = df['Found in Library'].sum()
+        st.write(f"Total number of barcodes found: {num_barcodes} (of which {num_barcodes_in_lib} were found in the library)")
         gb = GridOptionsBuilder.from_dataframe(df)
         gb.configure_default_column(filterable=True, sortable=True, resizable=True)
         AgGrid(df, gridOptions=gb.build(), height=400, theme="alpine", allow_unsafe_jscode=True)
@@ -126,7 +154,7 @@ with st.expander("Top List Barcodes", expanded=False):
         st.warning("❌ `found_barcodes.csv` not found.")
 
 # ---------- Section: Final Fragment Summary ----------
-with st.expander("Summary of Found Fragments", expanded=False):
+with st.expander("Summary of all Fragments that could be traced with Barcodes", expanded=False):
     st.write("""
     This section provides a summary of all fragments that were detected by matching barcodes found in the samples to the library barcodes.\n
     You can take a closer look at the fragments by selecting them from the table below.\n
@@ -188,46 +216,76 @@ with st.expander("Summary of Found Fragments", expanded=False):
                             use_container_width=True)
     else:
         st.warning("❌ `final_fragments_summary.csv` not found.")
-
-# ---------- Section: Fragment Group Comparison ----------
-with st.expander("Compare Fragment Abundance Across Samples/Tissues", expanded=False):
+        
+# ---------- Section: Find Best Fragments ----------
+with st.expander("Find Best Fragments", expanded=False):
     st.write("""
         Here we can compare the effectiveness of fragments across different groups.\n
-        You can select a group to compare against other groups. The first group will be shown in the first column, while the other groups will be shown in the following columns.\n
-        The comparison is based on the reads per million reads for each fragment in the selected groups.\n
+        You can select groups that you want to include. And chose if you want to select by Rank or by Reads per Million Reads.\n
         """)
     summary_file = os.path.join(input_dir, "final_fragments_summary.csv")
     if os.path.exists(summary_file):
-        df = pd.read_csv(os.path.join(input_dir, "final_fragments_summary.csv"))
-        df.rename(columns={"in_subsets": "Fraction of groups represented in subsets",
-                            "RNAcount": "Mean Reads per Million Reads"}, inplace=True)
-        df = df[df["Fraction of groups represented in subsets"] < 1.0]
+        df = pd.read_csv(summary_file)
+        
+        # Rename columns for display
+        df.rename(columns={
+            "in_subsets": "Fraction of groups represented in subsets",
+            "RNAcount": "Mean Reads per Million Reads",
+            "Rank_in_Group": "Rank in Group"
+        }, inplace=True)
+
+        # UI components
         options = df["Group"].unique()
-
         col1, col2 = st.columns(2)
-        first_group = col1.selectbox("Group to Compare", options)
-        compare_groups = col2.multiselect("Compare To:", [g for g in options if g != first_group])
+        groups = col1.multiselect("Groups for Comparison", options)
+        metric = col2.selectbox("Select Metric", ["Rank in Group", "Mean Reads per Million Reads"])
 
-        if st.button("Compare", use_container_width=True) and compare_groups:
-            display_df = df[df["Group"] == first_group][["Peptide", "Mean Reads per Million Reads", "Fraction of groups represented in subsets"]]
-            display_df.rename(columns={
-                "Mean Reads per Million Reads": first_group,
-                "Fraction of groups represented in subsets": f"Fraction in {first_group}"
-            }, inplace=True)
+        if groups:
+            display_df = df[df["Group"].isin(groups)][["Peptide"]].drop_duplicates()
 
-            for group in compare_groups:
-                gd = df[df["Group"] == group][["Peptide", "Mean Reads per Million Reads", "Fraction of groups represented in subsets"]]
-                gd.rename(columns={
-                    "Mean Reads per Million Reads": group,
-                    "Fraction of groups represented in subsets": f"Fraction in {group}"
-                }, inplace=True)
+            for group in groups:
+                gd = df[df["Group"] == group][["Peptide", "Mean Reads per Million Reads", "Rank in Group"]]
+                gd = gd.rename(columns={
+                    "Mean Reads per Million Reads": f"{group}: reads per million",
+                    "Rank in Group": f"Rank in {group}"
+                })
                 display_df = pd.merge(display_df, gd, on="Peptide", how="left")
 
-            display_df.sort_values(by=first_group, ascending=False, inplace=True)
-            st.subheader(f"Comparison of {first_group} with {', '.join(compare_groups)}")
-            st.dataframe(display_df, use_container_width=True)
+            # Filter columns based on selected metric
+            if metric == "Rank in Group":
+                display_df = display_df[["Peptide"] + [col for col in display_df.columns if col.startswith("Rank in")]]
+            elif metric == "Mean Reads per Million Reads":
+                display_df = display_df[["Peptide"] + [col for col in display_df.columns if "reads per million" in col]]
+
+            # Set up AgGrid display
+            gb = GridOptionsBuilder.from_dataframe(display_df)
+            gb.configure_default_column(filterable=True, sortable=True, resizable=True)
+            gridOptions = gb.build()
+
+            # Show grid and capture the return value
+            response = AgGrid(
+                display_df,
+                gridOptions=gridOptions,
+                height=400,
+                theme="alpine",
+                update_mode=GridUpdateMode.MODEL_CHANGED,
+            )
+
+            # Get the filtered dataframe from the grid
+            filtered_df = pd.DataFrame(response['data'])
+
+            # Add download button for filtered data
+            csv = filtered_df.to_csv(index=False)
+            st.download_button(
+                label="📥 Download Displayed Table as CSV",
+                data=csv,
+                file_name=f"{report_name}_filtered_fragments.csv",
+                mime="text/csv"
+            )
+
     else:
         st.warning("❌ `final_fragments_summary.csv` not found.")
+
 
 # ---------- Section: Heatmaps ----------
 with st.expander("Heatmap Visualization of Fragments", expanded=False):
