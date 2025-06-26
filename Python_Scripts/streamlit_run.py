@@ -2,7 +2,44 @@ import streamlit as st
 import pandas as pd
 import os
 import sys
-from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
+from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, JsCode
+
+# ---------- HELPER FUNCTIONS ----------
+def add_group_column(df: pd.DataFrame, input_dir: str, name_column: str = "Name") -> pd.DataFrame:
+    """
+    Adds the 'Group' column to the DataFrame by merging it with an annotation.csv file.
+    
+    Parameters:
+    - df: The input DataFrame (should contain a column matching annotation['Sample']).
+    - input_dir: Path used to locate the annotation file based on directory structure.
+    - name_column: Column in df to match against the 'Sample' column in annotation file. Default is 'Name'.
+    
+    Returns:
+    - A new DataFrame with the 'Group' column inserted in second position.
+    """
+    parent_3_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(input_dir))))
+    annotation_file = os.path.join(parent_3_dir, "Seq_Data", "Samples", "annotation.csv")
+
+    if not os.path.exists(annotation_file):
+        raise FileNotFoundError(f"Annotation file not found at {annotation_file}")
+
+    annotation_df = pd.read_csv(annotation_file)
+    annotation_df["Sample"] = annotation_df["Sample"].str.replace(".fastq.gz", "", regex=False)
+
+    # Merge with input DataFrame
+    merged_df = df.merge(annotation_df, left_on=name_column, right_on="Sample", how="left")
+
+    if "Group" not in merged_df.columns:
+        raise ValueError("Column 'Group' not found in merged annotation data.")
+
+    # Move Group to second position
+    group_col = merged_df.pop("Group")
+    merged_df.insert(1, "Group", group_col)
+
+    # Drop redundant 'Sample' column
+    merged_df.drop(columns=["Sample"], inplace=True)
+
+    return merged_df
 
 # ---------- Setup and Input Validation ----------
 
@@ -76,25 +113,23 @@ with st.expander("Library Sequencing Summary", expanded=False):
         st.dataframe(df, use_container_width=True)
         
 # ---------- Section: Found Sample Barcodes Summary ----------
-with st.expander("Sample Barcodes Summary", expanded=False):
+with st.expander("Summary of all Found Barcodes across Samples", expanded=False):
     report_file = os.path.join(input_dir, "found_barcode_report.csv")
     if os.path.exists(report_file):
+        st.write("This section provides a summary of all barcodes found in the samples. It includes the number of reads and unique barcodes found in each sample, as well as the number of reads and unique barcodes that matched the library barcodes.")
+        st.write("To get more details about a specific sample, you can select it from the table below.")
         df = pd.read_csv(report_file)
+        df = add_group_column(df, input_dir)
         df = df.rename(columns={
             "Name": "Sample Name", "BC_reads": "Found Barcode Reads", "unique_BC": "Found Unique Barcodes",
             "matched_BC_reads": "Barcode Reads matched to Library", "matched_unique_BC": " Unique Barcodes matched to Library"
         })
-
-        st.write("This section provides a summary of the barcodes found in all samples. It includes all barcodes with a mean read count per million reads greater than 1.\n"
-                "The Found in Library column indicates whether the barcode was found in the library. So if we can match the barcode to a corresponding fragment in the library, it is marked as True.")
-
         gb = GridOptionsBuilder.from_dataframe(df)
         gb.configure_default_column(filterable=True, sortable=True, resizable=True)
         gb.configure_selection("single", use_checkbox=True)
         gridOptions = gb.build()
-
-        barcode_summary = AgGrid(df, gridOptions=gridOptions, height=400, theme="alpine",
-                                update_mode=GridUpdateMode.SELECTION_CHANGED, fit_columns_on_grid_load=True)
+        barcode_summary = AgGrid(df, gridOptions=gridOptions, height=400, theme="alpine", fit_columns_on_grid_load=True,
+                                update_mode=GridUpdateMode.SELECTION_CHANGED)
 
         selected_rows = barcode_summary.get("selected_rows", [])
         if selected_rows is not None:
@@ -129,20 +164,33 @@ with st.expander("Sample Barcodes Summary", expanded=False):
         st.warning("❌ `found_barcode_report.csv` not found.")
 
 # ---------- Section: All Found Barcodes ----------
-with st.expander("Top List Barcodes", expanded=False):
-    st.write("This section provides a summary of all barcodes found in the samples. It includes all barcodes with a mean read count per million reads greater than 1.\n")
+with st.expander("List of most abundant Barcodes", expanded=False):
+    st.write("This section provides a summary of the most abundant barcodes found across all samples. It includes all barcodes with a mean read count per million reads greater than 1.\n")
     found_barcodes_file = os.path.join(input_dir, "found_barcodes.csv")
-    if os.path.exists(found_barcodes_file):
+    report_file = os.path.join(input_dir, "found_barcode_report.csv")
+    if os.path.exists(found_barcodes_file) and os.path.exists(report_file):
         df = pd.read_csv(found_barcodes_file)
+        annotation = pd.read_csv(report_file)
+        annotation = add_group_column(annotation, input_dir)
         num_samples = len(df.columns) - 5
         df = df[df['Count_per_mil_reads_mean'] > 1]
-        df.rename(columns={
+        # rename the columns in the dataframe based on the correspongin group in the annotation file
+        rename_map = {
             "BC": "Found Barcode",
             "Found_in_Lib": "Found in Library",
             "Count_per_mil_reads_mean": "Mean Reads per Million Reads",
             "Max_per_mil_reads": "Max Reads per Million Reads in a Sample",
             "Samples_Found_In": f"Samples Found in ... out of {num_samples}"
-        }, inplace=True)
+        }
+        for col_name in df.columns:
+            if col_name in annotation['Name'].values:
+                matched_group = annotation.loc[annotation['Name'] == col_name, 'Group']
+                if not matched_group.empty:
+                    new_name = f"{matched_group.values[0]} ({col_name})"
+                    rename_map[col_name] = new_name
+
+        df.rename(columns=rename_map, inplace=True)
+        
         # get the number of all barcodes in the dataframe and the number of barcodes found in the library
         num_barcodes = len(df)
         num_barcodes_in_lib = df['Found in Library'].sum()
@@ -173,18 +221,31 @@ with st.expander("Summary of all Fragments that could be traced with Barcodes", 
             "in_subsets": "Fraction of groups represented in subsets"
         }, inplace=True)
 
-        options = [g for g in df["Group"].unique() if g != "Plasmid_Library"]
-        selected_groups = st.multiselect("Select Group(s):", options, default=options)
+        # ---- AG-GRID CONFIGURATION ----
+        gb = GridOptionsBuilder.from_dataframe(df)
 
-        filtered_df = df[df["Group"].isin(selected_groups)]
-
-        gb = GridOptionsBuilder.from_dataframe(filtered_df)
+        # General settings
         gb.configure_default_column(filterable=True, sortable=True, resizable=True)
+
+        # Add dropdown filter to the "Group" column
+        gb.configure_column("Group", header_name="Group", filter="agSetColumnFilter")
+
+        # Optional: configure selection (checkboxes for row selection)
         gb.configure_selection("multiple", use_checkbox=True)
+
         gridOptions = gb.build()
 
-        final_fragments = AgGrid(filtered_df, gridOptions=gridOptions, height=600, theme="alpine",
-                                update_mode=GridUpdateMode.SELECTION_CHANGED, allow_unsafe_jscode=True, fit_columns_on_grid_load=True)
+        # Display in Streamlit with AgGrid
+        final_fragments = AgGrid(
+            df,
+            gridOptions=gridOptions,
+            height=600,
+            theme="alpine",
+            update_mode=GridUpdateMode.SELECTION_CHANGED,
+            allow_unsafe_jscode=True,
+            fit_columns_on_grid_load=True,
+        )
+
         selected_rows = final_fragments.get("selected_rows", [])
 
         if selected_rows is not None:
@@ -220,7 +281,7 @@ with st.expander("Summary of all Fragments that could be traced with Barcodes", 
 # ---------- Section: Find Best Fragments ----------
 with st.expander("Find Best Fragments", expanded=False):
     st.write("""
-        Here we can compare the effectiveness of fragments across different groups.\n
+        Here we can compare fragments across different groups.\n
         You can select groups that you want to include. And chose if you want to select by Rank or by Reads per Million Reads.\n
         """)
     summary_file = os.path.join(input_dir, "final_fragments_summary.csv")
@@ -305,3 +366,4 @@ with st.expander("Heatmap Visualization of Fragments", expanded=False):
             st.warning("No heatmap files found.")
     else:
         st.warning("❌ Heatmaps not found.")
+
