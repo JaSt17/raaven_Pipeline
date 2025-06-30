@@ -3,18 +3,18 @@
 data_dir = "Projects/Bluejay/Seq_Data"
 save_dir = "Projects/Bluejay/Libraries"
 # Name of the library and run
-library_name = "p034"
-run = "Plasmid_run_1"
+library_name = "p036"
+run = "Plasmid_run_2"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 27
 frag_len = 27
-linker_length = 3  # Lenght of the Linker left and right to the fragment sequence
+linker_length = 3  # Length of the Linker left and right to the fragment sequence
 
 # Define the number of possible fragments that can be created from the library
 num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "CTATCGAGTG" # Unique !!!
+barcode_left_literal = "AGTAATTCTT" # Unique !!!
 barcode_right_literal = "ATAACTTCGT"
 fragment_left_literal = "GAGTGCCCAA"
 fragment_right_literal = "GCACAGGCGC"
@@ -186,7 +186,6 @@ config_S6 = {
     "output_table": save_dir + f"/{library_name}/{run}/final_fragments_summary.csv",
     "log_dir": save_dir + f"/{library_name}/{run}/logs/",
 }
-
 # create a lookup dictionary for the configuration dictionaries
 config_lookup = {
     "S1": config_S1,
