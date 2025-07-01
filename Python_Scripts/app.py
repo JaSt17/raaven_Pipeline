@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode
+import matplotlib.pyplot as plt
 
 # ------------------ CACHE HELPERS ------------------
 
@@ -58,7 +59,7 @@ if 'page' not in st.session_state:
 def go_back():
     st.session_state.page = 'main'
     # Clear session state for report page
-    keys_to_clear = ['project', 'library', 'run', 'input_dir', 'summary_df', 'barcode_report_df', 'unique_barcodes_df', 'final_fragments_df', 'annotated_report_df', 'best_fragments_df']
+    keys_to_clear = ['summary_df', 'barcode_report_df', 'unique_barcodes_df', 'final_fragments_df', 'annotated_report_df', 'best_fragments_df', 'found_barcodes_df']
     for key in keys_to_clear:
         if key in st.session_state:
             del st.session_state[key]
@@ -82,25 +83,169 @@ if st.session_state.page == 'main':
     col1, col2, col3 = st.columns([3, 3, 3])
 
     with col1:
-        selected_project = st.selectbox("Project", projects)
+        selected_project = st.selectbox(
+            "Project",
+            projects,
+            index=projects.index(st.session_state.get('project', projects[0])),
+            help="Select a project to analyze its library sequencing data.",
+            key="main_project"
+        )
 
     project_dir = os.path.join(PROJECTS_DIR, selected_project)
     libraries_dir = os.path.join(project_dir, "Libraries")
-
     libraries = [d for d in os.listdir(libraries_dir) if os.path.isdir(os.path.join(libraries_dir, d))]
+
     with col2:
-        selected_library = st.selectbox("Library", libraries)
+        selected_library = st.selectbox(
+            "Library",
+            libraries,
+            index=libraries.index(st.session_state.get('library', libraries[0])),
+            help="Select a library to analyze its sequencing data.",
+            key="main_library"
+        )
 
     library_dir = os.path.join(libraries_dir, selected_library)
     runs = [d for d in os.listdir(library_dir) if os.path.isdir(os.path.join(library_dir, d))]
+
     with col3:
-        selected_run = st.selectbox("Run", runs)
+        selected_run = st.selectbox(
+            "Run",
+            runs,
+            index=runs.index(st.session_state.get('run', runs[0])),
+            help="Select a run to analyze its sequencing data.",
+            key="main_run"
+        )
 
     if st.button("Generate Report"):
         input_dir = os.path.join(library_dir, selected_run)
         go_to_report(selected_project, selected_library, selected_run, input_dir)
-        # reload the page to reset state
         st.rerun()
+
+    st.subheader("Project Barcode Coverage Summary")
+    st.write(
+        "This section provides a quick tool to check how many of the barcodes that were found in the mRNA samples can already be matched to the library barcodes."
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        selected_project_2 = st.selectbox(
+            "Project",
+            projects,
+            index=projects.index(st.session_state.get('project', projects[0])),
+            help="Select a project to analyze its library sequencing data.",
+            key="barcode_project"
+        )
+
+    project_dir = os.path.join(PROJECTS_DIR, selected_project_2)
+    libraries_dir = os.path.join(project_dir, "Libraries")
+    libraries = [d for d in os.listdir(libraries_dir) if os.path.isdir(os.path.join(libraries_dir, d))]
+
+    with col2:
+        selected_library_2 = st.selectbox(
+            "Library",
+            libraries,
+            index=libraries.index(st.session_state.get('library', libraries[0])),
+            help="Select a library to analyze its sequencing data.",
+            key="barcode_library"
+        )
+
+    library_dir = os.path.join(libraries_dir, selected_library_2)
+    runs = [d for d in os.listdir(library_dir) if os.path.isdir(os.path.join(library_dir, d))]
+
+    # Initial default setup (only once)
+    if "previous_runs" not in st.session_state:
+        st.session_state.previous_runs = []
+
+    # Display the multiselect
+    selected_runs = st.multiselect(
+        "Runs for Barcode Coverage",
+        runs,
+        help="Select the runs to include in the barcode coverage check.",
+        key="barcode_runs"
+    )
+
+    # Detect change
+    if selected_runs != st.session_state.previous_runs:
+        st.session_state.previous_runs = selected_runs  # update state
+
+        if not selected_runs:
+            st.warning("Please select at least one run to analyze.")
+            st.session_state.found_barcodes_df = None
+        else:
+            input_dirs = [os.path.join(library_dir, run) for run in selected_runs if os.path.isdir(os.path.join(library_dir, run))]
+            found_barcodes_df_list = []
+            report_path = get_file_path(input_dirs[0], "found_barcode_report.csv")
+            report_df = pd.read_csv(report_path) if os.path.exists(report_path) else None
+
+            for input_dir in input_dirs:
+                found_barcodes_path = get_file_path(input_dir, "found_barcodes.csv")
+                found_barcodes_df_list.append(pd.read_csv(found_barcodes_path))
+
+            if found_barcodes_df_list:
+                found_barcodes_df = pd.concat(found_barcodes_df_list, ignore_index=True)
+                found_barcodes_df = found_barcodes_df.sort_values(by='Found_in_Lib', ascending=False).drop_duplicates(subset='BC', keep='first')
+                found_barcodes_df = found_barcodes_df.sort_values(by='Count_per_mil_reads_mean', ascending=False)
+
+                num_samples = len(found_barcodes_df.columns) - 5
+                found_barcodes_df = found_barcodes_df[found_barcodes_df['Count_per_mil_reads_mean'] > 1]
+
+                rename_map = {
+                    "BC": "Found Barcode",
+                    "Found_in_Lib": "Found in Library",
+                    "Count_per_mil_reads_mean": "Mean Reads per Million Reads",
+                    "Max_per_mil_reads": "Max Reads per Million Reads in a Sample",
+                    "Samples_Found_In": f"Samples Found in ... out of {num_samples}"
+                }
+
+                found_barcodes_df.rename(columns=rename_map, inplace=True)
+                st.session_state.found_barcodes_df_main = found_barcodes_df
+
+    if st.session_state.previous_runs and st.session_state.found_barcodes_df_main is not None:
+        found_barcodes_df = st.session_state.found_barcodes_df_main
+        num_barcodes = len(found_barcodes_df)
+        num_barcodes_in_lib = found_barcodes_df['Found in Library'].sum()
+
+        # Create two columns
+        col1, col2 = st.columns([0.2, 1])
+
+        with col2:
+            st.metric(label="Total Barcodes", value=num_barcodes)
+            st.metric(label="Found in Library", value=num_barcodes_in_lib)
+
+        with col1:
+            sizes = [num_barcodes_in_lib, num_barcodes - num_barcodes_in_lib]
+            labels = ['Found in Library', 'No match in Library']
+            colors = ["#03254D", "#8DC8F0"]
+
+            fig, ax = plt.subplots(figsize=(5, 5))
+            wedges, texts, autotexts = ax.pie(
+                sizes,
+                labels=labels,
+                autopct='%1.1f%%',
+                startangle=90,
+                colors=colors,
+                wedgeprops=dict(width=0.25, edgecolor='w'),
+            )
+
+            for text in texts:
+                text.set_fontsize(22)
+            for autotext in autotexts:
+                autotext.set_fontsize(22)
+
+            ax.axis('equal')
+            st.pyplot(fig, use_container_width=True)
+
+        gb = GridOptionsBuilder.from_dataframe(found_barcodes_df)
+        gb.configure_default_column(filterable=True, sortable=True, resizable=True)
+        AgGrid(
+            found_barcodes_df,
+            gridOptions=gb.build(),
+            height=400,
+            theme="alpine",
+            allow_unsafe_jscode=True
+        )
+
+# ------------------ Report Page ------------------
 
 elif st.session_state.page == 'report':
     st.title(f"Library Report: `{st.session_state.project}_{st.session_state.library}_{st.session_state.run}`")
@@ -202,7 +347,38 @@ elif st.session_state.page == 'report':
 
             num_barcodes = len(found_df)
             num_barcodes_in_lib = found_df['Found in Library'].sum()
-            st.write(f"Total barcodes found: {num_barcodes} (of which {num_barcodes_in_lib} were found in the library)")
+            # Create three columns
+            col1, col2 = st.columns([0.2, 1])
+
+            # Left metric
+            with col2:
+                st.metric(label="Total Barcodes", value=num_barcodes)
+                st.metric(label="Found in Library", value=num_barcodes_in_lib)
+
+            # Center donut chart
+            with col1:
+                sizes = [num_barcodes_in_lib, num_barcodes - num_barcodes_in_lib]
+                labels = ['Found in Library', 'No match in Library']
+                colors = ["#03254D", "#8DC8F0"]  # Dark blue and light blue
+
+                fig, ax = plt.subplots(figsize=(5, 5))  # Smaller chart
+                wedges, texts, autotexts = ax.pie(
+                    sizes,
+                    labels=labels,
+                    autopct='%1.1f%%',
+                    startangle=90,
+                    colors=colors,
+                    wedgeprops=dict(width=0.25, edgecolor='w'),
+                )
+                # Set font size for labels
+                for text in texts:
+                    text.set_fontsize(22)
+
+                # Set font size for autopct values
+                for autotext in autotexts:
+                    autotext.set_fontsize(22)
+                ax.axis('equal')
+                st.pyplot(fig, use_container_width=True) # Adjusted size for better fit
 
             gb = GridOptionsBuilder.from_dataframe(found_df)
             gb.configure_default_column(filterable=True, sortable=True, resizable=True)
