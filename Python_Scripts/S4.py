@@ -38,6 +38,7 @@ import multiprocessing
 from pathlib import Path
 import gzip
 from Bio import SeqIO
+from Bio.Seq import Seq
 from itertools import islice
 # local import
 from config import get_config
@@ -216,7 +217,7 @@ def starcode_merge(unique_barcodes, barcode_db, threshold=0.95):
         return found_barcodes
 
 
-def analyze_tissue(file_path:str, data_dir:str, db:str, starcode:bool, out_dir:str, library_fragments: pd.DataFrame,
+def analyze_tissue(file_path:str, data_dir:str, barcode_db:pd.DataFrame, starcode:bool, out_dir:str, library_fragments: pd.DataFrame,
                     lut_dna: pd.DataFrame, threads:int, bbduk2_args: list,) -> dict:
     """
     Analyze a single tissue sample based on its index in the load list.
@@ -247,15 +248,6 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, starcode:bool, out_dir:s
     if os.path.isfile(out_file):
         logger.info(f"Output file {out_file} already exists.")
         unique_barcodes = pd.read_csv(out_file)
-        if not os.path.isfile(db):
-            logger.error(f"Database file {db} does not exist.")
-            sys.exit(1)
-        # read in all barcode form the db.fasta
-        barcode_dict = SeqIO.to_dict(SeqIO.parse(db, "fasta"))
-            # create a DataFrame from the barcode_db
-        barcode_db = pd.DataFrame({
-            'BC': [str(record.seq) for record in barcode_dict.values()],
-        })
 
     else:
         # Extraction of barcodes first
@@ -286,17 +278,6 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, starcode:bool, out_dir:s
         unique_barcodes['Count'] = unique_barcodes['Count'].astype(int)
         unique_barcodes['Count_per_mil_reads'] = unique_barcodes['Count'].astype(int) / per_mil_scale
         logger.info(f"Number of unique barcodes found: {unique_barcodes.shape[0]}")
-        
-        # match the barcodes with the reference barcodes from the plasmid database
-        if not os.path.isfile(db):
-            logger.error(f"Database file {db} does not exist.")
-            sys.exit(1)
-        # read in all barcode form the db.fasta
-        barcode_dict = SeqIO.to_dict(SeqIO.parse(db, "fasta"))
-            # create a DataFrame from the barcode_db
-        barcode_db = pd.DataFrame({
-            'BC': [str(record.seq) for record in barcode_dict.values()],
-        })
 
     try:
         # extract information about barcodes found in the sampes
@@ -317,7 +298,6 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, starcode:bool, out_dir:s
         # create a new column in the unique_barcodes DataFrame that holds a boolean value if the barcode is in the BCcount DataFrame
         unique_barcodes['Found_in_Lib'] = unique_barcodes['BC'].isin(BCcount['BC'])
         # save the unique_barcodes DataFrame with the Found_in_Lib column
-        # change the column order to have 'BC', 'Count', 'Count_per_mil_reads', 'Found_in_Lib'
         unique_barcodes = unique_barcodes[['BC', 'Count', 'Count_per_mil_reads', 'Found_in_Lib']]
         unique_barcodes.to_csv(os.path.join(out_dir, f"unique_barcodes_{log_entry['Name']}.csv"), index=False)     
         
@@ -352,10 +332,6 @@ def analyze_tissue(file_path:str, data_dir:str, db:str, starcode:bool, out_dir:s
         print(f"Error processing {file_path}: {e}")
         logger.error(f"Error processing {file_path}: {e}")
         exit(1)
-    
-    
-import os
-import pandas as pd
 
 def create_summary_csv(directory):
     """
@@ -432,6 +408,9 @@ def main():
     
     # load config
     config = get_config("S4")
+    # set reverse complement to False if not set
+    if "reverse_complement" not in config:
+        config["reverse_complement"] = False
     
     # Create a logger
     create_logger(config["log_dir"], "S4")
@@ -458,7 +437,6 @@ def main():
     data_dir = config["sample_directory"]
     output_dir = config["output_dir"]
     db = config["db"]
-    bc_len = config["bc_len"]
     # Create the output directory if it does not exist
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
@@ -468,12 +446,30 @@ def main():
     log_table = []
     # get the settings for the barcode extraction
     bbduk2_args_BC = config["bbduk2_args"]
+    
+    # Create the found barcode database
+    if not os.path.isfile(db):
+        logger.error(f"Database file {db} does not exist.")
+        sys.exit(1)
+    # read in all barcode form the db.fasta
+    barcode_dict = SeqIO.to_dict(SeqIO.parse(db, "fasta"))
+            # create a DataFrame from the barcode_db
+    if config["reverse_complement"]:
+        # If reverse complement is needed, create the reverse complement of the barcodes
+        barcode_db = pd.DataFrame({
+                'BC': [str(record.seq.reverse_complement()) for record in barcode_dict.values()],
+            })
+        library_fragments['BC'] = library_fragments['BC'].apply(lambda x: str(Seq(x).reverse_complement()))
+    else:
+        barcode_db = pd.DataFrame({
+                'BC': [str(record.seq) for record in barcode_dict.values()],
+            })
 
     # Analyze each tissue sample
     for row in load_list.iterrows():
         # Extract the file name from the first column
         file_path = row[1]['Sample']
-        log_entry = analyze_tissue(file_path, data_dir, db, config["starcode"],
+        log_entry = analyze_tissue(file_path, data_dir, barcode_db, config["starcode"],
                                     output_dir, library_fragments, lut_dna, threads,
                                     bbduk2_args_BC)
         if log_entry:

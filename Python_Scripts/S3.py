@@ -477,6 +477,7 @@ def combine_tables(temp_table_multi_clean: pd.DataFrame, temp_table_multi_chimer
     Def_barcodes = pd.concat([Def_barcodes, temp_table_multi_final[temp_table_multi_final['Mode'] == 'Chimeric_Def']], ignore_index=True)
     
     save_dir = output_path.replace("intermediate_files/library_barcodes.csv", "plots/barcode_pie_chart.png")
+    
     plot_barcode_pie_chart(library_name, num_unique_single, num_unique_clean + num_cleaned_chimeric, num_unique_chimeric, save_dir)
     
     return Def_barcodes, Chimeric_barcodes, temp_table_single
@@ -511,6 +512,11 @@ def main():
     
     # Create a logger
     create_logger(config["log_dir"], "S3")
+    
+    # Ensure that the output directory exists
+    output_dir = os.path.dirname(config["out_name"])
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     
     # Temporary directory for intermediate results
     temp_dir = tempfile.mkdtemp()
