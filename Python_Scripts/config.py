@@ -3,8 +3,8 @@
 data_dir = "Projects/Bluejay/Seq_Data"
 save_dir = "Projects/Bluejay/Libraries"
 # Name of the library and run
-library_name = "p039"
-run = "PacBio_run_1"
+library_name = "p036"
+run = "Chimeric_Recovery_Plasmid1+2"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 27
 frag_len = 27
@@ -14,10 +14,10 @@ linker_length = 3  # Length of the Linker left and right to the fragment sequenc
 num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "CATACATTATACGAAGTTAT"
-barcode_right_literal = "CGAACGCAAAAGTCCTCAAG" # Unique in each Library
-fragment_left_literal = "CAAACCACCAGAGTGCCCAA"
-fragment_right_literal = "GCACAGGCGCAGACCGGCTG"
+barcode_left_literal = "AGTAATTCTT" # Unique !!!
+barcode_right_literal = "ATAACTTCGT"
+fragment_left_literal = "GAGTGCCCAA"
+fragment_right_literal = "GCACAGGCGC"
 
 # Settings for Libary read usage:
 # Should single read barcodes be used?
@@ -48,16 +48,16 @@ config_S1 = {
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_barcode": data_dir + f"/{run}/{library_name}_pacbio.fastq.gz",
-    "in_name_fragment": data_dir + f"/{run}/{library_name}_pacbio.fastq.gz",
+    "in_name_barcode": data_dir + f"/{run}/{library_name}_R1.fastq.gz",
+    "in_name_fragment": data_dir + f"/{run}/{library_name}_R2.fastq.gz",
     "input_file": config_S1["input_file"],
-    "draw_sequence_logos": False,  # Whether to draw sequence logos for the barcodes and fragments
+    "draw_sequence_logos": True,  # Whether to draw sequence logos for the barcodes and fragments
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": save_dir + f"/{library_name}/{run}/barcode_fragment",
     "out_name": library_name,
     # arguments for the bbduk2 tool to extract the barcode and fragment sequences
     "bbduk2_args_BC" : [
-        "k=20",
+        "k=10",
         "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
@@ -71,7 +71,7 @@ config_S2 = {
         f"rliteral={barcode_right_literal}",
     ],
     "bbduk2_args_Frag" : [
-        "k=20",
+        "k=10",
         "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
@@ -117,7 +117,6 @@ config_S4 = {
     "bc_len": bc_len,
     "starcode": config_S3["starcode"],
     "db": save_dir + f"/{library_name}/{run}/intermediate_files/barcode_db.fasta",
-    "reverse_complement": True,  # whether to use the reverse complement of the barcodes
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": data_dir + "/Samples/annotation.csv",
     # directory containing the fastq files for the samples
