@@ -498,6 +498,8 @@ def write_def_barcodes(Def_barcodes: pd.DataFrame, out_name: str)-> None:
     # remove the file if it already exists
     if os.path.exists(save_path):
         os.remove(save_path)
+    # Make sure to only have unique barcodes in the DataFrame
+    Def_barcodes = Def_barcodes.drop_duplicates(subset=['BC'])
     # save the definitiv barcodes from the BC column to a fasta file
     for i, row in Def_barcodes.iterrows():
         with open(save_path, 'a') as f:

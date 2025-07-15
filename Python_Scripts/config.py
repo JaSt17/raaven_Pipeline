@@ -2,9 +2,10 @@
 # Define the data & save directory where the input and output files are stored
 data_dir = "Projects/Bluejay/Seq_Data"
 save_dir = "Projects/Bluejay/Libraries"
+annotation_file = data_dir + "/Samples/annotation_mCherry.csv"
 # Name of the library and run
-library_name = "p036"
-run = "Chimeric_Recovery_Plasmid1+2"
+library_name = "p037"
+run = "Plasmid_run_1"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 27
 frag_len = 27
@@ -14,7 +15,7 @@ linker_length = 3  # Length of the Linker left and right to the fragment sequenc
 num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "AGTAATTCTT" # Unique !!!
+barcode_left_literal = "GCTCCTTTGA" # Unique !!!
 barcode_right_literal = "ATAACTTCGT"
 fragment_left_literal = "GAGTGCCCAA"
 fragment_right_literal = "GCACAGGCGC"
@@ -118,7 +119,7 @@ config_S4 = {
     "starcode": config_S3["starcode"],
     "db": save_dir + f"/{library_name}/{run}/intermediate_files/barcode_db.fasta",
     # input csv file containing the file names of all samples that should be used for barcode extraction
-    "sample_inputs": data_dir + "/Samples/annotation.csv",
+    "sample_inputs": annotation_file,
     # directory containing the fastq files for the samples
     "sample_directory": data_dir + "/Samples",
     # filename for the log file that will be created and show how many barcodes were found in each sample
