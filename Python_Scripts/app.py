@@ -18,7 +18,20 @@ def load_annotation(annotation_file):
 
 def add_group_column(df: pd.DataFrame, input_dir: str, name_column: str = "Name") -> pd.DataFrame:
     parent_3_dir = os.path.dirname(os.path.dirname(os.path.dirname(input_dir)))
-    annotation_file = os.path.join(parent_3_dir, "Seq_Data", "Samples", "annotation.csv")
+    # get the library name form the last part of the path
+    library_name = os.path.basename(os.path.dirname(input_dir))
+    print(f"Library Name: {library_name}")
+    # if the library name starts with p034, p035 or p036 set prefix to GFP
+    if library_name.startswith(("p034", "p035", "p036")):
+        suffix = "GFP"
+    elif library_name.startswith(("p037", "p038", "p039")):
+        suffix = "mCherry"
+    else:
+        suffix = None
+    if suffix is None:
+        annotation_file = os.path.join(parent_3_dir, "Seq_Data", "Samples", "annotation.csv")
+    else:
+        annotation_file = os.path.join(parent_3_dir, "Seq_Data", "Samples", f"annotation_{suffix}.csv")
 
     if not os.path.exists(annotation_file):
         raise FileNotFoundError(f"Annotation file not found at {annotation_file}")

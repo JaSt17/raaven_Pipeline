@@ -5,7 +5,7 @@ save_dir = "Projects/Bluejay/Libraries"
 annotation_file = data_dir + "/Samples/annotation_mCherry.csv"
 # Name of the library and run
 library_name = "p037"
-run = "Plasmid_run_1"
+run = "Plasmid_run_2"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 27
 frag_len = 27
