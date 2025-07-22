@@ -100,7 +100,7 @@ if st.session_state.page == 'main':
         selected_project = st.selectbox(
             "Project",
             projects,
-            index=projects.index(st.session_state.get('project', projects[0])),
+            index=projects.index(st.session_state.get('project', projects[1])),
             help="Select a project to analyze its library sequencing data.",
             key="main_project"
         )
@@ -108,6 +108,12 @@ if st.session_state.page == 'main':
     project_dir = os.path.join(PROJECTS_DIR, selected_project)
     libraries_dir = os.path.join(project_dir, "Libraries")
     libraries = [d for d in os.listdir(libraries_dir) if os.path.isdir(os.path.join(libraries_dir, d))]
+    # sort the libraries alphabetically
+    libraries.sort()
+    # if there is a library called Undetermined, move it to the end of the list
+    if "Undetermined" in libraries:
+        libraries.remove("Undetermined")
+        libraries.append("Undetermined")
 
     with col2:
         selected_library = st.selectbox(
@@ -120,6 +126,8 @@ if st.session_state.page == 'main':
 
     library_dir = os.path.join(libraries_dir, selected_library)
     runs = [d for d in os.listdir(library_dir) if os.path.isdir(os.path.join(library_dir, d))]
+    # sort the runs alphabetically
+    runs.sort()
 
     with col3:
         selected_run = st.selectbox(
@@ -147,7 +155,7 @@ if st.session_state.page == 'main':
         selected_project_2 = st.selectbox(
             "Project",
             projects,
-            index=projects.index(st.session_state.get('project', projects[0])),
+            index=projects.index(st.session_state.get('project', projects[1])),
             help="Select a project to analyze its library sequencing data.",
             key="barcode_project"
         )
@@ -155,6 +163,12 @@ if st.session_state.page == 'main':
     project_dir = os.path.join(PROJECTS_DIR, selected_project_2)
     libraries_dir = os.path.join(project_dir, "Libraries")
     libraries = [d for d in os.listdir(libraries_dir) if os.path.isdir(os.path.join(libraries_dir, d))]
+    # sort the libraries alphabetically
+    libraries.sort()
+    # if there is a library called Undetermined, move it to the end of the list
+    if "Undetermined" in libraries:
+        libraries.remove("Undetermined")
+        libraries.append("Undetermined")
 
     with col2:
         selected_library_2 = st.selectbox(
@@ -167,6 +181,7 @@ if st.session_state.page == 'main':
 
     library_dir = os.path.join(libraries_dir, selected_library_2)
     runs = [d for d in os.listdir(library_dir) if os.path.isdir(os.path.join(library_dir, d))]
+    runs.sort()
 
     # Initial default setup (only once)
     if "previous_runs" not in st.session_state:
@@ -280,14 +295,14 @@ if st.session_state.page == 'main':
                 labels = ['Found in Library', 'No match in Library']
                 colors = ["#03254D", "#8DC8F0"]
 
-                fig, ax = plt.subplots(figsize=(5, 5))
+                fig, ax = plt.subplots(figsize=(6, 6))
                 wedges, texts, autotexts = ax.pie(
                     sizes,
                     labels=labels,
                     autopct='%1.1f%%',
                     startangle=90,
                     colors=colors,
-                    wedgeprops=dict(width=0.25, edgecolor='w'),
+                    wedgeprops=dict(width=0.15, edgecolor='w'),
                 )
 
                 for text in texts:
@@ -383,6 +398,9 @@ if st.session_state.page == 'main':
 
             if df is not None:
                 options = df["Group"].unique()
+                # sort options alphabetically descending
+                options.sort()
+                options = options[-1::-1] 
                 col1, col2 = st.columns(2)
                 groups = col1.multiselect("Groups for Comparison", options)
                 metric = col2.selectbox("Select Metric", ["Rank in Group", "Reads per Million Reads"], index=0)
@@ -701,6 +719,9 @@ elif st.session_state.page == 'report':
                 df = st.session_state["best_fragments_df"]
 
             options = df["Group"].unique()
+            # sort options alphabetically descending
+            options.sort()
+            options = options[-1::-1] 
             col1, col2 = st.columns(2)
             groups = col1.multiselect("Groups for Comparison", options)
             metric = col2.selectbox("Select Metric", ["Rank in Group", "Mean Reads per Million Reads"])

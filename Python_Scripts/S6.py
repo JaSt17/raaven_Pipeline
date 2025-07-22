@@ -66,6 +66,20 @@ def create_logger(path: str, name: str) -> None:
     )
     global logger  # Declare the logger as global
     logger = logging.getLogger(name) # Create a logger
+    
+
+# method that reads the annotation_Groups_GFP.csv file and  returns a dictornary in the same format as the Groups dictionary
+def read_annotation_groups(file_path):
+    annotation_df = pd.read_csv(file_path)
+    groups_dict = {}
+    
+    for _, row in annotation_df.iterrows():
+        group_name = row['Group_name']
+        method = row['Method']
+        name_list = eval(row['Name_list'])  # Convert string representation of list to actual list
+        groups_dict[group_name] = [method] + name_list
+
+    return groups_dict
 
 
 def load_combined_data(dir_path: str, sample_inputs_path: str) -> pd.DataFrame:
@@ -368,6 +382,9 @@ def main():
         logger.info("No data loaded. Exiting.")
         return
     
+    # Create the subsets dictionary from the annotation_Groups_GFP.csv
+    subsets = read_annotation_groups(config["annotation_groups"])
+    
     # Add the library fragment to the combined data
     library_fragments = pd.read_csv(config["library_fragments"])
     library_fragments['Group'] = config["library_name"]
@@ -378,7 +395,7 @@ def main():
     
     logger.info("Creating Subsets")
     # Create subsets based on the specified conditions
-    combined_data = create_subsets(combined_data, config["subsets"])
+    combined_data = create_subsets(combined_data, subsets)
     
     logger.info("Normalizing read counts")
     # Normalize the read counts in the DataFrame
@@ -410,7 +427,7 @@ def main():
     
     logger.info("Quantifying fragments in subsets")
     # Create subsets based on the specified conditions
-    combined_data = subset_counts(combined_data, config["subsets"])
+    combined_data = subset_counts(combined_data, subsets)
     
     # Rank the fragments in each group based on their RNA count
     logger.info("Ranking fragments in groups")

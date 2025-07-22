@@ -2,25 +2,26 @@
 # Define the data & save directory where the input and output files are stored
 data_dir = "Projects/Bluejay/Seq_Data"
 save_dir = "Projects/Bluejay/Libraries"
-annotation_file = data_dir + "/Samples/annotation_mCherry.csv"
+annotation_file = data_dir + "/Samples/annotation_GFP.csv"
+Group_annotation_file = data_dir + "/Samples/annotation_Groups_GFP.csv"
 # Name of the library and run
-library_name = "p037"
-run = "Plasmid_run_2"
+library_name = "p034"
+run = "PacBio_run_1"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 27
 frag_len = 27
-linker_length = 3  # Length of the Linker left and right to the fragment sequence
+linker_length = 3  # Lenght of the Linker left and right to the fragment sequence
 
 # Define the number of possible fragments that can be created from the library
 num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "GCTCCTTTGA" # Unique !!!
-barcode_right_literal = "ATAACTTCGT"
-fragment_left_literal = "GAGTGCCCAA"
-fragment_right_literal = "GCACAGGCGC"
+barcode_left_literal = "CATACATTATACGAAGTTAT"
+barcode_right_literal = "CACTCGATAGGTACAACCGG"
+fragment_left_literal = "CAAACCACCAGAGTGCCCAA"
+fragment_right_literal = "GCACAGGCGCAGACCGGCTG"
 
-# Settings for Libary read usage:
+# Settings for Library read usage:
 # Should single read barcodes be used?
 single_read_barcodes = True
 # Should chimeric barcodes be used?
@@ -49,16 +50,16 @@ config_S1 = {
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_barcode": data_dir + f"/{run}/{library_name}_R1.fastq.gz",
-    "in_name_fragment": data_dir + f"/{run}/{library_name}_R2.fastq.gz",
+    "in_name_barcode": data_dir + f"/{run}/{library_name}_pacbio.fastq.gz",
+    "in_name_fragment": data_dir + f"/{run}/{library_name}_pacbio.fastq.gz",
     "input_file": config_S1["input_file"],
-    "draw_sequence_logos": True,  # Whether to draw sequence logos for the barcodes and fragments
+    "draw_sequence_logos": False,  # Whether to draw sequence logos for the barcodes and fragments
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": save_dir + f"/{library_name}/{run}/barcode_fragment",
     "out_name": library_name,
     # arguments for the bbduk2 tool to extract the barcode and fragment sequences
     "bbduk2_args_BC" : [
-        "k=10",
+        "k=20",
         "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
@@ -72,7 +73,7 @@ config_S2 = {
         f"rliteral={barcode_right_literal}",
     ],
     "bbduk2_args_Frag" : [
-        "k=10",
+        "k=20",
         "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
@@ -118,6 +119,7 @@ config_S4 = {
     "bc_len": bc_len,
     "starcode": config_S3["starcode"],
     "db": save_dir + f"/{library_name}/{run}/intermediate_files/barcode_db.fasta",
+    "reverse_complement": True,  # whether to use the reverse complement of the barcodes
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": annotation_file,
     # directory containing the fastq files for the samples
@@ -168,21 +170,7 @@ config_S6 = {
     "library_name": "Plasmid_Library",
     # dictionary containing the information about the different subsets that should be created
     # the key is the name of the subset and the value is a list of the fragments that should be included
-    "subsets": {
-        "Infective_AAVs": ['exclude','DNAse_resistant_AAVs','Plasmid_Library'],
-        "CD_1": ['contains_include','CD_1'],
-        "CC_1": ['contains_include','CC_1'],
-        "Pons_1": ['contains_include','Pons_1'],
-        "HippoC_1": ['contains_include','HippoC_1'],
-        "Tha_1": ['contains_include','Tha_1'],
-        "Amyg_1": ['contains_include','Amyg_1'],
-        "GP_1": ['contains_include','GP_1'],
-        "Sub_N_1": ['contains_include','Sub_N_1'],
-        "HypT_1": ['contains_include','HypT_1'],
-        "C/P_1": ['contains_include','C/P_1'],
-        "MC_1": ['contains_include','MC_1'],
-        "TC_1": ['contains_include','TC_1'],
-    },
+    "annotation_groups": Group_annotation_file,
     # output file name for the final fragments summary
     "output_table": save_dir + f"/{library_name}/{run}/final_fragments_summary.csv",
     "log_dir": save_dir + f"/{library_name}/{run}/logs/",
