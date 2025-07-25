@@ -11,10 +11,14 @@ These are set at the top of the config file and are used across multiple pipelin
 ```python
 data_dir = "Projects/Kingfischer/Seq_Data"
 save_dir = "Projects/Kingfischer/Libraries"
+annotation_file = data_dir + "/Samples/annotation_p007.csv"
+Group_annotation_file = data_dir + "/Samples/annotation_Groups.csv"
 ```
 
 - `data_dir`: Path to raw sequencing data. There should be a subdirectory for each plasmid sequencing run, which corresponds to the `run` name given below. In that subdirectory, you should have the `<library_name>_R1` and `_R2` files for the fragment and barcode sequences. For full plasmid sequencing, you typically only need one `fastq.gz` file.
 - `save_dir`: Path where all outputs (e.g., logs, plots, CSVs) will be stored. For each run, a new directory will be created in this path named after the `library_name`.
+- `annotation_file`: Path to the annotation CSV file containing metadata for the mRNA samples. This file should be located in the `Samples` subdirectory of `data_dir`.
+- `Group_annotation_file`: Path to the annotation CSV file containing metadata on how we want to create subgroups. This file should also be located in the `Samples` subdirectory of `data_dir`.
 
 ```python
 library_name = "p007"
@@ -163,19 +167,12 @@ config_S6 = {
     "LUT_file": ...,
     "input_dir": ...,
     "library_fragments": ...,
-    "subsets": {
-        "Infective_AAVs": ['exclude','DNAse_resistant_AAVs','Plasmid_Library'],
-    },
+    "annotation_groups": ...,
     ...
     "output_table": ...,
-}
 ```
 
-- Aggregates and summarizes data across experiments.
-- `subsets`: You can define groups here. The key is the name of the group. The first list item should be `"include"` or `"exclude"`, followed by names of fragment groups. For example, `"exclude"` will include all but the listed groups.
-- All other parameters are set automatically and should not be changed.
-
----
+- All parameters are auto-generated from previous steps or global settings. No need for manual changes here.
 
 ## 🔄 Configuration Access Function
 
