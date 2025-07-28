@@ -217,7 +217,7 @@ def starcode_merge(unique_barcodes, barcode_db, threshold=0.95):
         return found_barcodes
 
 
-def analyze_tissue(file_path:str, data_dir:str, barcode_db:pd.DataFrame, starcode:bool, out_dir:str, library_fragments: pd.DataFrame,
+def analyze_tissue(file_path:str, data_dir:str, mrna_barcode_dir:str, barcode_db:pd.DataFrame, starcode:bool, out_dir:str, library_fragments: pd.DataFrame,
                     lut_dna: pd.DataFrame, threads:int, bbduk2_args: list,) -> dict:
     """
     Analyze a single tissue sample based on its index in the load list.
@@ -243,10 +243,13 @@ def analyze_tissue(file_path:str, data_dir:str, barcode_db:pd.DataFrame, starcod
     path = os.path.join(data_dir, file_path)
     logger.info(f"Processing {file_path}")
     
-    # Check if the output file already exists
-    out_file = os.path.join(out_dir, f"unique_barcodes_{log_entry['Name']}.csv")
+    # Check if the mrna_barcode_dir exists, if not create it
+    if not os.path.isdir(mrna_barcode_dir):
+        os.makedirs(mrna_barcode_dir)
+    # Check if the file already exists
+    out_file = os.path.join(mrna_barcode_dir, f"unique_barcodes_{log_entry['Name']}.csv")
     if os.path.isfile(out_file):
-        logger.info(f"Output file {out_file} already exists.")
+        logger.info(f"Take Barcodes from {out_file}")
         unique_barcodes = pd.read_csv(out_file)
 
     else:
@@ -278,6 +281,8 @@ def analyze_tissue(file_path:str, data_dir:str, barcode_db:pd.DataFrame, starcod
         unique_barcodes['Count'] = unique_barcodes['Count'].astype(int)
         unique_barcodes['Count_per_mil_reads'] = unique_barcodes['Count'].astype(int) / per_mil_scale
         logger.info(f"Number of unique barcodes found: {unique_barcodes.shape[0]}")
+        # Save the unique barcodes to a csv file
+        unique_barcodes.to_csv(out_file, index=False)
 
     try:
         # extract information about barcodes found in the sampes
@@ -436,6 +441,7 @@ def main():
     # get the data directory and output directory from the config
     data_dir = config["sample_directory"]
     output_dir = config["output_dir"]
+    mrna_barcode_dir = config["mRNA_output_dir"]
     db = config["db"]
     # Create the output directory if it does not exist
     if not os.path.isdir(output_dir):
@@ -469,7 +475,7 @@ def main():
     for row in load_list.iterrows():
         # Extract the file name from the first column
         file_path = row[1]['Sample']
-        log_entry = analyze_tissue(file_path, data_dir, barcode_db, config["starcode"],
+        log_entry = analyze_tissue(file_path, data_dir, mrna_barcode_dir, barcode_db, config["starcode"],
                                     output_dir, library_fragments, lut_dna, threads,
                                     bbduk2_args_BC)
         if log_entry:
