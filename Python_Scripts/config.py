@@ -1,23 +1,27 @@
+run = "Plasmid_run_1"
 #------------------------------------------------------------------------------------
 # Define the data & save directory where the input and output files are stored
-data_dir = "Projects/Puffin/Seq_Data"
-save_dir = "Projects/Puffin/Libraries"
-annotation_file = data_dir + "/Samples/annotation.csv"
-Group_annotation_file = data_dir + "/Samples/annotation_Groups.csv"
+data_dir = "Projects/Bluejay/Seq_Data"
+save_dir = "Projects/Bluejay/Libraries"
+annotation_file = data_dir + "/Samples/annotation_GFP.csv"
+Group_annotation_file = data_dir + "/Samples/annotation_Groups_GFP.csv"
 # Name of the library and run
-library_name = "p042"
-run = "Plasmid_run_1"
+library_name = "p034"
 # Define the length of the barcode and fragment sequences in DNA bases
-bc_len = 23
+bc_len = 27
 frag_len = 27
+linker_length = 3  # Lenght of the Linker left and right to the fragment sequence
+
+# Define the number of possible fragments that can be created from the library
+num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "GTACAAGTAAGGCGCGCCGC"
-barcode_right_literal = "AAAGGGGCCGTCAATATCAG" # Unique !!!
+barcode_left_literal = "CATACATTATACGAAGTTAT"
+barcode_right_literal = "CACTCGATAGGTACAACCGG"
 fragment_left_literal = "CAAACCACCAGAGTGCCCAA"
 fragment_right_literal = "GCACAGGCGCAGACCGGCTG"
 
-# Settings for Libary read usage:
+# Settings for Library read usage:
 # Should single read barcodes be used?
 single_read_barcodes = True
 # Should chimeric barcodes be used?
@@ -25,7 +29,7 @@ chimeric_barcodes = False
 # Should starcode reduction be used?
 starcode_reduction = False
 # threshold for the retrival of chimeric barcodes
-threshold = 0.8
+threshold = 1
 #------------------------------------------------------------------------------------
 
 # configuration for Step 1 in the pipeline
@@ -46,8 +50,8 @@ config_S1 = {
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_barcode": data_dir + f"/{run}/Puffin_pacbio.fastq.gz",
-    "in_name_fragment": data_dir + f"/{run}/Puffin_pacbio.fastq.gz",
+    "in_name_barcode": data_dir + f"/{run}/{library_name}_pacbio.fastq.gz",
+    "in_name_fragment": data_dir + f"/{run}/{library_name}_pacbio.fastq.gz",
     "input_file": config_S1["input_file"],
     "draw_sequence_logos": False,  # Whether to draw sequence logos for the barcodes and fragments
     # output directory and name for the barcode and fragment files once they have been extracted
@@ -62,8 +66,8 @@ config_S2 = {
         "rcomp=f",
         "minavgquality=0",
         "maxns=0",
-        f"minlength={bc_len-2}",
-        f"maxlength={bc_len+2}",
+        f"minlength={bc_len}",
+        f"maxlength={bc_len}",
         "ordered=t",
         f"lliteral={barcode_left_literal}",
         f"rliteral={barcode_right_literal}",
@@ -115,6 +119,7 @@ config_S4 = {
     "bc_len": bc_len,
     "starcode": config_S3["starcode"],
     "db": save_dir + f"/{library_name}/{run}/intermediate_files/barcode_db.fasta",
+    "reverse_complement": True,  # whether to use the reverse complement of the barcodes
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": annotation_file,
     # directory containing the fastq files for the samples
@@ -156,11 +161,17 @@ config_S5 = {
 config_S6 = {
     # input file names are extracted from the previous step
     "original_seq_file": config_S1["input_file"],
+    "LUT_file": config_S1["output_csv"],
     "input_dir": config_S4["output_dir"],
     "sample_inputs": config_S4["sample_inputs"],
     "library_fragments": config_S5["output_table"],
+    "linker_length": linker_length,
+    "plot_dir": save_dir + f"/{library_name}/{run}/plots",
+    "array_size": num_possible_frag,  # size of the array for the summary plots
     # group name for the library
     "library_name": "Plasmid_Library",
+    # dictionary containing the information about the different subsets that should be created
+    # the key is the name of the subset and the value is a list of the fragments that should be included
     "annotation_groups": Group_annotation_file,
     # output file name for the final fragments summary
     "output_table": save_dir + f"/{library_name}/{run}/final_fragments_summary.csv",

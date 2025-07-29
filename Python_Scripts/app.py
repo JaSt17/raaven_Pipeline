@@ -20,7 +20,6 @@ def add_group_column(df: pd.DataFrame, input_dir: str, name_column: str = "Name"
     parent_3_dir = os.path.dirname(os.path.dirname(os.path.dirname(input_dir)))
     # get the library name form the last part of the path
     library_name = os.path.basename(os.path.dirname(input_dir))
-    print(f"Library Name: {library_name}")
     # if the library name starts with p034, p035 or p036 set prefix to GFP
     if library_name.startswith(("p034", "p035", "p036")):
         suffix = "GFP"
@@ -60,6 +59,61 @@ def get_df_from_session_or_file(key, path):
         else:
             st.session_state[key] = None
     return st.session_state[key]
+
+@st.cache_data
+def load_barcode_summary(libraries_dir):
+    summary_data = []
+
+    libraries = [
+        d for d in os.listdir(libraries_dir)
+        if os.path.isdir(os.path.join(libraries_dir, d)) and d != "Undetermined"
+    ]
+
+    for lib in libraries:
+        library_dir = os.path.join(libraries_dir, lib)
+        runs = sorted([
+            d for d in os.listdir(library_dir)
+            if os.path.isdir(os.path.join(library_dir, d)) and d != "mRNA_barcodes"
+        ])
+
+        if not runs:
+            continue
+
+        run_data = {}
+        barcode_set = set()
+        total_barcodes = 0
+
+        for run in runs:
+            run_path = os.path.join(library_dir, run)
+            barcode_file = get_file_path(run_path, "found_barcodes.csv")
+
+            if not os.path.exists(barcode_file):
+                continue
+
+            try:
+                df = pd.read_csv(barcode_file, usecols=["BC", "Found_in_Lib", "Count_per_mil_reads_mean"])
+            except Exception as e:
+                st.warning(f"Error reading {barcode_file}: {e}")
+                continue
+
+            df = df[df["Count_per_mil_reads_mean"] > 1]
+
+            barcode_set.update(df["BC"].unique())
+
+            found_in_lib_count = df[df["Found_in_Lib"] == True]["BC"].nunique()
+            run_data[run] = found_in_lib_count
+
+            if total_barcodes == 0:
+                total_barcodes = df["BC"].nunique()
+
+        summary_data.append({
+            "Library": lib,
+            "Total mRNA Barcodes (BC per mil > 1)": total_barcodes,
+            **run_data
+        })
+
+    summary_df = pd.DataFrame(summary_data)
+    return summary_df.sort_values(by="Library")
 
 # ------------------ MAIN APP ------------------
 
@@ -110,7 +164,7 @@ if st.session_state.page == 'main':
     libraries = [d for d in os.listdir(libraries_dir) if os.path.isdir(os.path.join(libraries_dir, d))]
     # sort the libraries alphabetically
     libraries.sort()
-    for lib in ["Undetermined", "mRNA_barcodes"]:
+    for lib in ["Undetermined"]:
         if lib in libraries:
             libraries.remove(lib)
             libraries.append(lib)
@@ -128,7 +182,10 @@ if st.session_state.page == 'main':
     runs = [d for d in os.listdir(library_dir) if os.path.isdir(os.path.join(library_dir, d))]
     # sort the runs alphabetically
     runs.sort()
-
+    for run in ["mRNA_barcodes"]:
+        if run in runs:
+            runs.remove(run)
+        
     with col3:
         selected_run = st.selectbox(
             "Run",
@@ -165,7 +222,7 @@ if st.session_state.page == 'main':
     libraries = [d for d in os.listdir(libraries_dir) if os.path.isdir(os.path.join(libraries_dir, d))]
     # sort the libraries alphabetically
     libraries.sort()
-    for lib in ["Undetermined", "mRNA_barcodes"]:
+    for lib in ["Undetermined"]:
         if lib in libraries:
             libraries.remove(lib)
             libraries.append(lib)
@@ -182,6 +239,9 @@ if st.session_state.page == 'main':
     library_dir = os.path.join(libraries_dir, selected_library_2)
     runs = [d for d in os.listdir(library_dir) if os.path.isdir(os.path.join(library_dir, d))]
     runs.sort()
+    for run in ["mRNA_barcodes"]:
+        if run in runs:
+            runs.remove(run)
 
     # Initial default setup (only once)
     if "previous_runs" not in st.session_state:
@@ -195,259 +255,233 @@ if st.session_state.page == 'main':
             key="barcode_runs"
         )
 
-    if st.button("Generate Report", key="generate_report"):
-        if selected_runs != st.session_state.previous_runs:
-            st.session_state.previous_runs = selected_runs  # update state
+    if selected_runs != st.session_state.previous_runs:
+        st.session_state.previous_runs = selected_runs  # update state
 
-            if not selected_runs:
-                st.warning("Please select at least one run to analyze.")
-                st.session_state.found_barcodes_df = None
-            else:
-                input_dirs = [os.path.join(library_dir, run) for run in selected_runs if os.path.isdir(os.path.join(library_dir, run))]
-                found_barcodes_df_list = []
-                final_fragments_df_list = []
-                report_path = get_file_path(input_dirs[0], "found_barcode_report.csv")
-                # check if the report file exists
-                if not os.path.exists(report_path):
-                    st.warning(f"❌ `found_barcode_report.csv` not found in {input_dirs[0]}. Please run the barcode extraction step first.")
-                    st.session_state.found_barcodes_df_main = None
-                    st.stop()
-                report_df = pd.read_csv(report_path) if os.path.exists(report_path) else None
+        if not selected_runs:
+            st.warning("Please select at least one run to analyze.")
+            st.session_state.found_barcodes_df = None
+        else:
+            input_dirs = [os.path.join(library_dir, run) for run in selected_runs if os.path.isdir(os.path.join(library_dir, run))]
+            found_barcodes_df_list = []
+            final_fragments_df_list = []
+            report_path = get_file_path(input_dirs[0], "found_barcode_report.csv")
+            # check if the report file exists
+            if not os.path.exists(report_path):
+                st.warning(f"❌ `found_barcode_report.csv` not found in {input_dirs[0]}. Please run the barcode extraction step first.")
+                st.session_state.found_barcodes_df_main = None
+                st.stop()
+            report_df = pd.read_csv(report_path) if os.path.exists(report_path) else None
 
-                for input_dir in input_dirs:
-                    found_barcodes_path = get_file_path(input_dir, "found_barcodes.csv")
-                    final_fragments_path = get_file_path(input_dir, "final_fragments_summary.csv")
-                    found_barcodes_df_list.append(pd.read_csv(found_barcodes_path))
-                    temp_csv = pd.read_csv(final_fragments_path)
-                    # add a column for the library ID
-                    temp_csv["Library_ID"] = os.path.basename(input_dir)
-                    final_fragments_df_list.append(temp_csv)
+            for input_dir in input_dirs:
+                found_barcodes_path = get_file_path(input_dir, "found_barcodes.csv")
+                final_fragments_path = get_file_path(input_dir, "final_fragments_summary.csv")
+                found_barcodes_df_list.append(pd.read_csv(found_barcodes_path))
+                temp_csv = pd.read_csv(final_fragments_path)
+                # add a column for the library ID
+                temp_csv["Library_ID"] = os.path.basename(input_dir)
+                final_fragments_df_list.append(temp_csv)
 
-                if found_barcodes_df_list:
-                    found_barcodes_df = pd.concat(found_barcodes_df_list, ignore_index=True)
-                    found_barcodes_df = found_barcodes_df.sort_values(by='Found_in_Lib', ascending=False).drop_duplicates(subset='BC', keep='first')
-                    found_barcodes_df = found_barcodes_df.sort_values(by='Count_per_mil_reads_mean', ascending=False)
+            if found_barcodes_df_list:
+                found_barcodes_df = pd.concat(found_barcodes_df_list, ignore_index=True)
+                found_barcodes_df = found_barcodes_df.sort_values(by='Found_in_Lib', ascending=False).drop_duplicates(subset='BC', keep='first')
+                found_barcodes_df = found_barcodes_df.sort_values(by='Count_per_mil_reads_mean', ascending=False)
 
-                    num_samples = len(found_barcodes_df.columns) - 5
-                    found_barcodes_df = found_barcodes_df[found_barcodes_df['Count_per_mil_reads_mean'] > 1]
+                num_samples = len(found_barcodes_df.columns) - 5
+                found_barcodes_df = found_barcodes_df[found_barcodes_df['Count_per_mil_reads_mean'] > 1]
 
-                    rename_map = {
-                        "BC": "Found Barcode",
-                        "Found_in_Lib": "Found in Library",
-                        "Count_per_mil_reads_mean": "Mean Reads per Million Reads",
-                        "Max_per_mil_reads": "Max Reads per Million Reads in a Sample",
-                        "Samples_Found_In": f"Samples Found in ... out of {num_samples}"
-                    }
+                rename_map = {
+                    "BC": "Found Barcode",
+                    "Found_in_Lib": "Found in Library",
+                    "Count_per_mil_reads_mean": "Mean Reads per Million Reads",
+                    "Max_per_mil_reads": "Max Reads per Million Reads in a Sample",
+                    "Samples_Found_In": f"Samples Found in ... out of {num_samples}"
+                }
 
-                    found_barcodes_df.rename(columns=rename_map, inplace=True)
-                    st.session_state.found_barcodes_df_main = found_barcodes_df
-                    
-                if final_fragments_df_list:
-                    final_fragments_df = pd.concat(final_fragments_df_list, ignore_index=True)
-                    final_fragments_df = final_fragments_df[final_fragments_df["Group"] != "Plasmid_Library"]
-                    # get only unique combianations of Group, Peptide, LLinker, Sequence, RLinker and the mean of RNAcount RNAcount_ratio, append the list of BC together keep the first in_subsets
-                    final_fragments_df = final_fragments_df.groupby(
-                        ["Group", "Peptide", "LLinker", "Sequence", "RLinker"],
-                        as_index=False
-                    ).agg({
-                        "RNAcount": "mean",
-                        "RNAcount_ratio": "mean",
-                        "BC_count": "sum",
-                        "BC": lambda x: ', '.join(x.unique()),
-                        "in_subsets": "mean",
-                        "Library_ID": lambda x: ', '.join(x.unique()),
-                        "Rank_in_Group": "min"
-                    })
-                    # set the BC_count to the number of unique barcodes
-                    final_fragments_df["BC_count"] = final_fragments_df["BC"].apply(lambda x: len(x.split(', ')))
-                    # set RNAcount to int
-                    final_fragments_df["RNAcount"] = final_fragments_df["RNAcount"].astype(int)
-                    # Create new ranks based on the mean RNAcount for each group
-                    final_fragments_df["Rank_in_Group"] = final_fragments_df.groupby("Group")["RNAcount"].rank(ascending=False, method='dense').astype(int)
-                    final_fragments_df.rename(columns={
-                        "RNAcount": "Reads per Million Reads",
-                        "RNAcount_ratio": "Abundance in Group",
-                        "BC_count": "Barcode Count",
-                        "BC": "Barcode(s)",
-                        "in_subsets": "Fraction of groups represented in subsets",
-                        "Library_ID": "Library ID",
-                        "Rank_in_Group": "Rank in Group"
-                    }, inplace=True)
-                    st.session_state.final_fragments_df = final_fragments_df
+                found_barcodes_df.rename(columns=rename_map, inplace=True)
+                st.session_state.found_barcodes_df_main = found_barcodes_df
+                
+            if final_fragments_df_list:
+                final_fragments_df = pd.concat(final_fragments_df_list, ignore_index=True)
+                final_fragments_df = final_fragments_df[final_fragments_df["Group"] != "Plasmid_Library"]
+                # get only unique combianations of Group, Peptide, LLinker, Sequence, RLinker and the mean of RNAcount RNAcount_ratio, append the list of BC together keep the first in_subsets
+                final_fragments_df = final_fragments_df.groupby(
+                    ["Group", "Peptide", "LLinker", "Sequence", "RLinker"],
+                    as_index=False
+                ).agg({
+                    "RNAcount": "mean",
+                    "RNAcount_ratio": "mean",
+                    "BC_count": "sum",
+                    "BC": lambda x: ', '.join(x.unique()),
+                    "in_subsets": "mean",
+                    "Library_ID": lambda x: ', '.join(x.unique()),
+                    "Rank_in_Group": "min"
+                })
+                # set the BC_count to the number of unique barcodes
+                final_fragments_df["BC_count"] = final_fragments_df["BC"].apply(lambda x: len(x.split(', ')))
+                # set RNAcount to int
+                final_fragments_df["RNAcount"] = final_fragments_df["RNAcount"].astype(int)
+                # Create new ranks based on the mean RNAcount for each group
+                final_fragments_df["Rank_in_Group"] = final_fragments_df.groupby("Group")["RNAcount"].rank(ascending=False, method='dense').astype(int)
+                final_fragments_df.rename(columns={
+                    "RNAcount": "Reads per Million Reads",
+                    "RNAcount_ratio": "Abundance in Group",
+                    "BC_count": "Barcode Count",
+                    "BC": "Barcode(s)",
+                    "in_subsets": "Fraction of groups represented in subsets",
+                    "Library_ID": "Library ID",
+                    "Rank_in_Group": "Rank in Group"
+                }, inplace=True)
+                st.session_state.final_fragments_df = final_fragments_df
 
-        if st.session_state.previous_runs and st.session_state.found_barcodes_df_main is not None:
-            with st.expander("Found Barcodes Summary", expanded=False):
-                st.write("This section provides a summary of the barcodes found in the selected runs.")
-                st.write("The table below shows the barcodes that were found in the library and their counts across samples.")
-                found_barcodes_df = st.session_state.found_barcodes_df_main
-                num_barcodes = len(found_barcodes_df)
-                num_barcodes_in_lib = found_barcodes_df['Found in Library'].sum()
+    if st.session_state.previous_runs and st.session_state.found_barcodes_df_main is not None:
+        with st.expander("Found Barcodes Summary", expanded=False):
+            st.write("This section provides a summary of the barcodes found in the selected runs.")
+            st.write("The table below shows the barcodes that were found in the library and their counts across samples.")
+            found_barcodes_df = st.session_state.found_barcodes_df_main
+            num_barcodes = len(found_barcodes_df)
+            num_barcodes_in_lib = found_barcodes_df['Found in Library'].sum()
 
-                # Create two columns
-                col1, col2 = st.columns([0.2, 1])
+            # Create two columns
+            col1, col2 = st.columns([0.2, 1])
 
-                with col2:
-                    st.metric(label="Total Barcodes", value=num_barcodes)
-                    st.metric(label="Found in Library", value=num_barcodes_in_lib)
+            with col2:
+                st.metric(label="Total Barcodes", value=num_barcodes)
+                st.metric(label="Found in Library", value=num_barcodes_in_lib)
 
-                with col1:
-                    sizes = [num_barcodes_in_lib, num_barcodes - num_barcodes_in_lib]
-                    labels = ['Found in Library', 'No match in Library']
-                    colors = ["#03254D", "#8DC8F0"]
+            with col1:
+                sizes = [num_barcodes_in_lib, num_barcodes - num_barcodes_in_lib]
+                labels = ['Found in Library', 'No match in Library']
+                colors = ["#03254D", "#8DC8F0"]
 
-                    fig, ax = plt.subplots(figsize=(6, 6))
-                    wedges, texts, autotexts = ax.pie(
-                        sizes,
-                        labels=labels,
-                        autopct='%1.1f%%',
-                        startangle=90,
-                        colors=colors,
-                        wedgeprops=dict(width=0.15, edgecolor='w'),
-                    )
+                fig, ax = plt.subplots(figsize=(6, 6))
+                wedges, texts, autotexts = ax.pie(
+                    sizes,
+                    labels=labels,
+                    autopct='%1.1f%%',
+                    startangle=90,
+                    colors=colors,
+                    wedgeprops=dict(width=0.15, edgecolor='w'),
+                )
 
-                    for text in texts:
-                        text.set_fontsize(22)
-                    for autotext in autotexts:
-                        autotext.set_fontsize(22)
+                for text in texts:
+                    text.set_fontsize(22)
+                for autotext in autotexts:
+                    autotext.set_fontsize(22)
 
-                    ax.axis('equal')
-                    st.pyplot(fig, use_container_width=True)
+                ax.axis('equal')
+                st.pyplot(fig, use_container_width=True)
 
-                gb = GridOptionsBuilder.from_dataframe(found_barcodes_df)
-                gb.configure_default_column(filterable=True, sortable=True, resizable=True)
-                AgGrid(
-                    found_barcodes_df,
-                    gridOptions=gb.build(),
-                    height=400,
-                    theme="alpine",
-                    allow_unsafe_jscode=True
-                )       
+            gb = GridOptionsBuilder.from_dataframe(found_barcodes_df)
+            gb.configure_default_column(filterable=True, sortable=True, resizable=True)
+            response = AgGrid(
+                found_barcodes_df,
+                gridOptions=gb.build(),
+                height=400,
+                theme="alpine",
+                allow_unsafe_jscode=True
+            )
+            # Download filtered view
+            filtered_df = pd.DataFrame(response['data'])
+            csv = filtered_df.to_csv(index=False)
+            st.download_button(
+                label="📥 Download Displayed Table as CSV",
+                data=csv,
+                file_name="filtered_best_fragments.csv",
+                mime="text/csv"
+            )    
+
+        # ---------- Section: Find Best Fragments ----------
+        with st.expander("Find Best Fragments", expanded=False):
+            st.write("""
+                Here we can compare fragments across different groups.  
+                You can select groups that you want to include.  
+                And choose if you want to select by Rank or by Reads per Million Reads.
+            """)
             
-    # ---------------------- Summary of all Fragments that could be traced with Barcodes ------------------
-        if st.session_state.previous_runs and 'final_fragments_df' in st.session_state:
-            with st.expander("Summary of all Fragments that could be traced with Barcodes", expanded=False):
-                st.write("""
-                This section provides a summary of all fragments that were detected by matching barcodes found in the samples to the library barcodes.\n
-                You can take a closer look at the fragments by selecting them from the table below.\n
-                If *1* Fragment is selected, you will see the details of the fragment across all groups.\n
-                If *2* Fragments are selected, you will see a comparison of the two fragments across all groups.\n
-                """)
-                final_fragments_df = st.session_state.final_fragments_df
+            df = st.session_state.final_fragments_df
 
-                gb = GridOptionsBuilder.from_dataframe(final_fragments_df)
-                gb.configure_default_column(filterable=True, sortable=True, resizable=True)
-                gb.configure_column("Group", header_name="Group", filter="agSetColumnFilter")
-                gb.configure_selection("multiple", use_checkbox=True)
-                gridOptions = gb.build()
+            if df is not None:
+                options = df["Group"].unique()
+                # sort options alphabetically descending
+                options.sort()
+                options = options[-1::-1] 
+                col1, col2 = st.columns(2)
+                groups = col1.multiselect("Groups for Comparison", options)
+                metric = col2.selectbox("Select Metric", ["Rank in Group", "Reads per Million Reads"], index=0)
 
-                final_fragments = AgGrid(
-                    final_fragments_df,
-                    gridOptions=gridOptions,
-                        height=600,
+                if groups:
+                    display_df = df[df["Group"].isin(groups)][["Peptide", "Library ID"]].drop_duplicates()
+
+                    for group in groups:
+                        gd = df[df["Group"] == group][["Peptide", "Library ID", "Reads per Million Reads", "Rank in Group"]]
+                        gd = gd.rename(columns={
+                            "Reads per Million Reads": f"{group}: reads per million",
+                            "Rank in Group": f"Rank in {group}"
+                        })
+                        display_df = pd.merge(display_df, gd, on=["Peptide", "Library ID"], how="left")
+
+                    # Keep only metric-related columns
+                    if metric == "Rank in Group":
+                        display_df = display_df[["Peptide", "Library ID",] + [col for col in display_df.columns if col.startswith("Rank in")]]
+                        display_df = display_df.sort_values(by=[col for col in display_df.columns if col.startswith("Rank in")], ascending=True)
+                    elif metric == "Reads per Million Reads":
+                        display_df = display_df[["Peptide", "Library ID",] + [col for col in display_df.columns if "reads per million" in col]]
+                        display_df = display_df.sort_values(by=[col for col in display_df.columns if "reads per million" in col], ascending=False)
+                    # Display grid
+                    gb = GridOptionsBuilder.from_dataframe(display_df)
+                    gb.configure_default_column(filterable=True, sortable=True, resizable=True)
+                    gridOptions = gb.build()
+
+                    response = AgGrid(
+                        display_df,
+                        gridOptions=gridOptions,
+                        height=400,
                         theme="alpine",
-                        update_mode=GridUpdateMode.SELECTION_CHANGED,
-                        allow_unsafe_jscode=True,
-                        fit_columns_on_grid_load=True,
+                        update_mode=GridUpdateMode.MODEL_CHANGED,
                     )
 
-                selected_rows = final_fragments.get("selected_rows", [])
+                    # Download filtered view
+                    filtered_df = pd.DataFrame(response['data'])
+                    csv = filtered_df.to_csv(index=False)
+                    st.download_button(
+                        label="📥 Download Displayed Table as CSV",
+                        data=csv,
+                        file_name="filtered_best_fragments.csv",
+                        mime="text/csv"
+                    )
 
-                if selected_rows:
-                        selected_df = pd.DataFrame(selected_rows)
-                        if len(selected_df) > 2:
-                            st.warning("⚠️ Only the first 2 rows will be used.")
-                            selected_df = selected_df.head(2)
+    # === Project Barcode Coverage Summary ===
+    st.subheader("Project Barcode Coverage Summary")
+    st.write("This section gives you a quick overview about the barcode coverage of the project.")
 
-                        if len(selected_df) == 1:
-                            peptide = selected_df["Peptide"].iloc[0]
-                            match = final_fragments_df[final_fragments_df["Peptide"] == peptide]
-                            st.subheader(f"Details for Peptide: {peptide}")
-                            st.dataframe(match, use_container_width=True)
+    # Project selection
+    selected_project_2 = st.selectbox(
+        "Project",
+        projects,
+        index=projects.index(st.session_state.get('project', projects[1])),
+        help="Select a project to analyze its library sequencing data.",
+        key="selected_project_2"
+    )
 
-                        elif len(selected_df) == 2:
-                            p1, p2 = selected_df["Peptide"].iloc[0], selected_df["Peptide"].iloc[1]
-                            m1 = final_fragments_df[final_fragments_df["Peptide"] == p1]
-                            m2 = final_fragments_df[final_fragments_df["Peptide"] == p2]
-                            cmp = pd.merge(m1, m2, on="Group", suffixes=(f" ({p1})", f" ({p2})"))
+    # Dynamically set the project_dir and libraries_dir based on the selected project
+    project_dir = os.path.join(PROJECTS_DIR, selected_project_2)
+    libraries_dir = os.path.join(project_dir, "Libraries")
 
-                            for col in cmp.columns:
-                                if "Reads per Million Reads" in col:
-                                    cmp[col] = cmp[col].fillna(0)
+    # Load (cached) barcode summary specific to the selected project
+    summary_df = load_barcode_summary(libraries_dir)
 
-                            cmp["Ratio"] = cmp.apply(
-                                lambda row: row[f"Reads per Million Reads ({p1})"] / row[f"Reads per Million Reads ({p2})"]
-                                if row[f"Reads per Million Reads ({p1})"] > 0 and row[f"Reads per Million Reads ({p2})"] > 0
-                                else None, axis=1
-                            )
+    # Display
+    st.dataframe(summary_df, use_container_width=True)
 
-                            st.subheader(f"Comparison: {p1} vs {p2}")
-                            st.dataframe(
-                                cmp[["Group", f"Reads per Million Reads ({p1})", f"Reads per Million Reads ({p2})", "Ratio"]],
-                                use_container_width=True
-                            )
-                
-            # ---------- Section: Find Best Fragments ----------
-            with st.expander("Find Best Fragments", expanded=False):
-                st.write("""
-                    Here we can compare fragments across different groups.  
-                    You can select groups that you want to include.  
-                    And choose if you want to select by Rank or by Reads per Million Reads.
-                """)
-                
-                df = st.session_state.final_fragments_df
-
-                if df is not None:
-                    options = df["Group"].unique()
-                    # sort options alphabetically descending
-                    options.sort()
-                    options = options[-1::-1] 
-                    col1, col2 = st.columns(2)
-                    groups = col1.multiselect("Groups for Comparison", options)
-                    metric = col2.selectbox("Select Metric", ["Rank in Group", "Reads per Million Reads"], index=0)
-
-                    if groups:
-                        display_df = df[df["Group"].isin(groups)][["Peptide", "Library ID"]].drop_duplicates()
-
-                        for group in groups:
-                            gd = df[df["Group"] == group][["Peptide", "Library ID", "Reads per Million Reads", "Rank in Group"]]
-                            gd = gd.rename(columns={
-                                "Reads per Million Reads": f"{group}: reads per million",
-                                "Rank in Group": f"Rank in {group}"
-                            })
-                            print("display_df columns:", display_df.columns)
-                            print("gd columns:", gd.columns)
-                            display_df = pd.merge(display_df, gd, on=["Peptide", "Library ID"], how="left")
-
-                        # Keep only metric-related columns
-                        if metric == "Rank in Group":
-                            display_df = display_df[["Peptide", "Library ID",] + [col for col in display_df.columns if col.startswith("Rank in")]]
-                            display_df = display_df.sort_values(by=[col for col in display_df.columns if col.startswith("Rank in")], ascending=True)
-                        elif metric == "Reads per Million Reads":
-                            display_df = display_df[["Peptide", "Library ID",] + [col for col in display_df.columns if "reads per million" in col]]
-                            display_df = display_df.sort_values(by=[col for col in display_df.columns if "reads per million" in col], ascending=False)
-                        # Display grid
-                        gb = GridOptionsBuilder.from_dataframe(display_df)
-                        gb.configure_default_column(filterable=True, sortable=True, resizable=True)
-                        gridOptions = gb.build()
-
-                        response = AgGrid(
-                            display_df,
-                            gridOptions=gridOptions,
-                            height=400,
-                            theme="alpine",
-                            update_mode=GridUpdateMode.MODEL_CHANGED,
-                        )
-
-                        # Download filtered view
-                        filtered_df = pd.DataFrame(response['data'])
-                        csv = filtered_df.to_csv(index=False)
-                        st.download_button(
-                            label="📥 Download Displayed Table as CSV",
-                            data=csv,
-                            file_name="filtered_best_fragments.csv",
-                            mime="text/csv"
-                        )
-
+    # Download
+    csv = summary_df.to_csv(index=False)
+    st.download_button(
+        label="📥 Download Project Barcode Coverage Summary as CSV",
+        data=csv,
+        file_name=f"{selected_project_2}_barcode_coverage_summary.csv",
+        mime="text/csv"
+    )
 # ------------------ Report Page ------------------
 
 elif st.session_state.page == 'report':
