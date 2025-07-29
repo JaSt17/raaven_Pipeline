@@ -1,25 +1,21 @@
 #------------------------------------------------------------------------------------
 # Define the data & save directory where the input and output files are stored
-data_dir = "Projects/Kingfischer/Seq_Data"
-save_dir = "Projects/Kingfischer/Libraries"
-annotation_file = data_dir + "/Samples/annotation_p006.csv"
+data_dir = "Projects/Puffin/Seq_Data"
+save_dir = "Projects/Puffin/Libraries"
+annotation_file = data_dir + "/Samples/annotation.csv"
 Group_annotation_file = data_dir + "/Samples/annotation_Groups.csv"
 # Name of the library and run
-library_name = "p006"
+library_name = "p042"
 run = "Plasmid_run_1"
 # Define the length of the barcode and fragment sequences in DNA bases
-bc_len = 27
+bc_len = 23
 frag_len = 27
-linker_length = 3  # Length of the Linker left and right to the fragment sequence
-
-# Define the number of possible fragments that can be created from the library
-num_possible_frag = 20000  # This is an arbitrary number, adjust as needed
 
 # Define the literals for the barcode and fragment sequences
-barcode_left_literal = "TATCTCGTGG" # Unique !!!
-barcode_right_literal = "ATAACTTCGT"
-fragment_left_literal = "GAGAGGCAACG"
-fragment_right_literal = "AGACAAGCAG"
+barcode_left_literal = "GTACAAGTAAGGCGCGCCGC"
+barcode_right_literal = "AAAGGGGCCGTCAATATCAG" # Unique !!!
+fragment_left_literal = "CAAACCACCAGAGTGCCCAA"
+fragment_right_literal = "GCACAGGCGCAGACCGGCTG"
 
 # Settings for Libary read usage:
 # Should single read barcodes be used?
@@ -29,7 +25,7 @@ chimeric_barcodes = False
 # Should starcode reduction be used?
 starcode_reduction = False
 # threshold for the retrival of chimeric barcodes
-threshold = 1
+threshold = 0.8
 #------------------------------------------------------------------------------------
 
 # configuration for Step 1 in the pipeline
@@ -50,16 +46,16 @@ config_S1 = {
 
 config_S2 = {
     # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_barcode": data_dir + f"/{run}/{library_name}_R1.fastq.gz",
-    "in_name_fragment": data_dir + f"/{run}/{library_name}_R2.fastq.gz",
+    "in_name_barcode": data_dir + f"/{run}/Puffin_pacbio.fastq.gz",
+    "in_name_fragment": data_dir + f"/{run}/Puffin_pacbio.fastq.gz",
     "input_file": config_S1["input_file"],
-    "draw_sequence_logos": True,  # Whether to draw sequence logos for the barcodes and fragments
+    "draw_sequence_logos": False,  # Whether to draw sequence logos for the barcodes and fragments
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": save_dir + f"/{library_name}/{run}/barcode_fragment",
     "out_name": library_name,
     # arguments for the bbduk2 tool to extract the barcode and fragment sequences
     "bbduk2_args_BC" : [
-        "k=10",
+        "k=20",
         "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
@@ -73,7 +69,7 @@ config_S2 = {
         f"rliteral={barcode_right_literal}",
     ],
     "bbduk2_args_Frag" : [
-        "k=10",
+        "k=20",
         "hammingdistance=1",
         "overwrite=true",
         "findbestmatch=t",
@@ -139,8 +135,8 @@ config_S4 = {
         "rcomp=f",
         "minavgquality=0",
         "maxns=0",
-        f"minlength={bc_len-2}",
-        f"maxlength={bc_len+2}",
+        f"minlength={bc_len}",
+        f"maxlength={bc_len}",
         "ordered=t",
         f"lliteral={barcode_left_literal}",
         f"rliteral={barcode_right_literal}",
@@ -151,7 +147,7 @@ config_S4 = {
 config_S5 = {
     # input file names are extracted from the previous step
     "input_table": config_S3["out_name"],
-    "in_name_LUT":None,
+    "in_name_LUT": config_S1["output_csv"],
     # output file name for the library barcodes with their information form the LUT
     "output_table": save_dir + f"/{library_name}/{run}/intermediate_files/pos_library_barcodes.csv",
     "log_dir": save_dir + f"/{library_name}/{run}/logs/",
@@ -161,12 +157,8 @@ config_S6 = {
     # input file names are extracted from the previous step
     "original_seq_file": config_S1["input_file"],
     "input_dir": config_S4["output_dir"],
-    "LUT_file": config_S1["output_csv"],
     "sample_inputs": config_S4["sample_inputs"],
     "library_fragments": config_S5["output_table"],
-    "plot_dir": save_dir + f"/{library_name}/{run}/plots",
-    "linker_length": linker_length,  # Length of the Linker left and right to the fragment sequence
-    "array_size": num_possible_frag,  # size of the array for the summary plots
     # group name for the library
     "library_name": "Plasmid_Library",
     "annotation_groups": Group_annotation_file,

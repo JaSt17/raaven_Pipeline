@@ -191,7 +191,6 @@ def create_full_table(reads_frag: list, reads_BC: list)-> pd.DataFrame:
         'Reads': [str(rec.seq) for rec in reads_frag],
         'BC': [str(rec.seq) for rec in reads_BC]
     })
-
     return full_table
 
 
