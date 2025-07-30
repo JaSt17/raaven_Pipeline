@@ -1,12 +1,19 @@
-run = "Plasmid_run_1"
+library_name = "p034"
+run = "PacBio_run_2"
+draw_sequence_logos = False
+reverse_complement = False
+in_name_barcode = "p034.fastq.gz"
+in_name_fragment = "p034.fastq.gz"
+barcode_left_literal = "CATACATTATACGAAGTTAT"
+barcode_right_literal = "CACTCGATAGGTACAACCGG"
+fragment_left_literal = "CAAACCACCAGAGTGCCCAA"
+fragment_right_literal = "GCACAGGCGCAGACCGGCTG"
 #------------------------------------------------------------------------------------
 # Define the data & save directory where the input and output files are stored
 data_dir = "Projects/Bluejay/Seq_Data"
 save_dir = "Projects/Bluejay/Libraries"
 annotation_file = data_dir + "/Samples/annotation_GFP.csv"
 Group_annotation_file = data_dir + "/Samples/annotation_Groups_GFP.csv"
-# Name of the library and run
-library_name = "p034"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 27
 frag_len = 27
@@ -15,11 +22,6 @@ linker_length = 3  # Lenght of the Linker left and right to the fragment sequenc
 # Define the number of possible fragments that can be created from the library
 num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
 
-# Define the literals for the barcode and fragment sequences
-barcode_left_literal = "CATACATTATACGAAGTTAT"
-barcode_right_literal = "CACTCGATAGGTACAACCGG"
-fragment_left_literal = "CAAACCACCAGAGTGCCCAA"
-fragment_right_literal = "GCACAGGCGCAGACCGGCTG"
 
 # Settings for Library read usage:
 # Should single read barcodes be used?
@@ -49,11 +51,10 @@ config_S1 = {
 }
 
 config_S2 = {
-    # input file names for the P5 and P7 fastq files P5 is the barcode and P7 is the fragment
-    "in_name_barcode": data_dir + f"/{run}/{library_name}_pacbio.fastq.gz",
-    "in_name_fragment": data_dir + f"/{run}/{library_name}_pacbio.fastq.gz",
+    "in_name_barcode": data_dir + in_name_barcode,
+    "in_name_fragment": data_dir + in_name_fragment,
     "input_file": config_S1["input_file"],
-    "draw_sequence_logos": False,  # Whether to draw sequence logos for the barcodes and fragments
+    "draw_sequence_logos": draw_sequence_logos,  # Whether to draw sequence logos for the barcodes and fragments
     # output directory and name for the barcode and fragment files once they have been extracted
     "out_dir": save_dir + f"/{library_name}/{run}/barcode_fragment",
     "out_name": library_name,
@@ -119,7 +120,7 @@ config_S4 = {
     "bc_len": bc_len,
     "starcode": config_S3["starcode"],
     "db": save_dir + f"/{library_name}/{run}/intermediate_files/barcode_db.fasta",
-    "reverse_complement": True,  # whether to use the reverse complement of the barcodes
+    "reverse_complement": reverse_complement, # whether to use the reverse complement of the barcodes
     # input csv file containing the file names of all samples that should be used for barcode extraction
     "sample_inputs": annotation_file,
     # directory containing the fastq files for the samples

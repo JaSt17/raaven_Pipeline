@@ -141,7 +141,7 @@ Before running the pipeline, you must customize the configuration file. The conf
 
 Each plasmid library can have different library identifiers, linker sequences, or structural variations. Therefore, it is essential to adapt the configuration file to match your specific library setup.
 
-**Note:** Detailed parameter explanations are available in `Config_Explaination.md`.
+**Note:** Detailed parameter explanations are available in `Supplementaries/Config_Explaination.md`.
 
 ### Start the Pipeline
 
