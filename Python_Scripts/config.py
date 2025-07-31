@@ -1,11 +1,11 @@
 library_name = "p034"
-run = "Plasmid_run_1"
-draw_sequence_logos = True
-reverse_complement = False
-in_name_barcode = "p034_R1.fastq.gz"
-in_name_fragment = "p034_R2.fastq.gz"
-barcode_left_literal = "CCGGTTGTACCTATCGAGTG"
-barcode_right_literal = "ATAACTTCGTATAATGTATG"
+run = "PacBio_run_2"
+draw_sequence_logos = False
+reverse_complement = True
+in_name_barcode = "p034.fastq.gz"
+in_name_fragment = "p034.fastq.gz"
+barcode_left_literal = "CATACATTATACGAAGTTAT"
+barcode_right_literal = "CACTCGATAGGTACAACCGG"
 fragment_left_literal = "CAAACCACCAGAGTGCCCAA"
 fragment_right_literal = "GCACAGGCGCAGACCGGCTG"
 #------------------------------------------------------------------------------------

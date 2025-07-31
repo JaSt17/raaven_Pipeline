@@ -80,8 +80,7 @@ def load_barcode_summary(libraries_dir):
             continue
 
         run_data = {}
-        barcode_set = set()
-        total_barcodes = 0
+        total_num_barcodes = 0
 
         for run in runs:
             run_path = os.path.join(library_dir, run)
@@ -97,15 +96,13 @@ def load_barcode_summary(libraries_dir):
                 continue
 
             df = df[df["Count_per_mil_reads_mean"] > 1]
-
-            barcode_set = barcode_set.union(set(df["BC"]))
-
-            found_in_lib_count = df[df["Found_in_Lib"] == True]["BC"].nunique()
-            run_data[run] = found_in_lib_count
+            if total_num_barcodes == 0:
+                total_num_barcodes = df["BC"].nunique()
+            run_data[run] = df[df["Found_in_Lib"] == True]["BC"].nunique()
 
         summary_data.append({
             "Library": lib,
-            "Total mRNA Barcodes (BC per mil > 1)": len(barcode_set),
+            "Total mRNA Barcodes (BC per mil > 1)": total_num_barcodes,
             **run_data
         })
 
@@ -138,7 +135,7 @@ def go_to_report(project, library, run, input_dir):
 if st.session_state.page == 'main':
     st.title("rAAVen Sequencing Analyze Tool")
     st.subheader("Detailed Analysis of Library Sequencing Runs")
-    st.write("This tool allows you to analyze the library sequencing data and visualize the results for different projects.")
+    st.write("This tool allows you to analyze the library sequencing data and visualize the barcode_coverage_per_samples for different projects.")
 
     if not os.path.exists(PROJECTS_DIR):
         st.error(f"❌ `{PROJECTS_DIR}` directory does not exist.")
@@ -267,6 +264,8 @@ if st.session_state.page == 'main':
             if not os.path.exists(report_path):
                 st.warning(f"❌ `found_barcode_report.csv` not found in {input_dirs[0]}. Please run the barcode extraction step first.")
                 st.session_state.found_barcodes_df_main = None
+                st.session_state.final_fragments_df = None
+                st.session_state.barcode_coverage_per_sample = None
                 st.stop()
             report_df = pd.read_csv(report_path) if os.path.exists(report_path) else None
 
@@ -280,10 +279,10 @@ if st.session_state.page == 'main':
                 final_fragments_df_list.append(temp_csv)
 
             if found_barcodes_df_list:
-                found_barcodes_df = pd.concat(found_barcodes_df_list, ignore_index=True)
-                found_barcodes_df = found_barcodes_df.sort_values(by='Found_in_Lib', ascending=False).drop_duplicates(subset='BC', keep='first')
+                found_barcodes_df = found_barcodes_df_list[0].copy()
+                for df in found_barcodes_df_list[1:]:
+                    found_barcodes_df['Found_in_Lib'] |= df['Found_in_Lib']
                 found_barcodes_df = found_barcodes_df.sort_values(by='Count_per_mil_reads_mean', ascending=False)
-
                 num_samples = len(found_barcodes_df.columns) - 5
                 found_barcodes_df = found_barcodes_df[found_barcodes_df['Count_per_mil_reads_mean'] > 1]
 
@@ -298,6 +297,22 @@ if st.session_state.page == 'main':
                 found_barcodes_df.rename(columns=rename_map, inplace=True)
                 st.session_state.found_barcodes_df_main = found_barcodes_df
                 
+                # create a Barcode_coverage_per_sample.csv
+                sample_columns = found_barcodes_df.columns[5:]
+                barcode_coverage_per_sample = pd.DataFrame({'Sample': sample_columns})
+                # Total barcodes found per sample (values > 0)
+                barcode_coverage_per_sample['Barcodes'] = [ (found_barcodes_df[col] > 0).sum() for col in sample_columns ]
+                # Annotated barcodes found per sample (values > 0 and Found_in_Lib == True)
+                barcode_coverage_per_sample['Annotated_Barcodes'] = [
+                    ((found_barcodes_df[col] > 0) & (found_barcodes_df['Found in Library'])).sum()
+                    for col in sample_columns]
+                barcode_coverage_per_sample['Coverage in %'] = (
+                    barcode_coverage_per_sample['Annotated_Barcodes'] / barcode_coverage_per_sample['Barcodes'] * 100
+                ).fillna(0)
+                # covert the Coverage in % to to float with 1 decimal place
+                barcode_coverage_per_sample['Coverage in %'] = barcode_coverage_per_sample['Coverage in %'].round(1).astype(str) + '%'
+                st.session_state.barcode_coverage_per_sample = barcode_coverage_per_sample
+
             if final_fragments_df_list:
                 final_fragments_df = pd.concat(final_fragments_df_list, ignore_index=True)
                 final_fragments_df = final_fragments_df[final_fragments_df["Group"] != "Plasmid_Library"]
@@ -332,6 +347,7 @@ if st.session_state.page == 'main':
                 st.session_state.final_fragments_df = final_fragments_df
 
     if st.session_state.previous_runs and st.session_state.found_barcodes_df_main is not None:
+        # ---------- Section: Found Barcodes Summary ----------
         with st.expander("Found Barcodes Summary", expanded=False):
             st.write("This section provides a summary of the barcodes found in the selected runs.")
             st.write("The table below shows the barcodes that were found in the library and their counts across samples.")
@@ -382,11 +398,24 @@ if st.session_state.page == 'main':
             filtered_df = pd.DataFrame(response['data'])
             csv = filtered_df.to_csv(index=False)
             st.download_button(
-                label="📥 Download Displayed Table as CSV",
+                label="📥 Download Barcode Coverage as CSV",
                 data=csv,
-                file_name="filtered_best_fragments.csv",
+                file_name="barcode_coverage_summary.csv",
                 mime="text/csv"
-            )    
+            ) 
+            
+            # Display the Barcode Coverage per Sample
+            st.subheader("Barcode Coverage per Sample")
+            barcode_coverage_per_sample = st.session_state.barcode_coverage_per_sample
+            st.dataframe(barcode_coverage_per_sample, use_container_width=True)
+            # Download the barcode coverage per sample
+            csv = barcode_coverage_per_sample.to_csv(index=False)
+            st.download_button(
+                label="📥 Download Barcode Coverage per Sample as CSV",
+                data=csv,
+                file_name="barcode_coverage_per_sample.csv",
+                mime="text/csv"
+            )
 
         # ---------- Section: Find Best Fragments ----------
         with st.expander("Find Best Fragments", expanded=False):
