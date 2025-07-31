@@ -37,6 +37,7 @@ import pandas as pd
 import multiprocessing
 from pathlib import Path
 import gzip
+import shutil
 from Bio import SeqIO
 from Bio.Seq import Seq
 from itertools import islice
@@ -443,6 +444,9 @@ def main():
     output_dir = config["output_dir"]
     mrna_barcode_dir = config["mRNA_output_dir"]
     db = config["db"]
+    # remove the whole outut directory if it exists
+    if os.path.isdir(output_dir):
+        shutil.rmtree(output_dir)
     # Create the output directory if it does not exist
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)

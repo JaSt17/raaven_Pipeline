@@ -98,17 +98,14 @@ def load_barcode_summary(libraries_dir):
 
             df = df[df["Count_per_mil_reads_mean"] > 1]
 
-            barcode_set.update(df["BC"].unique())
+            barcode_set = barcode_set.union(set(df["BC"]))
 
             found_in_lib_count = df[df["Found_in_Lib"] == True]["BC"].nunique()
             run_data[run] = found_in_lib_count
 
-            if total_barcodes == 0:
-                total_barcodes = df["BC"].nunique()
-
         summary_data.append({
             "Library": lib,
-            "Total mRNA Barcodes (BC per mil > 1)": total_barcodes,
+            "Total mRNA Barcodes (BC per mil > 1)": len(barcode_set),
             **run_data
         })
 
