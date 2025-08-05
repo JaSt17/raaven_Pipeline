@@ -3,6 +3,8 @@ import pandas as pd
 import os
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode
 import matplotlib.pyplot as plt
+import numpy as np
+from functools import reduce
 
 # ------------------ CACHE HELPERS ------------------
 
@@ -256,33 +258,55 @@ if st.session_state.page == 'main':
             st.warning("Please select at least one run to analyze.")
             st.session_state.found_barcodes_df = None
         else:
-            input_dirs = [os.path.join(library_dir, run) for run in selected_runs if os.path.isdir(os.path.join(library_dir, run))]
+            input_dirs = [
+                os.path.join(library_dir, run)
+                for run in selected_runs
+                if os.path.isdir(os.path.join(library_dir, run))
+            ]
+
             found_barcodes_df_list = []
             final_fragments_df_list = []
+
             report_path = get_file_path(input_dirs[0], "found_barcode_report.csv")
-            # check if the report file exists
             if not os.path.exists(report_path):
                 st.warning(f"❌ `found_barcode_report.csv` not found in {input_dirs[0]}. Please run the barcode extraction step first.")
                 st.session_state.found_barcodes_df_main = None
                 st.session_state.final_fragments_df = None
                 st.session_state.barcode_coverage_per_sample = None
                 st.stop()
-            report_df = pd.read_csv(report_path) if os.path.exists(report_path) else None
 
+            report_df = pd.read_csv(report_path)
+
+            # Efficient loading of all CSVs
             for input_dir in input_dirs:
-                found_barcodes_path = get_file_path(input_dir, "found_barcodes.csv")
-                final_fragments_path = get_file_path(input_dir, "final_fragments_summary.csv")
-                found_barcodes_df_list.append(pd.read_csv(found_barcodes_path))
-                temp_csv = pd.read_csv(final_fragments_path)
-                # add a column for the library ID
-                temp_csv["Library_ID"] = os.path.basename(input_dir)
-                final_fragments_df_list.append(temp_csv)
+                lib_id = os.path.basename(input_dir)
 
+                fbc_path = get_file_path(input_dir, "found_barcodes.csv")
+                frg_path = get_file_path(input_dir, "final_fragments_summary.csv")
+
+                fbc_df = pd.read_csv(fbc_path)
+                fbc_df["Found_in_Lib"] = np.where(fbc_df["Found_in_Lib"], lib_id, "Not Found")
+                found_barcodes_df_list.append(fbc_df)
+
+                frg_df = pd.read_csv(frg_path)
+                frg_df["Library_ID"] = lib_id
+                final_fragments_df_list.append(frg_df)
+
+            # Combine all Found_in_Lib columns efficiently
             if found_barcodes_df_list:
-                found_barcodes_df = found_barcodes_df_list[0].copy()
-                for df in found_barcodes_df_list[1:]:
-                    found_barcodes_df['Found_in_Lib'] |= df['Found_in_Lib']
-                found_barcodes_df = found_barcodes_df.sort_values(by='Count_per_mil_reads_mean', ascending=False)
+                def merge_found_in_lib(df1, df2):
+                    combined = df1.copy()
+                    combined["Found_in_Lib"] = df1["Found_in_Lib"].combine(df2["Found_in_Lib"], lambda x, y: (
+                        y if x == "Not Found" and y != "Not Found" else
+                        x if y == "Not Found" else
+                        [x, y] if x != y else x
+                    ))
+                    return combined
+
+                found_barcodes_df = reduce(merge_found_in_lib, found_barcodes_df_list)
+
+                # Filtering and renaming
+                found_barcodes_df.sort_values(by='Count_per_mil_reads_mean', ascending=False, inplace=True)
                 num_samples = len(found_barcodes_df.columns) - 5
                 found_barcodes_df = found_barcodes_df[found_barcodes_df['Count_per_mil_reads_mean'] > 1]
 
@@ -293,8 +317,9 @@ if st.session_state.page == 'main':
                     "Max_per_mil_reads": "Max Reads per Million Reads in a Sample",
                     "Samples_Found_In": f"Samples Found in ... out of {num_samples}"
                 }
-
                 found_barcodes_df.rename(columns=rename_map, inplace=True)
+
+                # Save to session state
                 st.session_state.found_barcodes_df_main = found_barcodes_df
                 
                 # create a Barcode_coverage_per_sample.csv
@@ -353,7 +378,7 @@ if st.session_state.page == 'main':
             st.write("The table below shows the barcodes that were found in the library and their counts across samples.")
             found_barcodes_df = st.session_state.found_barcodes_df_main
             num_barcodes = len(found_barcodes_df)
-            num_barcodes_in_lib = found_barcodes_df['Found in Library'].sum()
+            num_barcodes_in_lib = found_barcodes_df['Found in Library'].apply(lambda x: isinstance(x, str) and x != "Not Found").sum()
 
             # Create two columns
             col1, col2 = st.columns([0.2, 1])

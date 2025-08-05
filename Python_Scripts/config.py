@@ -1,11 +1,11 @@
-library_name = "p034"
+library_name = "p036"
 run = "PacBio_run_2"
 draw_sequence_logos = False
 reverse_complement = True
-in_name_barcode = "p034.fastq.gz"
-in_name_fragment = "p034.fastq.gz"
+in_name_barcode = "p036.fastq.gz"
+in_name_fragment = "p036.fastq.gz"
 barcode_left_literal = "CATACATTATACGAAGTTAT"
-barcode_right_literal = "CACTCGATAGGTACAACCGG"
+barcode_right_literal = "AAGAATTACTGACCCCTCGG"
 fragment_left_literal = "CAAACCACCAGAGTGCCCAA"
 fragment_right_literal = "GCACAGGCGCAGACCGGCTG"
 #------------------------------------------------------------------------------------
@@ -14,10 +14,12 @@ data_dir = "Projects/Bluejay/Seq_Data"
 save_dir = "Projects/Bluejay/Libraries"
 annotation_file = data_dir + "/Samples/annotation_GFP.csv"
 Group_annotation_file = data_dir + "/Samples/annotation_Groups_GFP.csv"
+# Name of the library and run
+library_name = "p036"
 # Define the length of the barcode and fragment sequences in DNA bases
 bc_len = 27
 frag_len = 27
-linker_length = 3  # Lenght of the Linker left and right to the fragment sequence
+linker_length = 3  # Length of the Linker left and right to the fragment sequence
 
 # Define the number of possible fragments that can be created from the library
 num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
@@ -25,7 +27,7 @@ num_possible_frag = 180000  # This is an arbitrary number, adjust as needed
 # Define the literal sequence for the barcodes and fragments
 # IMPORTANT: These literals should both be on the forward strand they will automatically be reverse complemented if needed
 
-# Settings for Library read usage:
+# Settings for Libary read usage:
 # Should single read barcodes be used?
 single_read_barcodes = True
 # Should chimeric barcodes be used?
@@ -53,8 +55,8 @@ config_S1 = {
 }
 
 config_S2 = {
-    "in_name_barcode": data_dir + in_name_barcode,
-    "in_name_fragment": data_dir + in_name_fragment,
+    "in_name_barcode": f"{data_dir}/{run}/{in_name_barcode}",
+    "in_name_fragment": f"{data_dir}/{run}/{in_name_fragment}",
     "input_file": config_S1["input_file"],
     "draw_sequence_logos": draw_sequence_logos,  # Whether to draw sequence logos for the barcodes and fragments
     # output directory and name for the barcode and fragment files once they have been extracted
@@ -173,8 +175,6 @@ config_S6 = {
     "array_size": num_possible_frag,  # size of the array for the summary plots
     # group name for the library
     "library_name": "Plasmid_Library",
-    # dictionary containing the information about the different subsets that should be created
-    # the key is the name of the subset and the value is a list of the fragments that should be included
     "annotation_groups": Group_annotation_file,
     # output file name for the final fragments summary
     "output_table": save_dir + f"/{library_name}/{run}/final_fragments_summary.csv",
