@@ -150,7 +150,7 @@ if st.session_state.page == 'main':
         selected_project = st.selectbox(
             "Project",
             projects,
-            index=projects.index(st.session_state.get('project', projects[1])),
+            index=projects.index(st.session_state.get('project', projects[0])),
             help="Select a project to analyze its library sequencing data.",
             key="main_project"
         )
@@ -208,7 +208,7 @@ if st.session_state.page == 'main':
         selected_project_2 = st.selectbox(
             "Project",
             projects,
-            index=projects.index(st.session_state.get('project', projects[1])),
+            index=projects.index(st.session_state.get('project', projects[0])),
             help="Select a project to analyze its library sequencing data.",
             key="barcode_project"
         )
@@ -510,7 +510,7 @@ if st.session_state.page == 'main':
     selected_project_2 = st.selectbox(
         "Project",
         projects,
-        index=projects.index(st.session_state.get('project', projects[1])),
+        index=projects.index(st.session_state.get('project', projects[0])),
         help="Select a project to analyze its library sequencing data.",
         key="selected_project_2"
     )
