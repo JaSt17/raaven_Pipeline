@@ -139,6 +139,9 @@ def load_combined_data(dir_path: str, sample_inputs_path: str) -> pd.DataFrame:
     sample_inputs['Sample'] = sample_inputs['Sample'].str.split(".").str[0]
     sample_inputs_dict = dict(zip(sample_inputs["Sample"], sample_inputs["Group"]))
     
+    # save the original sample names to a new column
+    combined_data['Original_Sample'] = combined_data['Group']
+    
     # rename the samples from different organisms to the same name
     combined_data['Group'] = combined_data['Group'].replace(sample_inputs_dict)
     
@@ -225,6 +228,7 @@ def combine_information_of_identical_fragments(df: pd.DataFrame, key_cols: list)
         'Reads': 'first',
         'BC': lambda x: ','.join(pd.unique(x)),
         'RNAcount': 'mean',
+        'RNAcount_per_mil_reads': 'mean',
         'RNAcount_ratio': 'mean',
     }
     
@@ -388,6 +392,9 @@ def main():
     # Add the library fragment to the combined data
     library_fragments = pd.read_csv(config["library_fragments"])
     library_fragments['Group'] = config["library_name"]
+    library_fragments['Original_Sample'] = library_fragments['Group'] 
+    # add the RNA count per million reads column to the library fragments
+    library_fragments['RNAcount_per_mil_reads'] = 0
     # set the columns of the two DataFrames to be the same
     combined_data = combined_data[library_fragments.columns.tolist()]
     # Add the library fragments to the combined data
@@ -403,7 +410,7 @@ def main():
     
     logger.info("Combining fragment information")
     # Define the key columns for the groupby operation
-    key_cols = ["Group", "LUTnr", "Peptide"]
+    key_cols = ["Original_Sample", "Group", "LUTnr", "Peptide"]
     # Combine information of identical fragments in a DataFrame
     combined_data = combine_information_of_identical_fragments(combined_data, key_cols)
     
