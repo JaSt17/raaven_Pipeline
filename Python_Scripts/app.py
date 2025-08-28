@@ -150,7 +150,7 @@ if st.session_state.page == 'main':
         selected_project = st.selectbox(
             "Project",
             projects,
-            index=projects.index(st.session_state.get('project', projects[1])),
+            index=projects.index(st.session_state.get('project', projects[0])),
             help="Select a project to analyze its library sequencing data.",
             key="main_project"
         )
@@ -208,7 +208,7 @@ if st.session_state.page == 'main':
         selected_project_2 = st.selectbox(
             "Project",
             projects,
-            index=projects.index(st.session_state.get('project', projects[1])),
+            index=projects.index(st.session_state.get('project', projects[0])),
             help="Select a project to analyze its library sequencing data.",
             key="barcode_project"
         )
@@ -318,8 +318,6 @@ if st.session_state.page == 'main':
                     "Samples_Found_In": f"Samples Found in ... out of {num_samples}"
                 }
                 found_barcodes_df.rename(columns=rename_map, inplace=True)
-
-                # Save to session state
                 st.session_state.found_barcodes_df_main = found_barcodes_df
                 
                 # create a Barcode_coverage_per_sample.csv
@@ -410,34 +408,24 @@ if st.session_state.page == 'main':
                 ax.axis('equal')
                 st.pyplot(fig, use_container_width=True)
 
-            gb = GridOptionsBuilder.from_dataframe(found_barcodes_df)
-            gb.configure_default_column(filterable=True, sortable=True, resizable=True)
-            response = AgGrid(
-                found_barcodes_df,
-                gridOptions=gb.build(),
-                height=400,
-                theme="alpine",
-                allow_unsafe_jscode=True
-            )
-            # Download filtered view
-            filtered_df = pd.DataFrame(response['data'])
-            csv = filtered_df.to_csv(index=False)
+            st.dataframe(found_barcodes_df, use_container_width=True)
+            csv1 = found_barcodes_df.to_csv(index=False)
             st.download_button(
-                label="📥 Download Barcode Coverage as CSV",
-                data=csv,
-                file_name="barcode_coverage_summary.csv",
+                label="📥 Download Found Barcodes Summary as CSV",
+                data=csv1,
+                file_name="found_barcodes_summary.csv",
                 mime="text/csv"
-            ) 
-            
+            )
+
             # Display the Barcode Coverage per Sample
             st.subheader("Barcode Coverage per Sample")
             barcode_coverage_per_sample = st.session_state.barcode_coverage_per_sample
             st.dataframe(barcode_coverage_per_sample, use_container_width=True)
             # Download the barcode coverage per sample
-            csv = barcode_coverage_per_sample.to_csv(index=False)
+            csv2 = barcode_coverage_per_sample.to_csv(index=False)
             st.download_button(
                 label="📥 Download Barcode Coverage per Sample as CSV",
-                data=csv,
+                data=csv2,
                 file_name="barcode_coverage_per_sample.csv",
                 mime="text/csv"
             )
@@ -510,7 +498,7 @@ if st.session_state.page == 'main':
     selected_project_2 = st.selectbox(
         "Project",
         projects,
-        index=projects.index(st.session_state.get('project', projects[1])),
+        index=projects.index(st.session_state.get('project', projects[0])),
         help="Select a project to analyze its library sequencing data.",
         key="selected_project_2"
     )
